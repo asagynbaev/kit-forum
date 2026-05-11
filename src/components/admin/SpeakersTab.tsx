@@ -7,6 +7,16 @@ import { LocalizedField, Field, Modal, Btn, Toast } from "./shared";
 type Row = Database["public"]["Tables"]["speakers"]["Row"];
 type LV = { ru: string; ky: string; en: string };
 
+type FormState = {
+  name: LV;
+  role: LV;
+  topic: LV;
+  country: LV;
+  country_flag: string;
+  photo: string;
+  order_index: number;
+};
+
 async function uploadPhoto(file: File): Promise<string | null> {
   const ext = file.name.split(".").pop() ?? "jpg";
   const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -93,7 +103,7 @@ function PhotoField({
   );
 }
 
-const empty = (): Omit<Row, "id" | "created_at"> => ({
+const empty = (): FormState => ({
   name: { ru: "", ky: "", en: "" },
   role: { ru: "", ky: "", en: "" },
   topic: { ru: "", ky: "", en: "" },

@@ -8,48 +8,86 @@ export interface Database {
       speakers: {
         Row: {
           id: string;
-          name: LocalizedText;
-          role: LocalizedText;
-          topic: LocalizedText | null;
-          country: LocalizedText;
+          name: Json;
+          role: Json;
+          topic: Json | null;
+          country: Json;
           country_flag: string;
           photo: string | null;
           order_index: number;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["speakers"]["Row"], "id" | "created_at"> & {
+        Insert: {
           id?: string;
+          name: Json;
+          role: Json;
+          topic?: Json | null;
+          country: Json;
+          country_flag: string;
+          photo?: string | null;
+          order_index?: number;
           created_at?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["speakers"]["Insert"]>;
+        Update: {
+          id?: string;
+          name?: Json;
+          role?: Json;
+          topic?: Json | null;
+          country?: Json;
+          country_flag?: string;
+          photo?: string | null;
+          order_index?: number;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       program_sessions: {
         Row: {
           id: string;
-          title: LocalizedText;
-          description: LocalizedText | null;
-          speakers_label: LocalizedText | null;
+          title: Json;
+          description: Json | null;
+          speakers_label: Json | null;
           session_type: "keynote" | "panel" | "workshop" | "break" | "networking" | "ceremony";
           track: string | null;
           starts_at: string | null;
           duration_min: number | null;
-          room: LocalizedText | null;
+          room: Json | null;
           order_index: number;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["program_sessions"]["Row"], "id" | "created_at"> & {
+        Insert: {
           id?: string;
+          title: Json;
+          description?: Json | null;
+          speakers_label?: Json | null;
+          session_type: "keynote" | "panel" | "workshop" | "break" | "networking" | "ceremony";
+          track?: string | null;
+          starts_at?: string | null;
+          duration_min?: number | null;
+          room?: Json | null;
+          order_index?: number;
           created_at?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["program_sessions"]["Insert"]>;
+        Update: {
+          id?: string;
+          title?: Json;
+          description?: Json | null;
+          speakers_label?: Json | null;
+          session_type?: "keynote" | "panel" | "workshop" | "break" | "networking" | "ceremony";
+          track?: string | null;
+          starts_at?: string | null;
+          duration_min?: number | null;
+          room?: Json | null;
+          order_index?: number;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       session_speakers: {
-        Row: {
-          session_id: string;
-          speaker_id: string;
-        };
-        Insert: Database["public"]["Tables"]["session_speakers"]["Row"];
-        Update: Partial<Database["public"]["Tables"]["session_speakers"]["Row"]>;
+        Row: { session_id: string; speaker_id: string };
+        Insert: { session_id: string; speaker_id: string };
+        Update: { session_id?: string; speaker_id?: string };
+        Relationships: [];
       };
       social_links: {
         Row: {
@@ -61,12 +99,28 @@ export interface Database {
           order_index: number;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["social_links"]["Row"], "id" | "created_at"> & {
+        Insert: {
           id?: string;
+          platform: string;
+          label: string;
+          url: string;
+          icon?: string | null;
+          order_index?: number;
           created_at?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["social_links"]["Insert"]>;
+        Update: {
+          id?: string;
+          platform?: string;
+          label?: string;
+          url?: string;
+          icon?: string | null;
+          order_index?: number;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
   };
 }
