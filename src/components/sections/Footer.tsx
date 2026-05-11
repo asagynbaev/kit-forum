@@ -69,7 +69,7 @@ export function Footer() {
         <div className="mb-10 sm:mb-14 flex flex-wrap items-center justify-between gap-3 border-y border-brand/20 py-3.5 sm:py-4">
           <LiveBadge>{t("footer.liveBadge")}</LiveBadge>
           <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.22em] uppercase text-ink-soft tabular tnums">
-            42.8772°N · 74.5853°E
+            42.8669°N · 74.5724°E
           </span>
           <span className="hidden sm:inline-flex font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft">
             {t("footer.versionBadge")}

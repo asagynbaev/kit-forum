@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
 import { socialLinks } from "@/data/organizers";
@@ -378,12 +379,12 @@ export function Contacts() {
                       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 py-7">
                         <p className="text-[12px] leading-relaxed text-ink-soft sm:max-w-[420px]">
                           {t("contacts.agreePrefix")}
-                          <a
-                            href="#"
+                          <Link
+                            to="/privacy"
                             className="text-ink underline underline-offset-4 hover:text-brand transition-colors duration-300"
                           >
                             {t("contacts.agreeLink")}
-                          </a>
+                          </Link>
                           {t("contacts.agreeSuffix")}
                         </p>
                         <button

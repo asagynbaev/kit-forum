@@ -38,8 +38,8 @@ export const venue = {
     ky: "Кыргызстан",
     en: "Kyrgyzstan",
   } as Localized,
-  /** МУК Central Campus — Chui Ave, Bishkek (OSM way 992436311) */
-  coordinates: { lat: 42.8772, lng: 74.5853 } as { lat: number; lng: number },
+  /** МУК, ул. Льва Толстого — 2GIS verified */
+  coordinates: { lat: 42.866903, lng: 74.572381 } as { lat: number; lng: number },
   zoom: 16,
   /** Searchable destination string — used for Google Maps directions */
   googleQuery:

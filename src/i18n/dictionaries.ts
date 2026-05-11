@@ -50,7 +50,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       "Загружаем главное событие цифровой отрасли Центральной Азии.",
     "loader.metaVersion": "v.2026.06",
     "loader.metaCity": "Bishkek · KGZ",
-    "loader.metaCoords": "42.88°N · 74.59°E",
+    "loader.metaCoords": "42.87°N · 74.57°E",
 
     // ─── Hero
     "hero.aria": "КИТ Форум 2026",
@@ -79,7 +79,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "about.metaLocation": "Локация",
     "about.metaLocationValue": "Бишкек · KGZ",
     "about.metaCoordinates": "Координаты",
-    "about.metaCoordinatesValue": "42.88°N · 74.59°E",
+    "about.metaCoordinatesValue": "42.87°N · 74.57°E",
     "about.metaDate": "Дата",
     "about.metaDateValue": "04—05.06.2026",
     "about.metaTimezone": "Часовой пояс",
@@ -344,7 +344,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       "Борбордук Азиянын санариптик тармагынын башкы окуясын жүктөп жатабыз.",
     "loader.metaVersion": "v.2026.06",
     "loader.metaCity": "Бишкек · KGZ",
-    "loader.metaCoords": "42.88°N · 74.59°E",
+    "loader.metaCoords": "42.87°N · 74.57°E",
 
     // ─── Hero
     "hero.aria": "КИТ Форум 2026",
@@ -373,7 +373,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "about.metaLocation": "Жайгашкан жери",
     "about.metaLocationValue": "Бишкек · KGZ",
     "about.metaCoordinates": "Координаттар",
-    "about.metaCoordinatesValue": "42.88°N · 74.59°E",
+    "about.metaCoordinatesValue": "42.87°N · 74.57°E",
     "about.metaDate": "Күнү",
     "about.metaDateValue": "04—05.06.2026",
     "about.metaTimezone": "Убакыт алкагы",
@@ -640,7 +640,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       "Loading Central Asia's flagship digital-industry event.",
     "loader.metaVersion": "v.2026.06",
     "loader.metaCity": "Bishkek · KGZ",
-    "loader.metaCoords": "42.88°N · 74.59°E",
+    "loader.metaCoords": "42.87°N · 74.57°E",
 
     // ─── Hero
     "hero.aria": "KIT Forum 2026",
@@ -669,7 +669,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "about.metaLocation": "Location",
     "about.metaLocationValue": "Bishkek · KGZ",
     "about.metaCoordinates": "Coordinates",
-    "about.metaCoordinatesValue": "42.88°N · 74.59°E",
+    "about.metaCoordinatesValue": "42.87°N · 74.57°E",
     "about.metaDate": "Date",
     "about.metaDateValue": "04—05.06.2026",
     "about.metaTimezone": "Time zone",
