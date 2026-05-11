@@ -9,11 +9,13 @@ import { PressPage } from "./pages/PressPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { AdminPage } from "./pages/AdminPage";
 import { I18nProvider } from "./i18n/I18nProvider";
+import { RouteScrollReset } from "./components/ui/RouteScrollReset";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <I18nProvider>
       <BrowserRouter>
+        <RouteScrollReset />
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/speakers" element={<SpeakersPage />} />
