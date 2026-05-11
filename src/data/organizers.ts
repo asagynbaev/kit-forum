@@ -43,7 +43,6 @@ export const organizers = [
 ];
 
 export const navLinks = [
-  { id: "about", labelKey: "nav.about", href: "#about" },
   { id: "program", labelKey: "nav.program", href: "#program" },
   { id: "speakers", labelKey: "nav.speakers", href: "#speakers" },
   { id: "partners", labelKey: "nav.partners", href: "#partners" },

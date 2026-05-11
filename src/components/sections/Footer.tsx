@@ -8,7 +8,6 @@ const columns = [
   {
     titleKey: "footer.col.forum.title",
     links: [
-      { labelKey: "footer.col.forum.link.about", href: "#about" },
       { labelKey: "footer.col.forum.link.program", href: "#program" },
       { labelKey: "footer.col.forum.link.speakers", href: "/speakers" },
       { labelKey: "footer.col.forum.link.partners", href: "#partners" },

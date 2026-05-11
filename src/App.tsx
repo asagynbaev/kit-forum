@@ -1,6 +1,5 @@
 import { Navigation } from "./components/sections/Navigation";
 import { Hero } from "./components/sections/Hero";
-import { About } from "./components/sections/About";
 import { Program } from "./components/sections/Program";
 import { Speakers } from "./components/sections/Speakers";
 import { Partners } from "./components/sections/Partners";
@@ -18,7 +17,6 @@ export function App() {
       <Navigation />
       <main>
         <Hero />
-        <About />
         <Program />
         <Speakers />
         <Partners />
