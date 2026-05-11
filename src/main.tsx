@@ -7,6 +7,7 @@ import { SpeakersPage } from "./pages/SpeakersPage";
 import { ArchivePage } from "./pages/ArchivePage";
 import { PressPage } from "./pages/PressPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
+import { AdminPage } from "./pages/AdminPage";
 import { I18nProvider } from "./i18n/I18nProvider";
 
 createRoot(document.getElementById("root")!).render(
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/archive" element={<ArchivePage />} />
           <Route path="/press" element={<PressPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </I18nProvider>

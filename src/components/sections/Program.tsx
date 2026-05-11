@@ -1,12 +1,8 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
-import {
-  programDays,
-  trackColor,
-  type SessionSlot,
-  type Track,
-} from "@/data/program";
+import { trackColor, type SessionSlot, type Track } from "@/data/program";
+import { useProgramDays } from "@/lib/useSupabaseData";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
@@ -20,10 +16,12 @@ export function Program() {
   const [active, setActive] = useState<Track[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const prefersReduced = useReducedMotion();
+  const { programDays, loading } = useProgramDays();
 
   const day = programDays[dayIdx];
 
   const filtered = useMemo(() => {
+    if (!day) return [];
     if (active.length === 0) return day.sessions;
     return day.sessions.map((s) => ({
       ...s,
@@ -70,6 +68,12 @@ export function Program() {
               aria-label={t("program.tabsAria")}
               className="inline-flex border-b border-line min-w-max"
             >
+              {loading && (
+                <div className="flex gap-4 pb-3">
+                  <div className="h-8 w-28 rounded bg-surface animate-pulse" />
+                  <div className="h-8 w-28 rounded bg-surface animate-pulse" />
+                </div>
+              )}
               {programDays.map((d, i) => {
                 const sel = dayIdx === i;
                 return (
@@ -159,8 +163,15 @@ export function Program() {
           aria-labelledby={`day-tab-${dayIdx}`}
           className="mt-12"
         >
+          {loading || !day ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-24 rounded-2xl bg-surface animate-pulse" />
+              ))}
+            </div>
+          ) : null}
           <AnimatePresence mode="wait">
-            <motion.div
+            {day && <motion.div
               key={day.date}
               initial={prefersReduced ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -182,7 +193,7 @@ export function Program() {
                   />
                 ))}
               </ol>
-            </motion.div>
+            </motion.div>}
           </AnimatePresence>
         </div>
       </div>
