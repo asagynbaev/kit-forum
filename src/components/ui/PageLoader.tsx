@@ -9,8 +9,8 @@ import { useI18n } from "@/i18n/I18nProvider";
  * Minimum display time prevents a flash on fast connections; the timeout
  * cap prevents the splash from feeling stuck on slow ones.
  */
-const MIN_DISPLAY_MS = 1500;
-const MAX_DISPLAY_MS = 4500;
+const MIN_DISPLAY_MS = 2500;
+const MAX_DISPLAY_MS = 5500;
 
 export function PageLoader() {
   const { t, locale } = useI18n();

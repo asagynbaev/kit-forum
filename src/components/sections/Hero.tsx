@@ -89,15 +89,6 @@ export function Hero() {
       className="relative bg-ink text-white overflow-hidden"
       style={{ minHeight: "100dvh" }}
     >
-      {/* Ambient glows */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(900px 540px at 50% 10%, rgba(0,102,255,0.18), transparent 60%), radial-gradient(700px 420px at 80% 95%, rgba(0,212,255,0.16), transparent 60%)",
-        }}
-      />
       <div aria-hidden className="absolute inset-0 blueprint-bg-dark pointer-events-none" />
       <div aria-hidden className="absolute inset-0 blueprint-bg-dark-fine opacity-50 pointer-events-none" />
 
@@ -135,7 +126,7 @@ export function Hero() {
             className="absolute inset-0 z-10 pointer-events-none"
             style={{
               background:
-                "linear-gradient(to bottom, rgba(10,22,40,0.97) 0%, rgba(10,22,40,0.88) 12%, rgba(10,22,40,0.62) 28%, rgba(10,22,40,0.12) 50%, rgba(10,22,40,0.55) 76%, rgba(10,22,40,0.97) 100%)",
+                "linear-gradient(to bottom, rgba(10,22,40,1) 0%, rgba(10,22,40,1) 8%, rgba(10,22,40,0.88) 22%, rgba(10,22,40,0.55) 36%, rgba(10,22,40,0.08) 52%, rgba(10,22,40,0.55) 76%, rgba(10,22,40,1) 100%)",
             }}
           />
           {/* Horizontal: sides fade to ink */}

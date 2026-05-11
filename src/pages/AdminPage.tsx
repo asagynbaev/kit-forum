@@ -151,14 +151,24 @@ export function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+    const fallback = window.setTimeout(() => setLoading(false), 3000);
+
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        setSession(data.session);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false))
+      .finally(() => window.clearTimeout(fallback));
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
+      setLoading(false);
     });
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   if (loading) {
