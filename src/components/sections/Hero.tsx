@@ -91,15 +91,14 @@ export function Hero() {
     <section
       id="hero"
       aria-label={t("hero.aria")}
-      className="relative bg-ink text-white overflow-hidden"
+      className="relative bg-ink text-white overflow-hidden flex flex-col"
       style={{ minHeight: "100dvh" }}
     >
       <div aria-hidden className="absolute inset-0 blueprint-bg-dark pointer-events-none" />
       <div aria-hidden className="absolute inset-0 blueprint-bg-dark-fine opacity-50 pointer-events-none" />
 
-      <div className="container-edge relative flex min-h-[100dvh] flex-col pt-20 md:pt-28 pb-8 md:pb-12">
-
-        {/* ── Eyebrow row ── */}
+      {/* ── Eyebrow row (padded) ── */}
+      <div className="container-edge relative pt-20 md:pt-28">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,127 +114,126 @@ export function Hero() {
           </div>
           <LiveBadge tone="dark">{t("hero.liveBadge")}</LiveBadge>
         </motion.div>
+      </div>
 
-        {/* ── Video block — title lives inside ── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease, delay: 0.08 }}
-          className="mt-4 md:mt-5 relative w-full overflow-hidden"
-          style={{ aspectRatio: "16/9" }}
+      {/* ── Video — full viewport width, no side padding ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease, delay: 0.08 }}
+        className="relative w-full mt-4 md:mt-5 overflow-hidden"
+        style={{ aspectRatio: "16/9" }}
+      >
+        {/* Vertical: solid ink top → transparent centre → solid ink bottom */}
+        <div
+          aria-hidden
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(10,22,40,1) 0%, rgba(10,22,40,0.72) 13%, rgba(10,22,40,0.18) 30%, rgba(10,22,40,0) 48%, rgba(10,22,40,0.18) 70%, rgba(10,22,40,1) 100%)",
+          }}
+        />
+        {/* Horizontal: slight side fade */}
+        <div
+          aria-hidden
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(10,22,40,0.35) 0%, transparent 12%, transparent 88%, rgba(10,22,40,0.35) 100%)",
+          }}
+        />
+
+        <img
+          src={LQIP_DATA_URI}
+          alt=""
+          aria-hidden
+          width={32}
+          height={18}
+          className={`absolute inset-0 h-full w-full object-cover scale-110 blur-xl transition-opacity duration-700 ${
+            videoLoaded ? "opacity-0" : "opacity-100"
+          }`}
+        />
+        <img
+          src="/videos/poster.webp"
+          alt=""
+          aria-hidden
+          width={1280}
+          height={716}
+          decoding="async"
+          fetchPriority="high"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+            videoLoaded ? "opacity-0" : "opacity-100"
+          }`}
+        />
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          preload="auto"
+          poster="/videos/poster.webp"
+          aria-hidden
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
+            videoLoaded ? "opacity-100" : "opacity-0"
+          } ${videoEnded ? "saturate-[1.05]" : ""}`}
         >
-          {/* ── Gradient overlays replacing the CSS mask ── */}
-          {/* Vertical: ink at top (title bg) → clear middle → ink at bottom (merge into bg) */}
-          <div
-            aria-hidden
-            className="absolute inset-0 z-10 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(to bottom, rgba(10,22,40,1) 0%, rgba(10,22,40,1) 8%, rgba(10,22,40,0.88) 22%, rgba(10,22,40,0.55) 36%, rgba(10,22,40,0.08) 52%, rgba(10,22,40,0.55) 76%, rgba(10,22,40,1) 100%)",
-            }}
-          />
-          {/* Horizontal: sides fade to ink */}
-          <div
-            aria-hidden
-            className="absolute inset-0 z-10 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(to right, rgba(10,22,40,0.72) 0%, transparent 18%, transparent 82%, rgba(10,22,40,0.72) 100%)",
-            }}
-          />
+          <source media="(max-width: 768px)" src="/videos/3-mobile.mp4" type="video/mp4" />
+          <source media="(max-width: 768px)" src="/videos/3-mobile.webm" type="video/webm" />
+          <source src="/videos/3.mp4" type="video/mp4" />
+          <source src="/videos/3.webm" type="video/webm" />
+        </video>
 
-          {/* ── Media layers ── */}
-          <img
-            src={LQIP_DATA_URI}
-            alt=""
-            aria-hidden
-            width={32}
-            height={18}
-            className={`absolute inset-0 h-full w-full object-cover scale-110 blur-xl transition-opacity duration-700 ${
-              videoLoaded ? "opacity-0" : "opacity-100"
-            }`}
-          />
-          <img
-            src="/videos/poster.webp"
-            alt=""
-            aria-hidden
-            width={1280}
-            height={716}
-            decoding="async"
-            fetchPriority="high"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-              videoLoaded ? "opacity-0" : "opacity-100"
-            }`}
-          />
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            poster="/videos/poster.webp"
-            aria-hidden
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
-              videoLoaded ? "opacity-100" : "opacity-0"
-            } ${videoEnded ? "saturate-[1.05]" : ""}`}
+        {/* Title pinned top, horizontally aligned with container */}
+        <div className="absolute inset-x-0 top-0 z-20 pt-4 sm:pt-6 md:pt-9 px-5 sm:px-8 md:px-14 lg:px-20 xl:px-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease, delay: 0.18 }}
+            className="font-display font-medium text-white leading-[0.92] tracking-tightest text-balance"
+            style={{
+              fontSize: "clamp(2.4rem, 9.5vw, 7rem)",
+              textShadow: "0 4px 48px rgba(10,22,40,0.5)",
+            }}
           >
-            <source media="(max-width: 768px)" src="/videos/3-mobile.mp4" type="video/mp4" />
-            <source media="(max-width: 768px)" src="/videos/3-mobile.webm" type="video/webm" />
-            <source src="/videos/3.mp4" type="video/mp4" />
-            <source src="/videos/3.webm" type="video/webm" />
-          </video>
+            {t("hero.title").replace(" ", " ")}
+          </motion.h1>
 
-          {/* ── Title overlaid in top gradient zone ── */}
-          <div className="absolute inset-x-0 top-0 z-20 pt-5 sm:pt-7 md:pt-10 px-5 sm:px-7 md:px-10">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease, delay: 0.18 }}
-              className="font-display font-medium text-white leading-[0.92] tracking-tightest text-balance"
-              style={{
-                fontSize: "clamp(2.4rem, 9.5vw, 7rem)",
-                textShadow: "0 4px 48px rgba(10,22,40,0.5)",
-              }}
-            >
-              {t("hero.title").replace(" ", " ")}
-            </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease, delay: 0.3 }}
+            className="mt-2.5 sm:mt-3 font-mono text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-white/50"
+          >
+            {t("hero.descriptor")}
+          </motion.p>
+        </div>
 
-            <motion.p
+        <AnimatePresence>
+          {videoEnded && (
+            <motion.button
+              key="replay"
+              type="button"
+              onClick={replay}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease, delay: 0.3 }}
-              className="mt-2.5 sm:mt-3 font-mono text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-white/50"
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.5, ease }}
+              aria-label={t("cta.replayVideo")}
+              className="group absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 inline-flex items-center gap-2.5 rounded-full bg-ink/80 px-4 sm:px-5 py-2.5 sm:py-3 text-[12px] sm:text-[13px] font-medium text-white ring-1 ring-white/15 backdrop-blur-md hover:bg-brand hover:ring-white/30 active:scale-[0.97] transition-all duration-300 ease-spring"
             >
-              {t("hero.descriptor")}
-            </motion.p>
-          </div>
-
-          {/* ── Replay button ── */}
-          <AnimatePresence>
-            {videoEnded && (
-              <motion.button
-                key="replay"
-                type="button"
-                onClick={replay}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                transition={{ duration: 0.5, ease }}
-                aria-label={t("cta.replayVideo")}
-                className="group absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 inline-flex items-center gap-2.5 rounded-full bg-ink/80 px-4 sm:px-5 py-2.5 sm:py-3 text-[12px] sm:text-[13px] font-medium text-white ring-1 ring-white/15 backdrop-blur-md hover:bg-brand hover:ring-white/30 active:scale-[0.97] transition-all duration-300 ease-spring"
+              <span
+                aria-hidden
+                className="grid h-6 w-6 sm:h-7 sm:w-7 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-spring group-hover:-rotate-180"
               >
-                <span
-                  aria-hidden
-                  className="grid h-6 w-6 sm:h-7 sm:w-7 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-spring group-hover:-rotate-180"
-                >
-                  <RotateCcw size={13} strokeWidth={1.8} />
-                </span>
-                {t("cta.replayVideo")}
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                <RotateCcw size={13} strokeWidth={1.8} />
+              </span>
+              {t("cta.replayVideo")}
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-        {/* ── Stats strip ── */}
+      {/* ── Stats + bottom content (padded) ── */}
+      <div className="container-edge relative flex-1 flex flex-col pb-8 md:pb-12">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -258,7 +256,6 @@ export function Hero() {
           ))}
         </motion.div>
 
-        {/* ── Bottom row: lead + CTAs / countdown + meta ── */}
         <div className="mt-5 md:mt-6 grid grid-cols-12 gap-y-6 md:gap-6 items-end">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -291,7 +288,6 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* ── Countdown + venue meta ── */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -304,8 +300,10 @@ export function Hero() {
                   {t("hero.countdown.label")} ·
                 </span>
                 {countdown ? (
-                  <span className="text-white tabular-nums tracking-[0.04em]"
-                    style={{ fontSize: "clamp(0.95rem, 2.2vw, 1.25rem)" }}>
+                  <span
+                    className="text-white tabular-nums tracking-[0.04em]"
+                    style={{ fontSize: "clamp(0.95rem, 2.2vw, 1.25rem)" }}
+                  >
                     <span style={{ fontSize: "clamp(1.1rem, 2.6vw, 1.5rem)" }}>
                       {pad(countdown.days)}
                     </span>
@@ -335,7 +333,6 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* ── Scroll hint ── */}
         <motion.a
           href="#about"
           initial={{ opacity: 0 }}
