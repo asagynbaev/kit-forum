@@ -7,10 +7,12 @@ import { Partners } from "./components/sections/Partners";
 import { MapVenue } from "./components/sections/MapVenue";
 import { Contacts } from "./components/sections/Contacts";
 import { Footer } from "./components/sections/Footer";
+import { PageLoader } from "./components/ui/PageLoader";
 
 export function App() {
   return (
     <div className="relative min-h-[100dvh] bg-canvas text-ink overflow-x-clip">
+      <PageLoader />
       <Navigation />
       <main>
         <Hero />
