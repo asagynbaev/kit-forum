@@ -383,13 +383,13 @@
       .palette-row {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
-        gap: 6mm;
-        margin-top: 12mm;
+        gap: 5mm;
+        margin-top: 10mm;
       }
 
       .swatch {
-        height: 28mm;
-        border-radius: 6mm;
+        height: 20mm;
+        border-radius: 5mm;
         position: relative;
         border: 1px solid var(--line);
       }
@@ -406,16 +406,16 @@
       }
 
       .timeline {
-        margin-top: 14mm;
+        margin-top: 10mm;
         display: grid;
-        gap: 8mm;
+        gap: 4mm;
       }
 
       .timeline-row {
         display: grid;
-        grid-template-columns: 14mm 1fr;
-        gap: 10mm;
-        padding-bottom: 8mm;
+        grid-template-columns: 12mm 1fr;
+        gap: 8mm;
+        padding-bottom: 4mm;
         border-bottom: 1px solid var(--line);
         align-items: baseline;
       }
@@ -432,15 +432,15 @@
       }
 
       .timeline-content h4 {
-        font-size: 14px;
-        margin-bottom: 4px;
+        font-size: 13px;
+        margin-bottom: 3px;
       }
 
       .timeline-content p {
-        font-size: 11px;
+        font-size: 10.5px;
         color: var(--ink-soft);
         margin: 0;
-        line-height: 1.55;
+        line-height: 1.5;
       }
 
       .feature-list {
@@ -618,12 +618,12 @@
       .principle-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10mm;
-        margin-top: 14mm;
+        gap: 6mm;
+        margin-top: 10mm;
       }
 
       .principle {
-        padding: 8mm 8mm;
+        padding: 6mm 6mm;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 4mm;
@@ -635,20 +635,20 @@
         font-size: 10px;
         letter-spacing: 0.2em;
         color: var(--brand);
-        margin-bottom: 8mm;
+        margin-bottom: 4mm;
       }
 
       .principle h4 {
-        font-size: 16px;
+        font-size: 14px;
         line-height: 1.2;
-        margin-bottom: 6mm;
+        margin-bottom: 3mm;
       }
 
       .principle p {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--ink-soft);
         margin: 0;
-        line-height: 1.55;
+        line-height: 1.5;
       }
 
       .stack-block {
@@ -708,7 +708,7 @@
   <body>
     <div class="deck">
       <!-- ============== PAGE 1: COVER ============== -->
-      <section class="page cover">
+      <section id="p1" class="page cover">
         <div class="cover-bg"></div>
         <div class="cover-glow"></div>
         <div class="registration-mark-top"></div>
@@ -756,7 +756,7 @@
       </section>
 
       <!-- ============== PAGE 2: BRIEF ============== -->
-      <section class="page">
+      <section id="p2" class="page">
         <div class="grid-bg"></div>
         <div class="page-inner">
           <div class="data-strip">
@@ -830,11 +830,11 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>02</strong>/ 08</div>
+        <div class="page-num"><strong>02</strong>/ 09</div>
       </section>
 
       <!-- ============== PAGE 3: PROCESS ============== -->
-      <section class="page">
+      <section id="p3" class="page">
         <div class="grid-bg grid-bg-fine" style="opacity: 0.5"></div>
         <div class="grid-bg"></div>
         <div class="page-inner">
@@ -942,11 +942,11 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>03</strong>/ 08</div>
+        <div class="page-num"><strong>03</strong>/ 09</div>
       </section>
 
       <!-- ============== PAGE 4: DESIGN SYSTEM ============== -->
-      <section class="page">
+      <section id="p4" class="page">
         <div class="grid-bg"></div>
         <div class="page-inner">
           <div class="data-strip">
@@ -999,7 +999,7 @@
             </div>
           </div>
 
-          <div class="principle-grid" style="margin-top: 24mm">
+          <div class="principle-grid" style="margin-top: 14mm">
             <div class="principle">
               <div class="principle-num">PR · 01</div>
               <h4>Типографика без кричащих засечек</h4>
@@ -1044,11 +1044,11 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>04</strong>/ 08</div>
+        <div class="page-num"><strong>04</strong>/ 09</div>
       </section>
 
       <!-- ============== PAGE 5: HERO + SECTIONS ============== -->
-      <section class="page">
+      <section id="p5" class="page">
         <div class="grid-bg"></div>
         <div class="page-inner">
           <div class="data-strip">
@@ -1161,15 +1161,222 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>05</strong>/ 08</div>
+        <div class="page-num"><strong>05</strong>/ 09</div>
       </section>
 
-      <!-- ============== PAGE 6: DIGITAL MOTIFS ============== -->
-      <section class="page">
+      <!-- ============== PAGE 6: WHALE MORPH (HERO VIDEO) ============== -->
+      <section id="p6" class="page">
+        <div class="grid-bg"></div>
+        <div class="page-inner">
+          <div class="data-strip">
+            <span><span class="accent">06</span> · Hero video</span>
+            <span>Маскот → цифра · 8s morph</span>
+          </div>
+
+          <div style="margin-top: 22mm">
+            <span class="eyebrow">
+              <strong>06</strong>
+              Главный визуал
+            </span>
+            <h2 style="font-size: 30px; margin-top: 10px">
+              Кит превращается
+              в <span class="accent">цифровую сеть</span>.
+            </h2>
+            <p
+              class="body"
+              style="margin-top: 6mm; max-width: 170mm; font-size: 11px"
+            >
+              Hero-видео — главная метафора форума. За 8 секунд маскот
+              КИТ (тот же кит, что и в логотипе) из мультяшного существа
+              в коралловом рифе превращается в сияющую нейронную сеть,
+              плывущую через подводный город из данных. Подводный мир
+              не исчезает — он эволюционирует.
+            </p>
+          </div>
+
+          <!-- Before / After whale frames -->
+          <div
+            style="
+              margin-top: 8mm;
+              display: grid;
+              grid-template-columns: 1fr 14mm 1fr;
+              gap: 0;
+              align-items: center;
+            "
+          >
+            <div>
+              <div
+                class="label"
+                style="margin-bottom: 3mm; font-size: 9px"
+              >
+                <span class="accent">01</span> · Frame 00:00 · Маскот
+              </div>
+              <div
+                style="
+                  position: relative;
+                  border-radius: 3mm;
+                  overflow: hidden;
+                  aspect-ratio: 16/9;
+                  background: var(--surface);
+                  border: 1px solid var(--line);
+                "
+              >
+                <img
+                  src="/case-study/whale-before.png"
+                  alt="Cartoon whale"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+              </div>
+            </div>
+
+            <!-- Morph arrow -->
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3mm;
+                margin-top: 4mm;
+              "
+            >
+              <span
+                class="mono"
+                style="
+                  font-size: 8px;
+                  letter-spacing: 0.16em;
+                  text-transform: uppercase;
+                  color: var(--ink-soft);
+                  white-space: nowrap;
+                "
+                >Морф · 8s</span
+              >
+              <svg width="36" height="12" viewBox="0 0 40 14" fill="none">
+                <path
+                  d="M0 7 H34 M34 7 L28 2 M34 7 L28 12"
+                  stroke="#0066FF"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <div
+                class="label"
+                style="margin-bottom: 3mm; font-size: 9px"
+              >
+                <span class="accent">02</span> · Frame 08:00 · Цифра
+              </div>
+              <div
+                style="
+                  position: relative;
+                  border-radius: 3mm;
+                  overflow: hidden;
+                  aspect-ratio: 16/9;
+                  background: var(--ink);
+                  border: 1px solid var(--line);
+                "
+              >
+                <img
+                  src="/case-study/whale-after.png"
+                  alt="Digital wireframe whale"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 10mm;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 10mm;
+            "
+          >
+            <div>
+              <span class="label" style="font-size: 9px"
+                >Что это олицетворяет</span
+              >
+              <h3 style="margin-top: 4mm; font-size: 16px">
+                Цифровая трансформация страны
+              </h3>
+              <p
+                class="body"
+                style="margin-top: 4mm; font-size: 10.5px; line-height: 1.55"
+              >
+                Кит — это <strong>сам КИТ</strong>: логотип и маскот форума,
+                одновременно отсылка к слову «<strong>К</strong>ыргызстан
+                <strong>И</strong>нформационные <strong>Т</strong>ехнологии».
+                Он же — <strong>метафора Кыргызстана</strong>: большой,
+                древний, узнаваемый, со своей идентичностью.
+              </p>
+              <p
+                class="body"
+                style="margin-top: 3mm; font-size: 10.5px; line-height: 1.55"
+              >
+                Превращение из мультяшного в цифровой —
+                <strong>миссия форума</strong>: не отказ от того, кем
+                страна является, а наращивание «нейронной» инфраструктуры
+                поверх существующей идентичности. Подводный мир остаётся
+                подводным миром — просто теперь у него есть data-центры
+                и сеть.
+              </p>
+            </div>
+            <div>
+              <span class="label" style="font-size: 9px">Как это сделано</span>
+              <h3 style="margin-top: 4mm; font-size: 16px">
+                AI-морф + post-production
+              </h3>
+              <ol
+                class="body"
+                style="
+                  margin: 4mm 0 0;
+                  padding-left: 16px;
+                  line-height: 1.5;
+                  font-size: 10.5px;
+                "
+              >
+                <li style="margin-bottom: 3mm">
+                  <strong>2 keyframe-кадра.</strong> Стартовый (мультяшный
+                  кит в рифе) и финальный (wireframe-кит в digital-городе)
+                  сгенерированы как PNG 1920×1080.
+                </li>
+                <li style="margin-bottom: 3mm">
+                  <strong>Runway Gen-3 Turbo · img2video.</strong> Оба
+                  кадра загружены как start/end keyframe. Motion-prompt:
+                  «smooth particle dissolve as cartoon whale transforms into
+                  glowing neural-network whale; cyan particles, DOF shift,
+                  underwater coral becomes circuit-board cityscape».
+                </li>
+                <li style="margin-bottom: 3mm">
+                  <strong>5–8 итераций промпта</strong> до плавного
+                  перехода без артефактов на хвосте и плавниках.
+                </li>
+                <li style="margin-bottom: 3mm">
+                  <strong>DaVinci Resolve.</strong> Цветокор: brand-cyan
+                  в средних тонах, контраст в digital-секции, виньетка.
+                </li>
+                <li>
+                  <strong>ffmpeg · production-encode.</strong>
+                  <span class="mono"
+                    >libx264 CRF 26 + scale 1280:-2 + faststart</span
+                  >. WebM VP9. Финал: 2.0 MB на 8s.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="page-foot">КИТ Форум 2026 · Кейс</div>
+        <div class="page-num"><strong>06</strong>/ 09</div>
+      </section>
+
+      <!-- ============== PAGE 7: DIGITAL MOTIFS ============== -->
+      <section id="p7" class="page">
         <div class="grid-bg grid-bg-fine"></div>
         <div class="page-inner">
           <div class="data-strip">
-            <span><span class="accent">06</span> · Digital motifs</span>
+            <span><span class="accent">07</span> · Digital motifs</span>
             <span>Цифровизация · Координаты · Live</span>
           </div>
 
@@ -1248,15 +1455,15 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>06</strong>/ 08</div>
+        <div class="page-num"><strong>07</strong>/ 09</div>
       </section>
 
-      <!-- ============== PAGE 7: PERF + STACK ============== -->
-      <section class="page">
+      <!-- ============== PAGE 8: PERF + STACK ============== -->
+      <section id="p8" class="page">
         <div class="grid-bg"></div>
         <div class="page-inner">
           <div class="data-strip">
-            <span><span class="accent">07</span> · Performance</span>
+            <span><span class="accent">08</span> · Performance</span>
             <span>First-load · Cache · CDN</span>
           </div>
 
@@ -1357,11 +1564,11 @@
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
-        <div class="page-num"><strong>07</strong>/ 08</div>
+        <div class="page-num"><strong>08</strong>/ 09</div>
       </section>
 
-      <!-- ============== PAGE 8: FINAL ============== -->
-      <section class="page cover">
+      <!-- ============== PAGE 9: FINAL ============== -->
+      <section id="p9" class="page cover">
         <div class="cover-bg"></div>
         <div class="cover-glow"></div>
         <div class="registration-mark-top"></div>
@@ -1372,7 +1579,7 @@
             <span
               ><span class="live-dot"></span>End of case · 2026</span
             >
-            <span class="accent mono">08 / 08</span>
+            <span class="accent mono">09 / 09</span>
           </div>
 
           <div style="margin-top: 50mm">

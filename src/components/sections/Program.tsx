@@ -3,18 +3,19 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import {
   programDays,
-  sessionTypeLabel,
-  trackMeta,
+  trackColor,
   type SessionSlot,
   type Track,
 } from "@/data/program";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const trackOrder: Track[] = ["ai", "gov", "startup", "edu", "security"];
 
 export function Program() {
+  const { t, tr } = useI18n();
   const [dayIdx, setDayIdx] = useState(0);
   const [active, setActive] = useState<Track[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -30,9 +31,9 @@ export function Program() {
     }));
   }, [day, active]);
 
-  const toggleTrack = (t: Track) => {
+  const toggleTrack = (tk: Track) => {
     setActive((prev) =>
-      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
+      prev.includes(tk) ? prev.filter((x) => x !== tk) : [...prev, tk],
     );
   };
 
@@ -47,25 +48,17 @@ export function Program() {
       />
       <div className="container-edge relative">
         <SectionHeader
-          eyebrow="Программа · 02"
+          eyebrow={t("program.eyebrow")}
           title={
             <>
-              Два дня плотной<br /> повестки и <span className="text-brand">решений</span>.
+              {t("program.titleA")}<br /> {t("program.titleB")} <span className="text-brand">{t("program.titleC")}</span>{t("program.titleD")}
             </>
           }
-          description={
-            <>
-              Пленарные сессии, прикладные мастерские, инвестиционные встречи
-              и неформальные диалоги. Состав сессий обновляется по мере
-              подтверждения спикеров.
-            </>
-          }
+          description={<>{t("program.lead")}</>}
           rightSlot={
             <div className="flex flex-col items-end gap-3 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft">
-              <LiveBadge>Обновлено · сегодня</LiveBadge>
-              <span className="tabular tnums">
-                Версия 2026.06.01 · РУС
-              </span>
+              <LiveBadge>{t("program.updatedBadge")}</LiveBadge>
+              <span className="tabular tnums">{t("program.version")}</span>
             </div>
           }
         />
@@ -74,7 +67,7 @@ export function Program() {
           <div className="mt-12 md:mt-14 overflow-x-auto scrollbar-none">
             <div
               role="tablist"
-              aria-label="Дни программы"
+              aria-label={t("program.tabsAria")}
               className="inline-flex border-b border-line min-w-max"
             >
               {programDays.map((d, i) => {
@@ -99,7 +92,7 @@ export function Program() {
                       <span className="font-mono text-[10px] tracking-[0.18em] uppercase opacity-60">
                         0{i + 1}
                       </span>
-                      {d.label}
+                      {tr(d.label)}
                     </span>
                     {sel && (
                       <motion.span
@@ -123,15 +116,15 @@ export function Program() {
         <Reveal delay={0.15}>
           <div className="mt-8 flex flex-wrap items-center gap-2">
             <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-soft mr-2">
-              Треки
+              {t("program.tracksLabel")}
             </span>
-            {trackOrder.map((t) => {
-              const sel = active.includes(t);
+            {trackOrder.map((tk) => {
+              const sel = active.includes(tk);
               return (
                 <button
-                  key={t}
+                  key={tk}
                   type="button"
-                  onClick={() => toggleTrack(t)}
+                  onClick={() => toggleTrack(tk)}
                   className={`inline-flex items-center gap-2 rounded-sm border px-3 py-1.5 text-[12px] font-medium transition-all duration-300 ease-spring ${
                     sel
                       ? "border-ink bg-ink text-white"
@@ -142,9 +135,9 @@ export function Program() {
                   <span
                     aria-hidden
                     className="h-1.5 w-1.5 rounded-sm"
-                    style={{ backgroundColor: trackMeta[t].color }}
+                    style={{ backgroundColor: trackColor[tk] }}
                   />
-                  {trackMeta[t].label}
+                  {t(`program.track.${tk}`)}
                 </button>
               );
             })}
@@ -154,7 +147,7 @@ export function Program() {
                 onClick={() => setActive([])}
                 className="ml-1 text-[12px] underline-offset-4 hover:underline text-ink-soft hover:text-ink transition-colors duration-300"
               >
-                Сбросить
+                {t("cta.reset")}
               </button>
             )}
           </div>
@@ -208,10 +201,11 @@ function TimelineRow({
   onToggle: () => void;
   index: number;
 }) {
+  const { t, tr } = useI18n();
   const isBreak = session.type === "break";
   const isCeremony = session.type === "ceremony";
   const isOpening = isCeremony || session.type === "keynote";
-  const tm = trackMeta[session.track];
+  const tColor = trackColor[session.track];
 
   if (isBreak) {
     return (
@@ -224,7 +218,7 @@ function TimelineRow({
           {session.start}–{session.end}
         </span>
         <span className="text-[13px] sm:text-[14px] tracking-tight">
-          {session.title}
+          {tr(session.title)}
         </span>
       </li>
     );
@@ -257,7 +251,7 @@ function TimelineRow({
             </span>
             {session.hall && (
               <span className="mt-3 hidden md:inline-flex font-mono text-[10px] tracking-[0.18em] uppercase text-ink-soft">
-                {session.hall}
+                {tr(session.hall)}
               </span>
             )}
           </div>
@@ -267,34 +261,34 @@ function TimelineRow({
               <span
                 className="inline-flex items-center gap-1.5 rounded-sm px-2 sm:px-2.5 py-1 text-[10px] font-medium tracking-[0.12em] uppercase"
                 style={{
-                  color: tm.color,
-                  backgroundColor: `${tm.color}14`,
+                  color: tColor,
+                  backgroundColor: `${tColor}14`,
                 }}
               >
                 <span
                   aria-hidden
                   className="h-1 w-1 rounded-full"
-                  style={{ backgroundColor: tm.color }}
+                  style={{ backgroundColor: tColor }}
                 />
-                {sessionTypeLabel[session.type]}
+                {t(`program.type.${session.type}`)}
               </span>
               <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink-soft">
-                Трек · {tm.label}
+                {t("program.trackPrefix")} · {t(`program.track.${session.track}`)}
               </span>
               {isOpening && (
                 <span className="hidden sm:inline-flex font-mono text-[10px] tracking-[0.18em] uppercase text-brand">
-                  Главный зал
+                  {t("program.mainHall")}
                 </span>
               )}
             </div>
 
             <h3 className="mt-3 font-display font-medium text-ink leading-tight tracking-tightest text-[clamp(1.05rem,1vw+0.85rem,1.5rem)] text-balance break-words">
-              {session.title}
+              {tr(session.title)}
             </h3>
 
-            {session.speakers && session.speakers.length > 0 && (
+            {session.speakers && (
               <p className="mt-2.5 text-[13px] leading-snug text-ink-soft">
-                {session.speakers.join(" · ")}
+                {tr(session.speakers)}
               </p>
             )}
           </div>
@@ -327,11 +321,11 @@ function TimelineRow({
                   №{String(index + 1).padStart(2, "0")}
                 </div>
                 <div className="space-y-4 text-[14px] sm:text-[15px] leading-[1.7] text-ink-soft md:max-w-[640px]">
-                  <p>{session.description}</p>
+                  {session.description && <p>{tr(session.description)}</p>}
                   {session.hall && (
                     <div className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase text-ink">
                       <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-                      {session.hall}
+                      {tr(session.hall)}
                     </div>
                   )}
                 </div>

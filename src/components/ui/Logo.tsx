@@ -1,3 +1,5 @@
+import { useI18n } from "@/i18n/I18nProvider";
+
 interface Props {
   className?: string;
   variant?: "light" | "dark";
@@ -5,11 +7,16 @@ interface Props {
 }
 
 export function Logo({ className, variant = "dark", hideText }: Props) {
+  const { t, locale } = useI18n();
+  // Brand wordmark stays in Russian (proper noun "КИТ Форум")
+  // across all locales except English where we use the Latin variant.
+  const brand = locale === "en" ? "KIT Forum" : "КИТ Форум";
+  const subtitle = locale === "en" ? "2026 · Bishkek" : "2026 · Бишкек";
   return (
     <a
       href="#top"
       className={`group inline-flex items-center gap-3 ${className ?? ""}`}
-      aria-label="КИТ Форум — на главную"
+      aria-label={t("nav.homeAria")}
     >
       <img
         src="/logo.png"
@@ -25,14 +32,14 @@ export function Logo({ className, variant = "dark", hideText }: Props) {
               variant === "light" ? "text-white" : "text-ink"
             }`}
           >
-            КИТ Форум
+            {brand}
           </span>
           <span
             className={`mt-1 font-mono text-[10px] tracking-[0.2em] uppercase ${
               variant === "light" ? "text-white/70" : "text-ink-soft"
             }`}
           >
-            2026 · Бишкек
+            {subtitle}
           </span>
         </div>
       )}

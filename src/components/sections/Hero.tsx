@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, ChevronDown, RotateCcw } from "lucide-react";
 import { LiveBadge } from "../ui/LiveBadge";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /**
  * Editorial hero — 16:9 video that plays once and dissolves into the hero
@@ -24,6 +25,7 @@ const LQIP_DATA_URI =
   "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAACQBQCdASogABIAPtFUokuoJKMhsAgBABoJbACdMoR9H5negAhvAjMzjaHI7U7XjlxpsxhcAAD+0Nz6pQShBICnu4JZp48zUIiAhhZ8sPASAex/k48R8Gol0f6nJJ+UxtT/TOaaYJIQ8d6N5VN0nV4/YtTffQFEBE/9YGb5XMxw3DxH9jol2NXQN2cGEqPq6Q/Ax+rpD8lJdsvZOuc+PK8+EFhqWQzi7pU9Y60x1dIAAA==";
 
 export function Hero() {
+  const { t } = useI18n();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -65,10 +67,25 @@ export function Hero() {
     };
   }, [prefersReduced]);
 
+  const replay = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    setVideoEnded(false);
+    try {
+      v.currentTime = 0;
+    } catch {
+      /* noop */
+    }
+    v.play().catch(() => {
+      /* autoplay refused — keep the button visible for a second attempt */
+      setVideoEnded(true);
+    });
+  }, []);
+
   return (
     <section
       id="hero"
-      aria-label="КИТ Форум 2026"
+      aria-label={t("hero.aria")}
       className="relative bg-ink text-white overflow-hidden"
       style={{ minHeight: "100dvh" }}
     >
@@ -99,11 +116,11 @@ export function Hero() {
           <div className="inline-flex items-center gap-3 min-w-0">
             <span aria-hidden className="h-px w-8 sm:w-12 bg-brand-glow/60 shrink-0" />
             <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.18em] sm:tracking-[0.22em] uppercase text-white/85 truncate">
-              <span className="text-brand-glow mr-2">01</span>
-              Кыргызская Республика · 2026
+              <span className="text-brand-glow mr-2">{t("hero.eyebrowIndex")}</span>
+              {t("hero.eyebrowText")}
             </span>
           </div>
-          <LiveBadge tone="dark">Live · 04.06.2026</LiveBadge>
+          <LiveBadge tone="dark">{t("hero.liveBadge")}</LiveBadge>
         </motion.div>
 
         <div className="mt-6 md:mt-6 flex-1 flex flex-col justify-center min-h-0">
@@ -117,7 +134,7 @@ export function Hero() {
               textShadow: "0 4px 40px rgba(10,22,40,0.45)",
             }}
           >
-            КИТ&nbsp;ФОРУМ
+            {t("hero.title").replace(" ", " ")}
           </motion.h1>
 
           <motion.div
@@ -188,6 +205,33 @@ export function Hero() {
                 <source src="/videos/3.mp4" type="video/mp4" />
                 <source src="/videos/3.webm" type="video/webm" />
               </video>
+
+              {/* Replay control — fades in once the video paused on its closing
+                  frame. Sits over the video at bottom-right, outside the mask's
+                  faded edge so the label stays readable. */}
+              <AnimatePresence>
+                {videoEnded && (
+                  <motion.button
+                    key="replay"
+                    type="button"
+                    onClick={replay}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.5, ease }}
+                    aria-label={t("cta.replayVideo")}
+                    className="group absolute bottom-4 right-4 sm:bottom-6 sm:right-6 inline-flex items-center gap-2.5 rounded-full bg-ink/80 px-4 sm:px-5 py-2.5 sm:py-3 text-[12px] sm:text-[13px] font-medium text-white ring-1 ring-white/15 backdrop-blur-md shadow-glow hover:bg-brand hover:ring-white/30 active:scale-[0.97] transition-all duration-300 ease-spring"
+                  >
+                    <span
+                      aria-hidden
+                      className="grid h-6 w-6 sm:h-7 sm:w-7 place-items-center rounded-full bg-white/15 transition-transform duration-700 ease-spring group-hover:-rotate-180"
+                    >
+                      <RotateCcw size={13} strokeWidth={1.8} />
+                    </span>
+                    {t("cta.replayVideo")}
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
@@ -200,9 +244,7 @@ export function Hero() {
             className="col-span-12 md:col-span-7 lg:col-span-6 min-w-0"
           >
             <p className="text-balance text-[15px] md:text-[17px] leading-[1.55] text-white/80 max-w-[40rem]">
-              Крупнейшее событие в сфере цифровых технологий и инноваций
-              Центральной Азии. С 2010 года формирует повестку отрасли на
-              государственном уровне.
+              {t("hero.lead")}
             </p>
 
             <div className="mt-5 md:mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
@@ -210,7 +252,7 @@ export function Hero() {
                 href="#contacts"
                 className="group inline-flex items-center justify-between sm:justify-start gap-3 rounded-xl bg-brand px-5 py-3.5 text-[14px] font-medium text-white shadow-glow hover:bg-brand-deep active:scale-[0.98] transition-all duration-300 ease-spring"
               >
-                Зарегистрироваться
+                {t("cta.register")}
                 <span
                   aria-hidden
                   className="grid h-7 w-7 place-items-center rounded-md bg-white/15 transition-transform duration-500 ease-spring group-hover:translate-x-0.5"
@@ -222,7 +264,7 @@ export function Hero() {
                 href="#program"
                 className="group inline-flex items-center justify-between sm:justify-start gap-3 rounded-xl border border-white/25 px-5 py-3.5 text-[14px] font-medium text-white hover:border-white/45 hover:bg-white/[0.06] active:scale-[0.98] transition-all duration-300 ease-spring"
               >
-                Программа форума
+                {t("cta.program")}
                 <span
                   aria-hidden
                   className="grid h-7 w-7 place-items-center rounded-md border border-white/25 transition-transform duration-500 ease-spring group-hover:translate-x-0.5"
@@ -240,11 +282,11 @@ export function Hero() {
             className="col-span-12 md:col-span-5 lg:col-span-6 md:text-right min-w-0"
           >
             <div className="flex flex-col gap-2 border-t border-white/15 pt-4 font-mono text-[10px] tracking-[0.16em] sm:tracking-[0.2em] uppercase text-white/80">
-              <span>4–5 июня 2026 · Бишкек</span>
-              <span>МУК · ул. Льва Толстого, 1 (17Б)</span>
+              <span>{t("hero.dateLine")}</span>
+              <span>{t("hero.venueLine")}</span>
               <span className="text-white">
                 <span className="text-brand-glow mr-1.5">▸</span>
-                Организатор · ПВТ КР
+                {t("hero.organizerLine")}
               </span>
             </div>
           </motion.div>
@@ -255,7 +297,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, ease, delay: 0.9 }}
-          aria-label="Прокрутить вниз"
+          aria-label={t("hero.scrollAria")}
           className="group mt-6 md:mt-8 inline-flex self-start items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-white/55 hover:text-white transition-colors duration-300"
         >
           <span className="grid h-8 w-8 place-items-center rounded-md border border-white/20 group-hover:border-white/50 transition-colors duration-300">
@@ -265,7 +307,7 @@ export function Hero() {
               className="animate-chevron-bob"
             />
           </span>
-          Скрольте чтобы продолжить
+          {t("hero.scrollHint")}
         </motion.a>
       </div>
     </section>

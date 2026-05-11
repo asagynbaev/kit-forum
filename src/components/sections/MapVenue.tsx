@@ -5,10 +5,12 @@ import { Car, BadgeCheck, Accessibility } from "lucide-react";
 import { venue } from "@/data/venue";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Reveal } from "../ui/Reveal";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const detailIcons = [Car, BadgeCheck, Accessibility];
 
 export function MapVenue() {
+  const { t, tr } = useI18n();
   const mapDiv = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
 
@@ -70,7 +72,7 @@ export function MapVenue() {
 
     L.marker([venue.coordinates.lat, venue.coordinates.lng], { icon: marker })
       .addTo(map)
-      .bindTooltip(venue.shortName, {
+      .bindTooltip(tr(venue.shortName), {
         permanent: false,
         direction: "top",
         offset: [0, -18],
@@ -118,40 +120,34 @@ export function MapVenue() {
       map.remove();
       mapInstance.current = null;
     };
-  }, []);
+  }, [tr]);
 
   return (
     <section id="venue" className="v-section relative z-0 isolate bg-canvas">
       <div className="container-edge">
         <SectionHeader
-          eyebrow="Площадка · 05"
+          eyebrow={t("venue.eyebrow")}
           title={
             <>
-              Международный Университет<br />
-              <span className="text-brand">Кыргызстана</span> · Центральный кампус.
+              {t("venue.titleA")}<br />
+              <span className="text-brand">{t("venue.titleB")}</span> {t("venue.titleC")}
             </>
           }
-          description={
-            <>
-              Принимающая площадка КИТ Форума 2026 — главное здание МУК на
-              улице Льва Толстого. Конференц-залы, экспо-пространство,
-              образовательные блоки, открытый кампусный двор.
-            </>
-          }
+          description={<>{t("venue.lead")}</>}
         />
 
         <div className="mt-14 grid grid-cols-12 gap-y-8 lg:gap-10">
           <Reveal className="col-span-12 lg:col-span-6" delay={0.05}>
             <div className="rounded-2xl border border-line bg-white p-6 sm:p-7 md:p-9 shadow-soft h-full">
               <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-soft">
-                Адрес
+                {t("venue.addressLabel")}
               </div>
               <div className="mt-4 font-display font-medium text-ink leading-tight tracking-tightest text-[clamp(1.5rem,2vw+0.8rem,2rem)]">
-                {venue.name}
+                {tr(venue.name)}
               </div>
               <address className="mt-4 not-italic text-[15px] leading-relaxed text-ink-soft">
-                {venue.addressLines.map((line) => (
-                  <div key={line}>{line}</div>
+                {venue.addressLines.map((line, i) => (
+                  <div key={`addr-${i}`}>{tr(line)}</div>
                 ))}
               </address>
 
@@ -159,16 +155,16 @@ export function MapVenue() {
                 {venue.details.map((d, i) => {
                   const Icon = detailIcons[i] ?? Car;
                   return (
-                    <div key={d.title} className="flex items-start gap-4">
+                    <div key={d.id} className="flex items-start gap-4">
                       <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-tint text-brand">
                         <Icon size={18} strokeWidth={1.5} />
                       </span>
                       <div>
                         <div className="font-medium text-ink text-[14px]">
-                          {d.title}
+                          {tr(d.title)}
                         </div>
                         <p className="mt-1 text-[14px] leading-relaxed text-ink-soft">
-                          {d.body}
+                          {tr(d.body)}
                         </p>
                       </div>
                     </div>
@@ -183,7 +179,7 @@ export function MapVenue() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center justify-between sm:justify-start gap-3 rounded-xl bg-ink px-5 py-3 text-[13px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring"
                 >
-                  Построить маршрут
+                  {t("cta.directions")}
                   <span className="grid h-7 w-7 place-items-center rounded-md bg-white/15 transition-transform duration-500 ease-spring group-hover:translate-x-0.5">
                     <svg width="13" height="13" viewBox="0 0 12 12" fill="none">
                       <path
@@ -204,7 +200,7 @@ export function MapVenue() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center justify-center sm:justify-start gap-2 rounded-xl border border-line bg-white px-4 py-3 text-[13px] font-medium text-ink hover:border-brand/40 hover:text-brand active:scale-[0.98] transition-all duration-300 ease-spring"
                 >
-                  Открыть в 2ГИС
+                  {t("cta.open2gis")}
                 </a>
                 <span className="mt-2 sm:mt-0 font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-ink-soft">
                   {venue.coordinates.lat.toFixed(4)}° N ·{" "}
@@ -218,7 +214,7 @@ export function MapVenue() {
             <div
               ref={mapDiv}
               role="img"
-              aria-label="Карта расположения площадки форума в Бишкеке"
+              aria-label={t("venue.mapAria")}
               className="relative h-[360px] sm:h-[420px] lg:h-full min-h-[440px] w-full overflow-hidden rounded-2xl border border-line shadow-soft isolate"
               style={{ zIndex: 0 }}
             />

@@ -35,7 +35,7 @@ export function Navigation() {
         <Logo variant={scrolled ? "dark" : "light"} />
 
         <nav
-          aria-label="Основная навигация"
+          aria-label={t("nav.mainAria")}
           className="hidden lg:flex items-center gap-1 rounded-md bg-white/55 px-1.5 py-1.5 backdrop-blur-md ring-1 ring-line shadow-soft"
         >
           {navLinks.map((link) => (
@@ -75,7 +75,7 @@ export function Navigation() {
 
         <button
           type="button"
-          aria-label={open ? "Закрыть меню" : "Открыть меню"}
+          aria-label={open ? t("nav.closeMenu") : t("nav.openMenu")}
           aria-expanded={open}
           aria-controls="mobile-overlay"
           onClick={() => setOpen((v) => !v)}
@@ -91,7 +91,7 @@ export function Navigation() {
             id="mobile-overlay"
             role="dialog"
             aria-modal="true"
-            aria-label="Меню"
+            aria-label={t("nav.menuAria")}
             initial={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

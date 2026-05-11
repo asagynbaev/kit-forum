@@ -9,10 +9,13 @@ import {
 } from "react";
 import { dictionaries, LOCALES, type Locale } from "./dictionaries";
 
+export type Localized<T = string> = { ru: T; ky?: T; en?: T };
+
 interface I18nContextValue {
   locale: Locale;
   setLocale: (l: Locale) => void;
   t: (key: string) => string;
+  tr: <T>(v: Localized<T>) => T;
   locales: readonly Locale[];
 }
 
@@ -50,9 +53,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     [locale],
   );
 
+  const tr = useCallback(
+    <T,>(v: Localized<T>): T => v[locale] ?? v.ru,
+    [locale],
+  );
+
   const value = useMemo(
-    () => ({ locale, setLocale, t, locales: LOCALES }),
-    [locale, setLocale, t],
+    () => ({ locale, setLocale, t, tr, locales: LOCALES }),
+    [locale, setLocale, t, tr],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

@@ -2,12 +2,14 @@ import { partners, type Partner } from "@/data/partners";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const mid = Math.ceil(partners.length / 2);
 const rowA = partners.slice(0, mid);
 const rowB = partners.slice(mid);
 
 export function Partners() {
+  const { t } = useI18n();
   return (
     <section
       id="partners"
@@ -15,21 +17,19 @@ export function Partners() {
     >
       <div className="container-edge">
         <SectionHeader
-          eyebrow="Партнёры · 04"
+          eyebrow={t("partners.eyebrow")}
           title={
             <>
-              Партнёры и поддерживающие<br />
-              <span className="text-brand">организации</span> форума.
+              {t("partners.titleA")}<br />
+              <span className="text-brand">{t("partners.titleB")}</span> {t("partners.titleC")}
             </>
           }
-          description={
-            <>
-              Государственные институты, банки развития, ведущие
-              технологические компании и университеты — все, кто формирует
-              цифровое будущее региона.
-            </>
+          description={<>{t("partners.lead")}</>}
+          rightSlot={
+            <LiveBadge>
+              {t("partners.countBadge").replace("{count}", String(partners.length))}
+            </LiveBadge>
           }
-          rightSlot={<LiveBadge>{partners.length} организаций</LiveBadge>}
         />
       </div>
 

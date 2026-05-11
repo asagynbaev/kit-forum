@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /**
  * Branded splash that holds the first paint until either the hero video can
@@ -12,6 +13,7 @@ const MIN_DISPLAY_MS = 1500;
 const MAX_DISPLAY_MS = 4500;
 
 export function PageLoader() {
+  const { t, locale } = useI18n();
   const [visible, setVisible] = useState(true);
   const [progress, setProgress] = useState(0);
   const prefersReduced = useReducedMotion();
@@ -81,7 +83,7 @@ export function PageLoader() {
           key="page-loader"
           role="status"
           aria-live="polite"
-          aria-label="Загрузка"
+          aria-label={t("loader.aria")}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -121,10 +123,10 @@ export function PageLoader() {
                 />
                 <div className="flex flex-col leading-none min-w-0">
                   <span className="font-display font-medium text-[15px] tracking-[-0.01em] text-white truncate">
-                    КИТ Форум
+                    {locale === "en" ? "KIT Forum" : "КИТ Форум"}
                   </span>
                   <span className="mt-1 font-mono text-[10px] tracking-[0.2em] uppercase text-white/65 truncate">
-                    2026 · Бишкек
+                    {locale === "en" ? "2026 · Bishkek" : "2026 · Бишкек"}
                   </span>
                 </div>
               </div>
@@ -145,7 +147,7 @@ export function PageLoader() {
               >
                 <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-brand-glow/80">
                   <span aria-hidden className="h-px w-8 sm:w-12 bg-brand-glow/60" />
-                  <span>Подготовка опыта · 04.06.2026</span>
+                  <span>{t("loader.eyebrow")}</span>
                 </div>
                 <h1
                   className="mt-5 font-display font-medium text-white leading-[0.92] tracking-tightest"
@@ -154,10 +156,10 @@ export function PageLoader() {
                     textShadow: "0 4px 40px rgba(10,22,40,0.45)",
                   }}
                 >
-                  КИТ&nbsp;ФОРУМ
+                  {t("loader.title").replace(" ", " ")}
                 </h1>
                 <p className="mt-5 max-w-[34rem] text-[13px] sm:text-[15px] leading-[1.55] text-white/65">
-                  Загружаем главное событие цифровой отрасли Центральной Азии.
+                  {t("loader.subtitle")}
                 </p>
               </motion.div>
             </div>
@@ -188,9 +190,9 @@ export function PageLoader() {
                 )}
               </div>
               <div className="flex items-center justify-between font-mono text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-white/45 tabular tnums">
-                <span>Bishkek · KGZ</span>
-                <span className="hidden sm:inline">42.84°N · 74.60°E</span>
-                <span>v.2026.06</span>
+                <span>{t("loader.metaCity")}</span>
+                <span className="hidden sm:inline">{t("loader.metaCoords")}</span>
+                <span>{t("loader.metaVersion")}</span>
               </div>
             </motion.div>
           </div>

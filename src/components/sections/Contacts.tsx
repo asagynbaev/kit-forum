@@ -4,6 +4,7 @@ import { Check, ArrowUpRight } from "lucide-react";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
 import { socialLinks } from "@/data/organizers";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const socialIcons: Record<string, JSX.Element> = {
   telegram: (
@@ -93,6 +94,7 @@ interface ErrorState {
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Contacts() {
+  const { t } = useI18n();
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -104,10 +106,10 @@ export function Contacts() {
 
   const validate = (data: FormState) => {
     const e: ErrorState = {};
-    if (data.name.trim().length < 2) e.name = "Укажите имя — минимум 2 символа";
-    if (!EMAIL_RX.test(data.email)) e.email = "Введите корректный email-адрес";
+    if (data.name.trim().length < 2) e.name = t("contacts.field.name.error");
+    if (!EMAIL_RX.test(data.email)) e.email = t("contacts.field.email.error");
     if (data.message.trim().length < 8)
-      e.message = "Сообщение слишком короткое — минимум 8 символов";
+      e.message = t("contacts.field.message.error");
     return e;
   };
 
@@ -151,35 +153,34 @@ export function Contacts() {
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <span className="eyebrow">
                     <span className="h-px w-8 bg-brand/50" aria-hidden />
-                    <span className="text-brand">06</span> · Контакты
+                    {t("contacts.eyebrow")}
                   </span>
-                  <LiveBadge>Online · GMT+6</LiveBadge>
+                  <LiveBadge>{t("contacts.liveBadge")}</LiveBadge>
                 </div>
               </Reveal>
               <Reveal delay={0.05}>
                 <h2 className="h-section mt-5 text-balance">
-                  Связаться<br />
-                  с <span className="text-brand">оргкомитетом</span><br />
-                  форума.
+                  {t("contacts.titleA")}<br />
+                  {t("contacts.titleB")} <span className="text-brand">{t("contacts.titleC")}</span><br />
+                  {t("contacts.titleD")}
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="lead mt-7 text-balance max-w-[420px]">
-                  Запросы на участие, аккредитация СМИ, партнёрские предложения,
-                  приглашения делегаций. Ответим в течение одного рабочего дня.
+                  {t("contacts.lead")}
                 </p>
               </Reveal>
 
               <Reveal delay={0.15}>
                 <div className="mt-12 hidden lg:block">
                   <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-4">
-                    Часы работы
+                    {t("contacts.hoursLabel")}
                   </div>
                   <div className="font-display text-ink text-[28px] leading-tight tracking-tightest font-medium">
-                    Пн—Пт<br />09:00–18:00
+                    {t("contacts.hoursValueA")}<br />{t("contacts.hoursValueB")}
                   </div>
                   <div className="mt-3 font-mono text-[11px] tracking-[0.18em] uppercase text-ink-soft">
-                    GMT+6 · Бишкек
+                    {t("contacts.hoursMeta")}
                   </div>
                 </div>
               </Reveal>
@@ -190,63 +191,63 @@ export function Contacts() {
             <Reveal>
               <dl className="divide-y divide-brand/20 border-y border-brand/20">
                 <ContactRow
-                  label="Организатор"
-                  primary="Парк высоких технологий Кыргызской Республики"
+                  label={t("contacts.row.organizer.label")}
+                  primary={t("contacts.row.organizer.primary")}
                   secondary={
                     <>
-                      Главный организатор КИТ Форума 2026<br />
-                      htp.kg · г. Бишкек, Кыргызская Республика<br />
-                      Орган управления — Кабинет Министров КР
+                      {t("contacts.row.organizer.l1")}<br />
+                      {t("contacts.row.organizer.l2")}<br />
+                      {t("contacts.row.organizer.l3")}
                     </>
                   }
                 />
                 <ContactRow
-                  label="Площадка"
-                  primary="Международный Университет Кыргызстана"
+                  label={t("contacts.row.venue.label")}
+                  primary={t("contacts.row.venue.primary")}
                   secondary={
                     <>
-                      Центральный кампус МУК<br />
-                      Бишкек, ул. Льва Толстого, 1 (17Б)
+                      {t("contacts.row.venue.l1")}<br />
+                      {t("contacts.row.venue.l2")}
                     </>
                   }
                 />
                 <ContactPerson
-                  label="Общая координация"
+                  label={t("contacts.row.coord.label")}
                   name="Елена Нечаева"
                   phone="+996 550 077 091"
                   phoneHref="tel:+996550077091"
                   email="e.nechaeva@htp.kg"
                 />
                 <ContactPerson
-                  label="Программа · Спикеры"
+                  label={t("contacts.row.program.label")}
                   name="Айжана Османалиева"
                   phone="+996 708 686 766"
                   phoneHref="tel:+996708686766"
                   email="a.osmonalieva@htp.kg"
                 />
                 <ContactPerson
-                  label="EXPO"
+                  label={t("contacts.row.expo.label")}
                   name="Чубак Темиров · Адилет Дюшембиев"
                   phone="+996 555 221 146"
                   phoneHref="tel:+996555221146"
                   email="c.temirov@htp.kg · a.diushembiev@htp.kg"
                 />
                 <ContactPerson
-                  label="PR · СМИ"
+                  label={t("contacts.row.pr.label")}
                   name="Айпери"
                   phone="+996 778 444 208"
                   phoneHref="tel:+996778444208"
                   email="pr@htp.kg"
                 />
                 <ContactPerson
-                  label="Стартапы · Венчур · Университеты"
+                  label={t("contacts.row.startup.label")}
                   name="Нурзат"
                   phone="+996 777 092 838"
                   phoneHref="tel:+996777092838"
                   email="future.ecosystem@htp.kg"
                 />
                 <ContactRow
-                  label="Социальные сети"
+                  label={t("contacts.row.social.label")}
                   primary={
                     <div className="flex flex-wrap items-center gap-2">
                       {socialLinks.map((s) => (
@@ -263,7 +264,7 @@ export function Contacts() {
                       ))}
                     </div>
                   }
-                  secondary="Прямые трансляции ключевых сессий — на YouTube-канале форума"
+                  secondary={t("contacts.row.social.secondary")}
                 />
               </dl>
             </Reveal>
@@ -276,19 +277,18 @@ export function Contacts() {
               <Reveal>
                 <span className="eyebrow">
                   <span className="h-px w-8 bg-ink-soft/40" aria-hidden />
-                  Заявка · 07
+                  {t("contacts.formEyebrow")}
                 </span>
               </Reveal>
               <Reveal delay={0.05}>
                 <h2 className="h-section mt-5 text-balance">
-                  Оставить заявку<br />
-                  на участие.
+                  {t("contacts.formTitleA")}<br />
+                  {t("contacts.formTitleB")}
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="lead mt-6 text-balance max-w-[420px]">
-                  Заполните форму — оргкомитет свяжется с вами для уточнения
-                  деталей участия, аккредитации и логистики.
+                  {t("contacts.formLead")}
                 </p>
               </Reveal>
             </div>
@@ -315,25 +315,25 @@ export function Contacts() {
                           <Check size={16} strokeWidth={1.8} />
                         </span>
                         <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-soft">
-                          Принято
+                          {t("contacts.success.eyebrow")}
                         </span>
                       </div>
                       <div className="mt-6 font-display font-medium text-ink text-[28px] leading-tight tracking-tightest">
-                        Заявка отправлена.
+                        {t("contacts.success.title")}
                       </div>
                       <p className="mt-4 text-[15px] leading-relaxed text-ink-soft max-w-[460px]">
-                        Подтверждение отправили на{" "}
+                        {t("contacts.success.bodyA")}
                         <span className="text-ink font-medium">
                           {form.email}
                         </span>
-                        . Оргкомитет свяжется в течение одного рабочего дня.
+                        {t("contacts.success.bodyB")}
                       </p>
                       <button
                         type="button"
                         onClick={reset}
                         className="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-ink underline underline-offset-4 hover:text-brand transition-colors duration-300"
                       >
-                        Отправить ещё одну заявку
+                        {t("contacts.success.reset")}
                       </button>
                     </motion.div>
                   ) : (
@@ -349,49 +349,49 @@ export function Contacts() {
                     >
                       <FieldText
                         id="contact-name"
-                        label="Имя и фамилия"
+                        label={t("contacts.field.name.label")}
                         value={form.name}
                         onChange={onChange("name")}
                         error={errors.name}
                         autoComplete="name"
-                        placeholder="Айбек Айдаров"
+                        placeholder={t("contacts.field.name.placeholder")}
                       />
                       <FieldText
                         id="contact-email"
-                        label="Email"
+                        label={t("contacts.field.email.label")}
                         value={form.email}
                         onChange={onChange("email")}
                         error={errors.email}
                         type="email"
                         autoComplete="email"
-                        placeholder="name@company.kg"
+                        placeholder={t("contacts.field.email.placeholder")}
                       />
                       <FieldTextarea
                         id="contact-message"
-                        label="Сообщение"
+                        label={t("contacts.field.message.label")}
                         value={form.message}
                         onChange={onChange("message")}
                         error={errors.message}
-                        placeholder="Расскажите о цели запроса — участие, аккредитация СМИ, партнёрство…"
+                        placeholder={t("contacts.field.message.placeholder")}
                       />
 
                       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 py-7">
                         <p className="text-[12px] leading-relaxed text-ink-soft sm:max-w-[420px]">
-                          Отправляя форму, вы соглашаетесь с{" "}
+                          {t("contacts.agreePrefix")}
                           <a
                             href="#"
                             className="text-ink underline underline-offset-4 hover:text-brand transition-colors duration-300"
                           >
-                            политикой обработки персональных данных
+                            {t("contacts.agreeLink")}
                           </a>
-                          .
+                          {t("contacts.agreeSuffix")}
                         </p>
                         <button
                           type="submit"
                           disabled={submitting}
                           className="group inline-flex w-full sm:w-auto items-center justify-between gap-3 rounded-xl bg-ink px-5 sm:px-6 py-3.5 sm:py-4 text-[14px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring disabled:opacity-70"
                         >
-                          {submitting ? "Отправляем…" : "Отправить заявку"}
+                          {submitting ? t("cta.submitting") : t("cta.submit")}
                           <span className="grid h-7 w-7 place-items-center rounded-md bg-white/15 transition-transform duration-500 ease-spring group-hover:translate-x-0.5 shrink-0">
                             <ArrowUpRight size={14} strokeWidth={1.6} />
                           </span>
