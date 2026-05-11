@@ -144,7 +144,7 @@ export function Contacts() {
         className="absolute inset-0 blueprint-bg-faded pointer-events-none"
       />
       <div className="container-edge relative">
-        <div className="grid grid-cols-12 gap-12 lg:gap-20">
+        <div className="grid grid-cols-12 gap-y-12 lg:gap-20">
           <div className="col-span-12 lg:col-span-5">
             <div className="lg:sticky lg:top-32">
               <Reveal>
@@ -271,7 +271,7 @@ export function Contacts() {
         </div>
 
         <div className="mt-28 md:mt-36">
-          <div className="grid grid-cols-12 gap-12 lg:gap-20">
+          <div className="grid grid-cols-12 gap-y-12 lg:gap-20">
             <div className="col-span-12 lg:col-span-5">
               <Reveal>
                 <span className="eyebrow">

@@ -140,7 +140,7 @@ export function MapVenue() {
           }
         />
 
-        <div className="mt-14 grid grid-cols-12 gap-8 lg:gap-10">
+        <div className="mt-14 grid grid-cols-12 gap-y-8 lg:gap-10">
           <Reveal className="col-span-12 lg:col-span-6" delay={0.05}>
             <div className="rounded-2xl border border-line bg-white p-6 sm:p-7 md:p-9 shadow-soft h-full">
               <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-ink-soft">

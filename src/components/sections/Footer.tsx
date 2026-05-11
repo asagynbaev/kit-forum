@@ -59,7 +59,7 @@ export function Footer() {
           </span>
         </div>
 
-        <div className="grid grid-cols-12 gap-8 md:gap-10">
+        <div className="grid grid-cols-12 gap-y-8 md:gap-10">
           <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
             <Logo />
             <p className="text-[14px] leading-relaxed text-ink-soft max-w-[360px]">

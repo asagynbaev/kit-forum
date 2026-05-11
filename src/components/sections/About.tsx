@@ -18,7 +18,7 @@ export function About() {
         className="absolute inset-0 blueprint-bg-faded pointer-events-none"
       />
       <div className="container-edge relative">
-        <div className="grid grid-cols-12 gap-10 lg:gap-16">
+        <div className="grid grid-cols-12 gap-y-10 lg:gap-16">
           <div className="col-span-12 lg:col-span-5 min-w-0">
             <div className="lg:sticky lg:top-32">
               <Reveal>

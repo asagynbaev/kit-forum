@@ -17,6 +17,12 @@ import { LiveBadge } from "../ui/LiveBadge";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+// 32px-wide blurred preview of the hero video's closing frame (~200 bytes).
+// Paints instantly with the HTML, before any network request resolves —
+// avoids the dark void on slow connections while poster.webp loads.
+const LQIP_DATA_URI =
+  "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAACQBQCdASogABIAPtFUokuoJKMhsAgBABoJbACdMoR9H5negAhvAjMzjaHI7U7XjlxpsxhcAAD+0Nz6pQShBICnu4JZp48zUIiAhhZ8sPASAex/k48R8Gol0f6nJJ+UxtT/TOaaYJIQ8d6N5VN0nV4/YtTffQFEBE/9YGb5XMxw3DxH9jol2NXQN2cGEqPq6Q/Ax+rpD8lJdsvZOuc+PK8+EFhqWQzi7pU9Y60x1dIAAA==";
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -129,34 +135,64 @@ export function Hero() {
                   "radial-gradient(ellipse 90% 80% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 30%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
               }}
             >
+              {/* Instant blurred LQIP (~200 bytes inline) — paints before any network */}
+              <img
+                src={LQIP_DATA_URI}
+                alt=""
+                aria-hidden
+                width={32}
+                height={18}
+                className={`absolute inset-0 h-full w-full object-cover scale-110 blur-xl transition-opacity duration-700 ${
+                  videoLoaded ? "opacity-0" : "opacity-100"
+                }`}
+              />
+
+              {/* Crisp WebP poster — small (~90KB) and shown before video frames arrive */}
+              <img
+                src="/videos/poster.webp"
+                alt=""
+                aria-hidden
+                width={1280}
+                height={716}
+                decoding="async"
+                fetchPriority="high"
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+                  videoLoaded ? "opacity-0" : "opacity-100"
+                }`}
+              />
+
               <video
                 ref={videoRef}
                 muted
                 autoPlay
                 playsInline
                 preload="auto"
-                poster="/videos/poster.svg"
+                poster="/videos/poster.webp"
                 aria-hidden
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
                   videoLoaded ? "opacity-100" : "opacity-0"
                 } ${videoEnded ? "saturate-[1.05]" : ""}`}
               >
-                <source src="/videos/3.mp4" type="video/mp4" />
-              </video>
-
-              {!videoLoaded && (
-                <img
-                  src="/videos/poster.svg"
-                  alt=""
-                  aria-hidden
-                  className="absolute inset-0 h-full w-full object-cover"
+                {/* Mobile / narrow viewports: ~650KB mp4 and ~990KB webm */}
+                <source
+                  media="(max-width: 768px)"
+                  src="/videos/3-mobile.mp4"
+                  type="video/mp4"
                 />
-              )}
+                <source
+                  media="(max-width: 768px)"
+                  src="/videos/3-mobile.webm"
+                  type="video/webm"
+                />
+                {/* Desktop / wide: prefer mp4 first (smaller H.264 here than VP9) */}
+                <source src="/videos/3.mp4" type="video/mp4" />
+                <source src="/videos/3.webm" type="video/webm" />
+              </video>
             </div>
           </motion.div>
         </div>
 
-        <div className="mt-6 md:mt-8 grid grid-cols-12 gap-6 items-end">
+        <div className="mt-6 md:mt-8 grid grid-cols-12 gap-y-6 md:gap-6 items-end">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}

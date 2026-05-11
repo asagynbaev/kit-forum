@@ -82,17 +82,24 @@ function MarqueeRow({
 }
 
 function PartnerTile({ partner }: { partner: Partner }) {
+  const webp = partner.src.replace(/\.png$/, ".webp");
   return (
     <div
       title={partner.name}
       className="grid h-20 w-40 sm:h-24 sm:w-48 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-line transition-all duration-500 ease-spring grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:ring-brand/30 hover:-translate-y-0.5 hover:shadow-soft px-4"
     >
-      <img
-        src={partner.src}
-        alt={partner.name}
-        loading="lazy"
-        className="max-h-full max-w-full object-contain"
-      />
+      <picture>
+        <source srcSet={webp} type="image/webp" />
+        <img
+          src={partner.src}
+          alt={partner.name}
+          width={240}
+          height={120}
+          loading="lazy"
+          decoding="async"
+          className="max-h-full max-w-full object-contain"
+        />
+      </picture>
     </div>
   );
 }
