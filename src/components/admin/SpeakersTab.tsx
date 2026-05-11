@@ -1,11 +1,97 @@
-import { useEffect, useState } from "react";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Pencil, Trash2, Plus, Upload, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Database } from "@/lib/database.types";
 import { LocalizedField, Field, Modal, Btn, Toast } from "./shared";
 
 type Row = Database["public"]["Tables"]["speakers"]["Row"];
 type LV = { ru: string; ky: string; en: string };
+
+async function uploadPhoto(file: File): Promise<string | null> {
+  const ext = file.name.split(".").pop() ?? "jpg";
+  const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage
+    .from("speaker-photos")
+    .upload(name, file, { upsert: true, contentType: file.type });
+  if (error) return null;
+  const { data } = supabase.storage.from("speaker-photos").getPublicUrl(name);
+  return data.publicUrl;
+}
+
+function PhotoField({
+  value,
+  onChange,
+  onError,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  onError: (msg: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handle = async (file: File) => {
+    if (!file.type.startsWith("image/")) { onError("Только изображения"); return; }
+    if (file.size > 8 * 1024 * 1024) { onError("Максимум 8 МБ"); return; }
+    setUploading(true);
+    const url = await uploadPhoto(file);
+    setUploading(false);
+    if (!url) { onError("Ошибка загрузки. Проверьте бакет speaker-photos в Supabase Storage."); return; }
+    onChange(url);
+  };
+
+  return (
+    <div>
+      <p className="mb-1.5 text-sm font-medium text-gray-700">Фото</p>
+      <div className="flex gap-3 items-start">
+        {value ? (
+          <div className="relative shrink-0">
+            <img src={value} alt="" className="h-24 w-[4.5rem] rounded-lg object-cover border border-gray-200" />
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-red-500 text-white hover:bg-red-600"
+            >
+              <X size={10} />
+            </button>
+          </div>
+        ) : null}
+        <div className="flex-1 min-w-0">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handle(f); e.target.value = ""; }}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="w-full flex flex-col items-center justify-center gap-1.5 h-20 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 hover:border-brand/50 hover:bg-brand/5 transition-colors disabled:opacity-60 cursor-pointer"
+          >
+            {uploading ? (
+              <span className="text-xs text-brand font-medium">Загружаем…</span>
+            ) : (
+              <>
+                <Upload size={16} className="text-gray-400" />
+                <span className="text-xs text-gray-500 font-medium">Нажмите для загрузки</span>
+                <span className="text-[10px] text-gray-400">PNG, JPG, WebP · до 8 МБ</span>
+              </>
+            )}
+          </button>
+          <input
+            type="text"
+            className="mt-2 w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-gray-400 focus:outline-none focus:ring-1 focus:ring-brand/30 focus:border-brand placeholder:text-gray-300"
+            placeholder="или вставьте URL вручную"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const empty = (): Omit<Row, "id" | "created_at"> => ({
   name: { ru: "", ky: "", en: "" },
@@ -144,12 +230,14 @@ export function SpeakersTab() {
           onClose={() => setModal(null)}
         >
           <form onSubmit={save} className="space-y-4">
+            <PhotoField
+              value={form.photo}
+              onChange={(url) => setForm((f) => ({ ...f, photo: url }))}
+              onError={(msg) => showToast(msg, false)}
+            />
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Фото URL" value={form.photo} onChange={(v) => setForm((f) => ({ ...f, photo: v }))} />
-              <div className="grid grid-cols-2 gap-2">
-                <Field label="Флаг (эмодзи)" value={form.country_flag} onChange={(v) => setForm((f) => ({ ...f, country_flag: v }))} required />
-                <Field label="Порядок" value={form.order_index} type="number" onChange={(v) => setForm((f) => ({ ...f, order_index: Number(v) }))} />
-              </div>
+              <Field label="Флаг (эмодзи)" value={form.country_flag} onChange={(v) => setForm((f) => ({ ...f, country_flag: v }))} required />
+              <Field label="Порядок" value={form.order_index} type="number" onChange={(v) => setForm((f) => ({ ...f, order_index: Number(v) }))} />
             </div>
             <LocalizedField label="Имя *" value={lv("name")} onChange={setLv("name")} required />
             <LocalizedField label="Роль *" value={lv("role")} onChange={setLv("role")} required />

@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronDown, RotateCcw } from "lucide-react";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
+import { onLoaderDone } from "@/lib/loaderState";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -65,12 +66,16 @@ export function Hero() {
     v.addEventListener("loadeddata", onReady, { once: true });
     v.addEventListener("ended", onEnded);
 
-    if (prefersReduced) { v.pause(); } else { v.play().catch(() => {}); }
+    let unsub: (() => void) | undefined;
+    if (!prefersReduced) {
+      unsub = onLoaderDone(() => { v.play().catch(() => {}); });
+    }
 
     return () => {
       v.removeEventListener("canplay", onReady);
       v.removeEventListener("loadeddata", onReady);
       v.removeEventListener("ended", onEnded);
+      unsub?.();
     };
   }, [prefersReduced]);
 
@@ -165,7 +170,6 @@ export function Hero() {
           <video
             ref={videoRef}
             muted
-            autoPlay
             playsInline
             preload="auto"
             poster="/videos/poster.webp"

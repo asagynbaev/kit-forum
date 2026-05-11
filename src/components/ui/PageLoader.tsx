@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/i18n/I18nProvider";
+import { markLoaderDone } from "@/lib/loaderState";
 
 /**
  * Branded splash that holds the first paint until either the hero video can
@@ -31,7 +32,10 @@ export function PageLoader() {
       const wait = Math.max(0, MIN_DISPLAY_MS - elapsed);
       window.setTimeout(() => {
         setProgress(1);
-        window.setTimeout(() => setVisible(false), 120);
+        window.setTimeout(() => {
+          markLoaderDone();
+          setVisible(false);
+        }, 120);
       }, wait);
     };
 

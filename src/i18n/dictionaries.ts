@@ -152,15 +152,15 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Speakers page
     "speakersPage.eyebrow": "Все спикеры · /speakers",
-    "speakersPage.titleA": "Страница готовится.",
-    "speakersPage.titleB": "Скоро здесь.",
+    "speakersPage.titleA": "Спикеры",
+    "speakersPage.titleB": "КИТ Форум 2026.",
     "speakersPage.lead":
-      "Подробные карточки спикеров, биографии, темы выступлений и записи прошлых сессий появятся ближе к началу форума. Подпишитесь, чтобы узнать первыми.",
-    "speakersPage.back": "Вернуться на главную",
+      "Принимающие решения из правительства, лидеры технологических компаний региона, исследователи и представители международных институтов.",
+    "speakersPage.back": "На главную",
     "speakersPage.contact": "Связаться с оргкомитетом",
     "speakersPage.footerCopyright":
       "© 2026 КИТ Форум · Парк высоких технологий КР",
-    "speakersPage.footerStatus": "Страница в разработке",
+    "speakersPage.footerStatus": "КИТ Форум · 2026",
 
     // ─── Partners
     "partners.eyebrow": "Партнёры · 04",
@@ -453,15 +453,15 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Спикерлер бети
     "speakersPage.eyebrow": "Бардык спикерлер · /speakers",
-    "speakersPage.titleA": "Барак даярдалууда.",
-    "speakersPage.titleB": "Жакында бул жерде.",
+    "speakersPage.titleA": "Спикерлер",
+    "speakersPage.titleB": "КИТ Форум 2026.",
     "speakersPage.lead":
-      "Спикерлердин толук карточкалары, биографиялары, сүйлөө темалары жана өткөн сессиялардын жазуулары форум башталганга жакын пайда болот. Биринчилерден болуп билиш үчүн жазылыңыз.",
-    "speakersPage.back": "Башкы бетке кайтуу",
+      "Өкмөттүн чечим кабыл алуучулары, технология компанияларынын жетекчилери, изилдөөчүлөр жана эл аралык мекемелердин өкүлдөрү.",
+    "speakersPage.back": "Башкы бетке",
     "speakersPage.contact": "Уюштуруу комитети менен байланышуу",
     "speakersPage.footerCopyright":
       "© 2026 КИТ Форум · КР Жогорку технологиялар паркы",
-    "speakersPage.footerStatus": "Барак иштелип жатат",
+    "speakersPage.footerStatus": "КИТ Форум · 2026",
 
     // ─── Өнөктөштөр
     "partners.eyebrow": "Өнөктөштөр · 04",
@@ -757,15 +757,15 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Speakers page
     "speakersPage.eyebrow": "All speakers · /speakers",
-    "speakersPage.titleA": "Page in preparation.",
-    "speakersPage.titleB": "Coming soon.",
+    "speakersPage.titleA": "Speakers",
+    "speakersPage.titleB": "KIT Forum 2026.",
     "speakersPage.lead":
-      "Detailed speaker cards, biographies, talk topics, and recordings of past sessions will appear closer to the start of the forum. Subscribe to be the first to know.",
+      "Decision-makers from government, regional technology company leaders, researchers and representatives of international institutions.",
     "speakersPage.back": "Back to home",
     "speakersPage.contact": "Contact the organising committee",
     "speakersPage.footerCopyright":
       "© 2026 KIT Forum · High Technology Park of the KR",
-    "speakersPage.footerStatus": "Page under development",
+    "speakersPage.footerStatus": "KIT Forum · 2026",
 
     // ─── Partners
     "partners.eyebrow": "Partners · 04",

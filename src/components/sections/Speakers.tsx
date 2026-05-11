@@ -47,7 +47,7 @@ export function Speakers() {
         ) : (
           <>
             <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {speakers.map((s, idx) => (
+              {speakers.slice(0, 8).map((s, idx) => (
                 <Reveal
                   key={s.id}
                   delay={prefersReduced ? 0 : (idx % 4) * 0.06 + Math.floor(idx / 4) * 0.04}
