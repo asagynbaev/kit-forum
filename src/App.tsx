@@ -8,11 +8,13 @@ import { MapVenue } from "./components/sections/MapVenue";
 import { Contacts } from "./components/sections/Contacts";
 import { Footer } from "./components/sections/Footer";
 import { PageLoader } from "./components/ui/PageLoader";
+import { ScrollToTop } from "./components/ui/ScrollToTop";
 
 export function App() {
   return (
     <div className="relative min-h-[100dvh] bg-canvas text-ink overflow-x-clip">
       <PageLoader />
+      <ScrollToTop />
       <Navigation />
       <main>
         <Hero />

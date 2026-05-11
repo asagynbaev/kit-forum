@@ -1,14 +1,5 @@
 import type { Localized } from "@/i18n/I18nProvider";
 
-export interface SpeakerCrop {
-  /** Which screenshot sheet to source the portrait from */
-  source: "row1" | "row2";
-  /** Column 0–2 in the 3×2 sheet */
-  col: 0 | 1 | 2;
-  /** Row 0–1 in the 3×2 sheet */
-  row: 0 | 1;
-}
-
 export interface Speaker {
   id: string;
   name: Localized;
@@ -16,25 +7,13 @@ export interface Speaker {
   topic: Localized;
   country: Localized;
   countryFlag: string;
-  crop: SpeakerCrop;
+  photo: string;
 }
 
-/**
- * 12 announced KIT 2026 speakers. Portraits come from public/speakers/
- * row1.png + row2.png via CSS background-position — see Speakers.tsx.
- *
- * Localised fields carry the source RU plus professionally translated
- * KY (Kyrgyz) and EN copy. Names of people are kept as-is in their
- * native form; country names follow each locale's convention.
- */
 export const speakers: Speaker[] = [
   {
     id: "tilek-mamutov",
-    name: {
-      ru: "Тилек Мамутов",
-      ky: "Тилек Мамутов",
-      en: "Tilek Mamutov",
-    },
+    name: { ru: "Тилек Мамутов", ky: "Тилек Мамутов", en: "Tilek Mamutov" },
     role: {
       ru: "Первый кыргызстанец в Google · Основатель Outtalent",
       ky: "Google'дагы биринчи кыргызстандык · Outtalent компаниясынын негиздөөчүсү",
@@ -47,15 +26,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row1", col: 0, row: 0 },
+    photo: "/speakers/tilek-mamutov.webp",
   },
   {
     id: "maksim-prokhorov",
-    name: {
-      ru: "Максим Прохоров",
-      ky: "Максим Прохоров",
-      en: "Maksim Prokhorov",
-    },
+    name: { ru: "Максим Прохоров", ky: "Максим Прохоров", en: "Maksim Prokhorov" },
     role: {
       ru: "Сооснователь и CEO PLATMA",
       ky: "PLATMAнын тең негиздөөчүсү жана башкы директору",
@@ -68,15 +43,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row1", col: 1, row: 0 },
+    photo: "/speakers/maksim-prokhorov.webp",
   },
   {
     id: "takeru-kawashima",
-    name: {
-      ru: "Такэру Кавашима",
-      ky: "Такэру Кавашима",
-      en: "Takeru Kawashima",
-    },
+    name: { ru: "Такэру Кавашима", ky: "Такэру Кавашима", en: "Takeru Kawashima" },
     role: {
       ru: "Исполнительный директор · 01Booster Inc.",
       ky: "Аткаруучу директор · 01Booster Inc.",
@@ -89,15 +60,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Япония", ky: "Япония", en: "Japan" },
     countryFlag: "🇯🇵",
-    crop: { source: "row1", col: 2, row: 0 },
+    photo: "/speakers/takeru-kawashima.webp",
   },
   {
     id: "avigayil-menashe",
-    name: {
-      ru: "Авигайль Менаше",
-      ky: "Авигайль Менаше",
-      en: "Avigayil Menashe",
-    },
+    name: { ru: "Авигайль Менаше", ky: "Авигайль Менаше", en: "Avigayil Menashe" },
     role: {
       ru: "Основатель STEM Consulting",
       ky: "STEM Consultingтин негиздөөчүсү",
@@ -110,15 +77,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Израиль", ky: "Израиль", en: "Israel" },
     countryFlag: "🇮🇱",
-    crop: { source: "row1", col: 0, row: 1 },
+    photo: "/speakers/avigayil-menashe.webp",
   },
   {
     id: "ulan-abdurazakov",
-    name: {
-      ru: "Улан Абдуразаков",
-      ky: "Улан Абдуразаков",
-      en: "Ulan Abdurazakov",
-    },
+    name: { ru: "Улан Абдуразаков", ky: "Улан Абдуразаков", en: "Ulan Abdurazakov" },
     role: {
       ru: "CEO Nineninesixai.ai",
       ky: "Nineninesixai.aiнин башкы директору",
@@ -131,15 +94,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row1", col: 1, row: 1 },
+    photo: "/speakers/ulan-abdurazakov.webp",
   },
   {
     id: "kenny-johnson",
-    name: {
-      ru: "Кенни Джонсон",
-      ky: "Кенни Джонсон",
-      en: "Kenny Johnson",
-    },
+    name: { ru: "Кенни Джонсон", ky: "Кенни Джонсон", en: "Kenny Johnson" },
     role: {
       ru: "Основатель DreamLine Holdings · Инвестор",
       ky: "DreamLine Holdingsтин негиздөөчүсү · Инвестор",
@@ -152,15 +111,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "США", ky: "АКШ", en: "USA" },
     countryFlag: "🇺🇸",
-    crop: { source: "row1", col: 2, row: 1 },
+    photo: "/speakers/kenny-johnson.webp",
   },
   {
     id: "takuya-nomura",
-    name: {
-      ru: "Такуя Номура",
-      ky: "Такуя Номура",
-      en: "Takuya Nomura",
-    },
+    name: { ru: "Такуя Номура", ky: "Такуя Номура", en: "Takuya Nomura" },
     role: {
       ru: "Генеральный продюсер Knowledge Capital Association · VS. Joint Partnership",
       ky: "Knowledge Capital Associationдын башкы продюсери · VS. Joint Partnership",
@@ -173,15 +128,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Япония", ky: "Япония", en: "Japan" },
     countryFlag: "🇯🇵",
-    crop: { source: "row2", col: 0, row: 0 },
+    photo: "/speakers/takuya-nomura.webp",
   },
   {
     id: "kainar-kamalov",
-    name: {
-      ru: "Кайнар Камалов",
-      ky: "Кайнар Камалов",
-      en: "Kainar Kamalov",
-    },
+    name: { ru: "Кайнар Камалов", ky: "Кайнар Камалов", en: "Kainar Kamalov" },
     role: {
       ru: "Руководитель отдела продуктов · CloudX",
       ky: "Продуктулар бөлүмүнүн жетекчиси · CloudX",
@@ -194,15 +145,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row2", col: 1, row: 0 },
+    photo: "/speakers/kainar-kamalov.webp",
   },
   {
     id: "azamat-burzhuev",
-    name: {
-      ru: "Азамат Буржуев",
-      ky: "Азамат Буржуев",
-      en: "Azamat Burzhuev",
-    },
+    name: { ru: "Азамат Буржуев", ky: "Азамат Буржуев", en: "Azamat Burzhuev" },
     role: {
       ru: "Эксперт в сфере GovTech · Цифровая трансформация",
       ky: "GovTech жаатындагы эксперт · Санариптик трансформация",
@@ -215,15 +162,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row2", col: 2, row: 0 },
+    photo: "/speakers/azamat-burzhuev.webp",
   },
   {
     id: "amy-peck",
-    name: {
-      ru: "Эми Пэк",
-      ky: "Эми Пэк",
-      en: "Amy Peck",
-    },
+    name: { ru: "Эми Пэк", ky: "Эми Пэк", en: "Amy Peck" },
     role: {
       ru: "Основатель и генеральный директор EndeavorXR",
       ky: "EndeavorXRдын негиздөөчүсү жана башкы директору",
@@ -236,15 +179,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "США", ky: "АКШ", en: "USA" },
     countryFlag: "🇺🇸",
-    crop: { source: "row2", col: 0, row: 1 },
+    photo: "/speakers/amy-peck.webp",
   },
   {
     id: "aizhan-alisherova",
-    name: {
-      ru: "Айжан Алишерова-Дуймаз",
-      ky: "Айжан Алишерова-Дуймаз",
-      en: "Aizhan Alisherova-Duymaz",
-    },
+    name: { ru: "Айжан Алишерова-Дуймаз", ky: "Айжан Алишерова-Дуймаз", en: "Aizhan Alisherova-Duymaz" },
     role: {
       ru: "Сооснователь Startup Lab 119 · Директор WeFund",
       ky: "Startup Lab 119дун тең негиздөөчүсү · WeFundдун директору",
@@ -257,15 +196,11 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row2", col: 1, row: 1 },
+    photo: "/speakers/aizhan-alisherova.webp",
   },
   {
     id: "taalay-djumabaev",
-    name: {
-      ru: "Таалай Джумабаев",
-      ky: "Таалай Жумабаев",
-      en: "Taalay Djumabaev",
-    },
+    name: { ru: "Таалай Джумабаев", ky: "Таалай Жумабаев", en: "Taalay Djumabaev" },
     role: {
       ru: "Основатель и генеральный директор Growthhungry",
       ky: "Growthhungryнин негиздөөчүсү жана башкы директору",
@@ -278,6 +213,6 @@ export const speakers: Speaker[] = [
     },
     country: { ru: "Кыргызстан", ky: "Кыргызстан", en: "Kyrgyzstan" },
     countryFlag: "🇰🇬",
-    crop: { source: "row2", col: 2, row: 1 },
+    photo: "/speakers/taalay-djumabaev.webp",
   },
 ];

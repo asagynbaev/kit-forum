@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Logo } from "../ui/Logo";
 import { LangSwitcher } from "../ui/LangSwitcher";
 import { LiveBadge } from "../ui/LiveBadge";
@@ -9,7 +10,7 @@ const columns = [
     links: [
       { labelKey: "footer.col.forum.link.about", href: "#about" },
       { labelKey: "footer.col.forum.link.program", href: "#program" },
-      { labelKey: "footer.col.forum.link.speakers", href: "#speakers" },
+      { labelKey: "footer.col.forum.link.speakers", href: "/speakers" },
       { labelKey: "footer.col.forum.link.partners", href: "#partners" },
     ],
   },
@@ -27,8 +28,8 @@ const columns = [
     links: [
       { labelKey: "footer.col.info.link.venue", href: "#venue" },
       { labelKey: "footer.col.info.link.route", href: "#venue" },
-      { labelKey: "footer.col.info.link.archive", href: "#" },
-      { labelKey: "footer.col.info.link.press", href: "#" },
+      { labelKey: "footer.col.info.link.archive", href: "/archive" },
+      { labelKey: "footer.col.info.link.press", href: "/press" },
     ],
   },
 ];
@@ -37,15 +38,24 @@ const columns = [
 const contactsColumn = {
   titleKey: "footer.col.contacts.title",
   links: [
-    { label: "e.nechaeva@htp.kg", href: "mailto:e.nechaeva@htp.kg" },
-    { label: "pr@htp.kg", href: "mailto:pr@htp.kg" },
-    { label: "+996 550 077 091", href: "tel:+996550077091" },
+    { id: "email-1", label: "e.nechaeva@htp.kg", href: "mailto:e.nechaeva@htp.kg" },
+    { id: "email-2", label: "pr@htp.kg", href: "mailto:pr@htp.kg" },
+    { id: "phone", label: "+996 550 077 091", href: "tel:+996550077091" },
     {
+      id: "address",
       label: { ru: "Бишкек, ул. Льва Толстого, 1/17Б", ky: "Бишкек, Лев Толстой к., 1/17Б", en: "Bishkek, 1/17B Lev Tolstoy St." },
       href: "#venue",
     },
   ],
 };
+
+function ColLink({ href, children }: Readonly<{ href: string; children: React.ReactNode }>) {
+  const cls = "text-[14px] text-ink hover:text-brand transition-colors duration-300";
+  if (href.startsWith("/")) {
+    return <Link to={href} className={cls}>{children}</Link>;
+  }
+  return <a href={href} className={cls}>{children}</a>;
+}
 
 export function Footer() {
   const { t, locale } = useI18n();
@@ -59,7 +69,7 @@ export function Footer() {
         <div className="mb-10 sm:mb-14 flex flex-wrap items-center justify-between gap-3 border-y border-brand/20 py-3.5 sm:py-4">
           <LiveBadge>{t("footer.liveBadge")}</LiveBadge>
           <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.22em] uppercase text-ink-soft tabular tnums">
-            42.8424°N · 74.6047°E
+            42.8772°N · 74.5853°E
           </span>
           <span className="hidden sm:inline-flex font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft">
             {t("footer.versionBadge")}
@@ -94,12 +104,7 @@ export function Footer() {
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.labelKey}>
-                      <a
-                        href={link.href}
-                        className="text-[14px] text-ink hover:text-brand transition-colors duration-300"
-                      >
-                        {t(link.labelKey)}
-                      </a>
+                      <ColLink href={link.href}>{t(link.labelKey)}</ColLink>
                     </li>
                   ))}
                 </ul>
@@ -110,19 +115,14 @@ export function Footer() {
                 {t(contactsColumn.titleKey)}
               </div>
               <ul className="mt-4 space-y-2.5">
-                {contactsColumn.links.map((link, i) => {
+                {contactsColumn.links.map((link) => {
                   const label =
                     typeof link.label === "string"
                       ? link.label
                       : link.label[locale] ?? link.label.ru;
                   return (
-                    <li key={`c-${i}`}>
-                      <a
-                        href={link.href}
-                        className="text-[14px] text-ink hover:text-brand transition-colors duration-300"
-                      >
-                        {label}
-                      </a>
+                    <li key={link.id}>
+                      <ColLink href={link.href}>{label}</ColLink>
                     </li>
                   );
                 })}
@@ -136,12 +136,12 @@ export function Footer() {
             {t("footer.copyright")}
           </p>
           <div className="flex items-center gap-5">
-            <a
-              href="#"
+            <Link
+              to="/privacy"
               className="text-[12px] text-ink-soft hover:text-ink transition-colors duration-300"
             >
               {t("footer.privacy")}
-            </a>
+            </Link>
             <LangSwitcher />
           </div>
         </div>

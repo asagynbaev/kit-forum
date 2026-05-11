@@ -76,21 +76,18 @@ function SpeakerCard({
   index: number;
 }) {
   const { t, tr } = useI18n();
-  const { crop } = speaker;
-  const xPos = crop.col === 0 ? "0%" : crop.col === 1 ? "50%" : "100%";
-  const yPos = crop.row === 0 ? "0%" : "100%";
 
   return (
     <article className="group/card">
       <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface ring-1 ring-brand/15">
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-no-repeat transition-transform duration-700 ease-spring group-hover/card:scale-[1.04]"
-          style={{
-            backgroundImage: `url(/speakers/${crop.source}.png)`,
-            backgroundSize: "300% 200%",
-            backgroundPosition: `${xPos} ${yPos}`,
-          }}
+        <img
+          src={speaker.photo}
+          alt={tr(speaker.name)}
+          width={440}
+          height={557}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-spring group-hover/card:scale-[1.04]"
         />
 
         <span
