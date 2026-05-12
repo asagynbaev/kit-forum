@@ -939,6 +939,32 @@
                 </p>
               </div>
             </div>
+
+            <div class="timeline-row">
+              <span class="timeline-step">07</span>
+              <div class="timeline-content">
+                <h4>CityCTA: кибер-Бишкек + Liquid Glass</h4>
+                <p>
+                  Leaflet удалён (−155 KB bundle). Новая секция CityCTA: видеофон
+                  bishkek-cyber.mp4 8.7 MB с параллаксом framer-motion (±6% Y, scale 1.06),
+                  fallback MP4 → JPG → CSS-градиент. Поверх — Liquid Glass панель
+                  (<span class="mono">blur(22px) saturate(160%)</span>) с площадкой МУК и
+                  кнопкой «Построить маршрут» → Google Maps.
+                </p>
+              </div>
+            </div>
+
+            <div class="timeline-row">
+              <span class="timeline-step">08</span>
+              <div class="timeline-content">
+                <h4>PageLoader + Hero glass panel</h4>
+                <p>
+                  PageLoader: spinner-пилюля Loader2 + animate-spin, pulsing-dot перед eyebrow,
+                  shimmer на прогресс-баре (4px, glow). Hero stats + CTA + countdown
+                  обёрнуты в Liquid Glass карточку — единый мотив с CityCTA.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="page-foot">КИТ Форум 2026 · Кейс</div>
@@ -1139,11 +1165,11 @@
             <div class="feature">
               <span class="feature-idx">07</span>
               <div>
-                <h4>Map · МУК Центральный кампус</h4>
+                <h4>CityCTA · Кибер-Бишкек</h4>
                 <p>
-                  Leaflet + CartoDB Light tiles, кастомный brand-blue
-                  pulsing-marker «KF», координаты 42.8424°N · 74.6047°E,
-                  кнопки маршрута: Google Maps + 2ГИС.
+                  Видеофон bishkek-cyber.mp4 с параллаксом, Liquid Glass панель с данными
+                  площадки МУК (адрес, парковка, доступность), кнопка → Google Maps.
+                  Leaflet удалён. Bundle: 821 KB → 666 KB.
                 </p>
               </div>
             </div>
@@ -1377,7 +1403,7 @@
         <div class="page-inner">
           <div class="data-strip">
             <span><span class="accent">07</span> · Digital motifs</span>
-            <span>Цифровизация · Координаты · Live</span>
+            <span>Liquid Glass · Blueprint · Live</span>
           </div>
 
           <div style="margin-top: 30mm">
@@ -1386,14 +1412,14 @@
               Цифровые motif-ы
             </span>
             <h2>
-              <span class="accent">Координаты</span>, blueprint-сетка,<br />
-              live-индикаторы.
+              <span class="accent">Liquid Glass</span>, blueprint-сетка,<br />
+              координаты, live-индикаторы.
             </h2>
             <p class="lead" style="margin-top: 10mm">
-              Чтобы донести смысл «цифровая трансформация» без банальных
-              tech-стоковых элементов — добавлены тонкие digital-motif-ы:
-              blueprint-grid 96px в брендовом синем, координатные маркеры
-              широты/долготы, system-status строки, pulsing LiveBadge.
+              Два уровня визуального языка: тонкие фоновые digital-motif-ы
+              (blueprint-grid, координаты, LiveBadge) создают «государственную»
+              серьёзность, а Liquid Glass панели поверх видео — кинематографичную
+              глубину без потери читаемости.
             </p>
           </div>
 
@@ -1440,16 +1466,17 @@
               </p>
             </div>
             <div>
-              <span class="label">Registration marks</span>
+              <span class="label">Liquid Glass · iOS 26 style</span>
               <h3 style="margin-top: 8mm">
-                Cinema-метки по углам ключевых блоков
+                Мокрое стекло над видеофоном
               </h3>
               <p class="body" style="margin-top: 6mm">
-                L-образные печатные метки в углах (как в типографских
-                регистровых картах). Подсознательное «это не интернет,
-                это документ, печатный материал, государственный документ».
-                Аккуратные, не привлекают внимание, но создают слой
-                solidity.
+                Панели CityCTA и Hero используют
+                <span class="mono">backdrop-filter: blur(20–22px) saturate(150–160%)</span>
+                с тонким градиентным фоном и inset-тенью. Два псевдослоя:
+                specular highlight (top-left) имитирует бликующую поверхность,
+                brand-glow (bottom-right) — лёгкое голубое свечение. Текст
+                читается без тяжёлой тёмной полки под ним.
               </p>
             </div>
           </div>
@@ -1482,7 +1509,7 @@
             </p>
           </div>
 
-          <div class="three-col" style="margin-top: 14mm">
+          <div class="four-col" style="margin-top: 14mm">
             <div class="metric-card">
               <span class="label">Hero видео</span>
               <div class="val">2.0 MB</div>
@@ -1491,10 +1518,17 @@
               </div>
             </div>
             <div class="metric-card">
-              <span class="label">JS bundle</span>
-              <div class="val">158 KB</div>
+              <span class="label">CityCTA видео</span>
+              <div class="val">8.7 MB</div>
               <div class="delta">
-                Gzip · React + Motion + Leaflet + Router
+                bishkek-cyber.mp4 · параллакс-фон · fallback JPG + CSS
+              </div>
+            </div>
+            <div class="metric-card">
+              <span class="label">JS bundle</span>
+              <div class="val">~90 KB</div>
+              <div class="delta">
+                Gzip · <strong>—68 KB</strong> Leaflet удалён · React + Motion + Router
               </div>
             </div>
             <div class="metric-card">
@@ -1513,8 +1547,8 @@
               <span class="stack-pill">Tailwind 3</span>
               <span class="stack-pill">Framer Motion 11</span>
               <span class="stack-pill">Lucide React</span>
-              <span class="stack-pill">Leaflet</span>
               <span class="stack-pill">React Router 6</span>
+              <span class="stack-pill">Liquid Glass · backdrop-filter</span>
               <span class="stack-pill">ffmpeg · libx264 · libvpx</span>
               <span class="stack-pill">Vercel</span>
             </div>
@@ -1551,9 +1585,11 @@
                 <span class="mono">/assets/*</span>. + Accept-Ranges.
               </div>
               <div>
-                <strong>Доступность.</strong> Семантические landmarks,
-                <span class="mono">prefers-reduced-motion</span> везде, focus-ring,
-                ARIA-tabs на программе, диалог-роли на overlay.
+                <strong>Liquid Glass.</strong> Видеофоны CityCTA и Hero-панель используют
+                <span class="mono">backdrop-filter</span> — без жёсткой тёмной подложки,
+                текст читается при любой яркости фона.
+                <span class="mono">prefers-reduced-motion</span> отключает видео,
+                переключает на статичное фото.
               </div>
               <div>
                 <strong>Адаптив.</strong> 320–1440px. Touch-action: pan-y,
