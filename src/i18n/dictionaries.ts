@@ -44,6 +44,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Loader
     "loader.aria": "Загрузка",
+    "loader.status": "Загрузка",
     "loader.eyebrow": "Подготовка опыта · 04.06.2026",
     "loader.title": "КИТ ФОРУМ",
     "loader.subtitle":
@@ -238,6 +239,16 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       ". Оргкомитет свяжется в течение одного рабочего дня.",
     "contacts.success.reset": "Отправить ещё одну заявку",
 
+    // ─── City CTA (cinematic banner before footer)
+    "city.aria": "Бишкек — город форума",
+    "city.eyebrow": "Bishkek · cyber-capital · 2026",
+    "city.titleA": "До встречи",
+    "city.titleB": "в Бишкеке.",
+    "city.lead":
+      "Столица Кыргызстана соберёт лидеров цифровой отрасли Центральной Азии. Два дня дискуссий, решений и встреч — там, где традиции встречаются с технологиями будущего.",
+    "city.metaCity": "Бишкек · КР",
+    "city.metaDate": "4–5 июня 2026",
+
     // ─── Footer
     "footer.col.forum.title": "Форум",
     "footer.col.forum.link.about": "О форуме",
@@ -345,6 +356,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Жүктөгүч
     "loader.aria": "Жүктөлүүдө",
+    "loader.status": "Жүктөлүүдө",
     "loader.eyebrow": "Тажрыйбага даярдоо · 04.06.2026",
     "loader.title": "КИТ ФОРУМ",
     "loader.subtitle":
@@ -541,6 +553,16 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       " дарегине жөнөтүлдү. Уюштуруу комитети бир жумушчу күндүн ичинде сиз менен байланышат.",
     "contacts.success.reset": "Дагы бир арыз жөнөтүү",
 
+    // ─── Шаар (форумдан мурунку cinematic баннер)
+    "city.aria": "Бишкек — форумдун шаары",
+    "city.eyebrow": "Bishkek · cyber-capital · 2026",
+    "city.titleA": "Бишкекте",
+    "city.titleB": "жолугушалы.",
+    "city.lead":
+      "Кыргызстандын борбору Борбордук Азиянын санариптик тармагынын лидерлерин чогултат. Эки күн талкуу, чечим жана жолугушуу — салттар келечектин технологиялары менен жолуккан жерде.",
+    "city.metaCity": "Бишкек · КР",
+    "city.metaDate": "4–5-июнь, 2026",
+
     // ─── Подвал
     "footer.col.forum.title": "Форум",
     "footer.col.forum.link.about": "Форум жөнүндө",
@@ -648,6 +670,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
 
     // ─── Loader
     "loader.aria": "Loading",
+    "loader.status": "Loading",
     "loader.eyebrow": "Preparing the experience · 04.06.2026",
     "loader.title": "KIT FORUM",
     "loader.subtitle":
@@ -843,6 +866,16 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "contacts.success.bodyB":
       ". The organising committee will be in touch within one business day.",
     "contacts.success.reset": "Submit another request",
+
+    // ─── City CTA (cinematic banner before footer)
+    "city.aria": "Bishkek — host city of the forum",
+    "city.eyebrow": "Bishkek · cyber-capital · 2026",
+    "city.titleA": "See you",
+    "city.titleB": "in Bishkek.",
+    "city.lead":
+      "The capital of Kyrgyzstan will host Central Asia's digital industry leaders. Two days of dialogue, decisions, and encounters — where tradition meets the technologies of tomorrow.",
+    "city.metaCity": "Bishkek · KR",
+    "city.metaDate": "4–5 June 2026",
 
     // ─── Footer
     "footer.col.forum.title": "Forum",

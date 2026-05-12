@@ -3,8 +3,8 @@ import { Hero } from "./components/sections/Hero";
 import { Program } from "./components/sections/Program";
 import { Speakers } from "./components/sections/Speakers";
 import { Partners } from "./components/sections/Partners";
-import { MapVenue } from "./components/sections/MapVenue";
 import { Contacts } from "./components/sections/Contacts";
+import { CityCTA } from "./components/sections/CityCTA";
 import { Footer } from "./components/sections/Footer";
 import { PageLoader } from "./components/ui/PageLoader";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
@@ -20,8 +20,8 @@ export function App() {
         <Program />
         <Speakers />
         <Partners />
-        <MapVenue />
         <Contacts />
+        <CityCTA />
       </main>
       <Footer />
     </div>

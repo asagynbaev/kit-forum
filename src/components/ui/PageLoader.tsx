@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { markLoaderDone } from "@/lib/loaderState";
 
@@ -134,11 +135,21 @@ export function PageLoader() {
                   </span>
                 </div>
               </div>
-              <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-white/55 tabular tnums">
-                {Math.floor(progress * 100)
-                  .toString()
-                  .padStart(2, "0")}
-                %
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 backdrop-blur-sm font-mono text-[10px] tracking-[0.22em] uppercase text-white tabular tnums">
+                <Loader2
+                  size={12}
+                  strokeWidth={2}
+                  className={prefersReduced ? "text-brand-glow" : "text-brand-glow animate-spin"}
+                  aria-hidden
+                />
+                <span className="text-white/70">{t("loader.status")}</span>
+                <span aria-hidden className="h-1 w-1 rounded-full bg-brand-glow" />
+                <span className="text-white">
+                  {Math.floor(progress * 100)
+                    .toString()
+                    .padStart(3, "0")}
+                  %
+                </span>
               </span>
             </motion.div>
 
@@ -150,8 +161,12 @@ export function PageLoader() {
                 className="w-full"
               >
                 <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-brand-glow/80">
-                  <span aria-hidden className="h-px w-8 sm:w-12 bg-brand-glow/60" />
+                  <span aria-hidden className="relative inline-flex h-2 w-2 shrink-0">
+                    <span className="absolute inset-0 rounded-full bg-brand-glow opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-glow" />
+                  </span>
                   <span>{t("loader.eyebrow")}</span>
+                  <span aria-hidden className="h-px w-8 sm:w-12 bg-brand-glow/60" />
                 </div>
                 <h1
                   className="mt-5 font-display font-medium text-white leading-[0.92] tracking-tightest"
@@ -174,19 +189,19 @@ export function PageLoader() {
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
               className="mt-auto flex flex-col gap-4"
             >
-              <div className="relative h-[2px] w-full overflow-hidden rounded-full bg-white/10">
+              <div className="relative h-[4px] w-full overflow-hidden rounded-full bg-white/[0.08] ring-1 ring-white/10">
                 <div
-                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-brand via-brand-glow to-brand transition-[width] duration-200 ease-out"
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-brand via-brand-glow to-brand shadow-[0_0_18px_rgba(0,212,255,0.55)] transition-[width] duration-200 ease-out"
                   style={{ width: `${progress * 100}%` }}
                 />
                 {!prefersReduced && (
                   <motion.div
                     aria-hidden
-                    className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-white/45 to-transparent"
                     initial={{ x: "-100%" }}
                     animate={{ x: "400%" }}
                     transition={{
-                      duration: 1.8,
+                      duration: 1.6,
                       repeat: Infinity,
                       ease: "linear",
                     }}

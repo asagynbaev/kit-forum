@@ -171,7 +171,7 @@ export function Hero() {
           playsInline
           preload="auto"
           poster="/videos/poster.webp"
-          aria-hidden
+          tabIndex={-1}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
             videoLoaded ? "opacity-100" : "opacity-0"
           } ${videoEnded ? "saturate-[1.05]" : ""}`}
@@ -234,6 +234,38 @@ export function Hero() {
 
       {/* ── Stats + bottom content (padded) ── */}
       <div className="container-edge relative flex-1 flex flex-col pb-8 md:pb-12">
+        <div
+          className="relative mt-1 rounded-[22px] sm:rounded-[28px] overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 40%, rgba(10,22,40,0.14) 100%)",
+            backdropFilter: "blur(20px) saturate(150%)",
+            WebkitBackdropFilter: "blur(20px) saturate(150%)",
+            border: "1px solid rgba(255,255,255,0.10)",
+            boxShadow:
+              "0 24px 64px -16px rgba(0,0,0,0.5), 0 6px 20px -6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.03)",
+          }}
+        >
+          {/* Specular top-left sheen */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none rounded-[22px] sm:rounded-[28px]"
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 45% at 10% 0%, rgba(255,255,255,0.11) 0%, transparent 60%)",
+            }}
+          />
+          {/* Brand-glow accent bottom-right */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none rounded-[22px] sm:rounded-[28px]"
+            style={{
+              background:
+                "radial-gradient(ellipse 45% 35% at 95% 100%, rgba(0,212,255,0.09) 0%, transparent 60%)",
+            }}
+          />
+
+          <div className="relative px-4 sm:px-6 md:px-8 pt-1 pb-5 md:pb-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -331,6 +363,8 @@ export function Hero() {
               </span>
             </div>
           </motion.div>
+        </div>
+          </div>
         </div>
 
         <motion.a
