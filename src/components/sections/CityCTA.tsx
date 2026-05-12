@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Car, BadgeCheck, Accessibility } from "lucide-react";
 import { Reveal } from "../ui/Reveal";
@@ -7,7 +7,9 @@ import { venue } from "@/data/venue";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-const CITY_VIDEO_SRC = "/videos/bishkek-cyber.mp4";
+const CITY_VIDEO_DESKTOP_MP4 = "/videos/bishkek-cyber.mp4";
+const CITY_VIDEO_DESKTOP_WEBM = "/videos/bishkek-cyber.webm";
+const CITY_VIDEO_MOBILE_MP4 = "/videos/bishkek-cyber-mobile.mp4";
 
 const CITY_IMAGE_CANDIDATES = [
   "/images/bishkek-cyber.webp",
@@ -23,12 +25,42 @@ const googleDirectionsHref = `https://www.google.com/maps/dir/?api=1&destination
 export function CityCTA() {
   const { t, tr } = useI18n();
   const ref = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReduced = useReducedMotion();
   const [srcIndex, setSrcIndex] = useState(0);
   const imgOk = srcIndex < CITY_IMAGE_CANDIDATES.length;
   const currentSrc = CITY_IMAGE_CANDIDATES[srcIndex];
   const [videoOk, setVideoOk] = useState(true);
+  const [videoShouldLoad, setVideoShouldLoad] = useState(false);
   const posterSrc = imgOk ? currentSrc : undefined;
+
+  useEffect(() => {
+    if (prefersReduced) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setVideoShouldLoad(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "400px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [prefersReduced]);
+
+  useEffect(() => {
+    if (!videoShouldLoad) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.load();
+    v.play().catch(() => {});
+  }, [videoShouldLoad]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -56,18 +88,24 @@ export function CityCTA() {
           style={{ y: bgY, scale: bgScale }}
         >
           <video
-            autoPlay
+            ref={videoRef}
             loop
             muted
             playsInline
-            preload="auto"
+            preload="none"
             poster={posterSrc}
             tabIndex={-1}
             onError={() => setVideoOk(false)}
             className="h-full w-full object-cover"
             style={{ filter: "saturate(1.12) contrast(1.05)" }}
           >
-            <source src={CITY_VIDEO_SRC} type="video/mp4" />
+            {videoShouldLoad && (
+              <>
+                <source media="(max-width: 768px)" src={CITY_VIDEO_MOBILE_MP4} type="video/mp4" />
+                <source src={CITY_VIDEO_DESKTOP_WEBM} type="video/webm" />
+                <source src={CITY_VIDEO_DESKTOP_MP4} type="video/mp4" />
+              </>
+            )}
           </video>
         </motion.div>
       ) : (
