@@ -272,7 +272,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "footer.organizerName": "Парк высоких технологий КР",
     "footer.eventLine": "4–5 июня 2026 · Бишкек",
     "footer.liveBadge": "Online · KGZ · GMT+6",
-    "footer.versionBadge": "v.2026.06 · РУС",
+    "footer.versionBadge": "v1.1.3 · РУС",
     "footer.copyright":
       "© 2026 КИТ Форум · Парк высоких технологий Кыргызской Республики · Все права защищены.",
     "footer.privacy": "Политика конфиденциальности",
@@ -586,7 +586,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "footer.organizerName": "КР Жогорку технологиялар паркы",
     "footer.eventLine": "4–5-июнь, 2026 · Бишкек",
     "footer.liveBadge": "Online · KGZ · GMT+6",
-    "footer.versionBadge": "v.2026.06 · КЫР",
+    "footer.versionBadge": "v1.1.3 · КЫР",
     "footer.copyright":
       "© 2026 КИТ Форум · Кыргыз Республикасынын Жогорку технологиялар паркы · Бардык укуктар корголгон.",
     "footer.privacy": "Купуялык саясаты",
@@ -900,7 +900,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "footer.organizerName": "High Technology Park of the KR",
     "footer.eventLine": "4–5 June 2026 · Bishkek",
     "footer.liveBadge": "Online · KGZ · GMT+6",
-    "footer.versionBadge": "v.2026.06 · ENG",
+    "footer.versionBadge": "v1.1.3 · ENG",
     "footer.copyright":
       "© 2026 KIT Forum · High Technology Park of the Kyrgyz Republic · All rights reserved.",
     "footer.privacy": "Privacy policy",
