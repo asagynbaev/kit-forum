@@ -38,6 +38,10 @@ export function CityCTA() {
     if (prefersReduced) return;
     const el = ref.current;
     if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVideoShouldLoad(true);
+      return;
+    }
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -58,8 +62,16 @@ export function CityCTA() {
     if (!videoShouldLoad) return;
     const v = videoRef.current;
     if (!v) return;
-    v.load();
-    v.play().catch(() => {});
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    };
+    if (v.readyState >= 2) {
+      tryPlay();
+    } else {
+      v.addEventListener("canplay", tryPlay, { once: true });
+      return () => v.removeEventListener("canplay", tryPlay);
+    }
   }, [videoShouldLoad]);
 
   const { scrollYProgress } = useScroll({
@@ -81,7 +93,7 @@ export function CityCTA() {
       <div aria-hidden className="absolute inset-0 z-0 city-cta-backdrop" />
 
       {/* ── Animated background (video → static photo fallback) ── */}
-      {videoOk && !prefersReduced ? (
+      {videoOk && !prefersReduced && videoShouldLoad ? (
         <motion.div
           aria-hidden
           className="absolute inset-0 z-[1]"
@@ -89,23 +101,20 @@ export function CityCTA() {
         >
           <video
             ref={videoRef}
+            autoPlay
             loop
             muted
             playsInline
-            preload="none"
+            preload="auto"
             poster={posterSrc}
             tabIndex={-1}
             onError={() => setVideoOk(false)}
             className="h-full w-full object-cover"
             style={{ filter: "saturate(1.12) contrast(1.05)" }}
           >
-            {videoShouldLoad && (
-              <>
-                <source media="(max-width: 768px)" src={CITY_VIDEO_MOBILE_MP4} type="video/mp4" />
-                <source src={CITY_VIDEO_DESKTOP_WEBM} type="video/webm" />
-                <source src={CITY_VIDEO_DESKTOP_MP4} type="video/mp4" />
-              </>
-            )}
+            <source media="(max-width: 768px)" src={CITY_VIDEO_MOBILE_MP4} type="video/mp4" />
+            <source src={CITY_VIDEO_DESKTOP_WEBM} type="video/webm" />
+            <source src={CITY_VIDEO_DESKTOP_MP4} type="video/mp4" />
           </video>
         </motion.div>
       ) : (
