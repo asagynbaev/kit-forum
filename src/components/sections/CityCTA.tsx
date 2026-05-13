@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Car, BadgeCheck, Accessibility } from "lucide
 import { Reveal } from "../ui/Reveal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { venue } from "@/data/venue";
+import { onLoaderDone } from "@/lib/loaderState";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -59,29 +60,26 @@ export function CityCTA() {
   }, [prefersReduced]);
 
   useEffect(() => {
-    if (!videoShouldLoad) return;
+    if (!videoShouldLoad || prefersReduced) return;
     const v = videoRef.current;
     if (!v) return;
+    v.load();
     const tryPlay = () => {
       if (!v.paused) return;
       const p = v.play();
       if (p && typeof p.catch === "function") p.catch(() => {});
     };
-    if (v.readyState >= 2) tryPlay();
-    v.addEventListener("canplay", tryPlay);
-    v.addEventListener("loadeddata", tryPlay);
-    const onGesture = () => tryPlay();
-    globalThis.addEventListener("touchstart", onGesture, { once: true, passive: true });
-    globalThis.addEventListener("click", onGesture, { once: true });
-    globalThis.addEventListener("scroll", onGesture, { once: true, passive: true });
+    const unsub = onLoaderDone(() => {
+      if (v.readyState >= 2) tryPlay();
+      v.addEventListener("canplay", tryPlay);
+      v.addEventListener("loadeddata", tryPlay);
+    });
     return () => {
+      unsub?.();
       v.removeEventListener("canplay", tryPlay);
       v.removeEventListener("loadeddata", tryPlay);
-      globalThis.removeEventListener("touchstart", onGesture);
-      globalThis.removeEventListener("click", onGesture);
-      globalThis.removeEventListener("scroll", onGesture);
     };
-  }, [videoShouldLoad]);
+  }, [videoShouldLoad, prefersReduced]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -102,7 +100,7 @@ export function CityCTA() {
       <div aria-hidden className="absolute inset-0 z-0 city-cta-backdrop" />
 
       {/* ── Animated background (video → static photo fallback) ── */}
-      {videoOk && !prefersReduced && videoShouldLoad ? (
+      {videoOk && !prefersReduced ? (
         <motion.div
           aria-hidden
           className="absolute inset-0 z-[1]"
@@ -110,11 +108,10 @@ export function CityCTA() {
         >
           <video
             ref={videoRef}
-            autoPlay
             loop
             muted
             playsInline
-            preload="auto"
+            preload={videoShouldLoad ? "auto" : "none"}
             poster={posterSrc}
             tabIndex={-1}
             onError={() => setVideoOk(false)}
@@ -122,8 +119,8 @@ export function CityCTA() {
             style={{ filter: "saturate(1.12) contrast(1.05)" }}
           >
             <source media="(max-width: 768px)" src={CITY_VIDEO_MOBILE_MP4} type="video/mp4" />
-            <source src={CITY_VIDEO_DESKTOP_WEBM} type="video/webm" />
             <source src={CITY_VIDEO_DESKTOP_MP4} type="video/mp4" />
+            <source src={CITY_VIDEO_DESKTOP_WEBM} type="video/webm" />
           </video>
         </motion.div>
       ) : (
