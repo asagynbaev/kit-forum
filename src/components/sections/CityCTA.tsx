@@ -63,15 +63,24 @@ export function CityCTA() {
     const v = videoRef.current;
     if (!v) return;
     const tryPlay = () => {
+      if (!v.paused) return;
       const p = v.play();
       if (p && typeof p.catch === "function") p.catch(() => {});
     };
-    if (v.readyState >= 2) {
-      tryPlay();
-    } else {
-      v.addEventListener("canplay", tryPlay, { once: true });
-      return () => v.removeEventListener("canplay", tryPlay);
-    }
+    if (v.readyState >= 2) tryPlay();
+    v.addEventListener("canplay", tryPlay);
+    v.addEventListener("loadeddata", tryPlay);
+    const onGesture = () => tryPlay();
+    globalThis.addEventListener("touchstart", onGesture, { once: true, passive: true });
+    globalThis.addEventListener("click", onGesture, { once: true });
+    globalThis.addEventListener("scroll", onGesture, { once: true, passive: true });
+    return () => {
+      v.removeEventListener("canplay", tryPlay);
+      v.removeEventListener("loadeddata", tryPlay);
+      globalThis.removeEventListener("touchstart", onGesture);
+      globalThis.removeEventListener("click", onGesture);
+      globalThis.removeEventListener("scroll", onGesture);
+    };
   }, [videoShouldLoad]);
 
   const { scrollYProgress } = useScroll({
