@@ -79,7 +79,11 @@ export function Navigation() {
           aria-expanded={open}
           aria-controls="mobile-overlay"
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden grid h-11 w-11 place-items-center rounded-md bg-white/70 ring-1 ring-line backdrop-blur-md text-ink active:scale-[0.96] transition-all duration-300 ease-spring"
+          className={`lg:hidden grid h-11 w-11 place-items-center rounded-md backdrop-blur-md active:scale-[0.96] transition-all duration-300 ease-spring ${
+            scrolled
+              ? "bg-ink text-white ring-1 ring-ink/20 shadow-soft"
+              : "bg-white/70 text-ink ring-1 ring-line"
+          }`}
         >
           {open ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
         </button>
