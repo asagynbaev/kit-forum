@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Car, BadgeCheck, Accessibility } from "lucide
 import { Reveal } from "../ui/Reveal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { venue } from "@/data/venue";
+import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -24,6 +25,7 @@ const googleDirectionsHref = `https://www.google.com/maps/dir/?api=1&destination
 
 export function CityCTA() {
   const { t, tr } = useI18n();
+  const { openModal } = useRegistrationModal();
   const ref = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReduced = useReducedMotion();
@@ -285,15 +287,16 @@ export function CityCTA() {
 
           <Reveal delay={0.26}>
             <div className="mt-9 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <a
-                href="#contacts"
+              <button
+                type="button"
+                onClick={openModal}
                 className="group inline-flex items-center justify-center gap-3 rounded-xl bg-brand px-6 py-3.5 text-[14px] font-medium text-white shadow-glow hover:bg-brand-deep active:scale-[0.98] transition-all duration-300 ease-spring"
               >
                 {t("cta.register")}
                 <span aria-hidden className="grid h-7 w-7 place-items-center rounded-md bg-white/15 transition-transform duration-500 ease-spring group-hover:translate-x-0.5">
                   <ArrowRight size={14} strokeWidth={1.6} />
                 </span>
-              </a>
+              </button>
               <a
                 href={googleDirectionsHref}
                 target="_blank"

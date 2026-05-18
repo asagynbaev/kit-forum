@@ -4,6 +4,7 @@ import { ArrowRight, ChevronDown, RotateCcw } from "lucide-react";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
 import { onLoaderDone } from "@/lib/loaderState";
+import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -45,6 +46,7 @@ const stats = [
 
 export function Hero() {
   const { t } = useI18n();
+  const { openModal } = useRegistrationModal();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -299,15 +301,16 @@ export function Hero() {
               {t("hero.lead")}
             </p>
             <div className="mt-5 md:mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
-              <a
-                href="#contacts"
+              <button
+                type="button"
+                onClick={openModal}
                 className="group inline-flex items-center justify-between sm:justify-start gap-3 rounded-xl bg-brand px-5 py-3.5 text-[14px] font-medium text-white shadow-glow hover:bg-brand-deep active:scale-[0.98] transition-all duration-300 ease-spring"
               >
                 {t("cta.register")}
                 <span aria-hidden className="grid h-7 w-7 place-items-center rounded-md bg-white/15 transition-transform duration-500 ease-spring group-hover:translate-x-0.5">
                   <ArrowRight size={14} strokeWidth={1.6} />
                 </span>
-              </a>
+              </button>
               <a
                 href="#program"
                 className="group inline-flex items-center justify-between sm:justify-start gap-3 rounded-xl border border-white/25 px-5 py-3.5 text-[14px] font-medium text-white hover:border-white/45 hover:bg-white/[0.06] active:scale-[0.98] transition-all duration-300 ease-spring"

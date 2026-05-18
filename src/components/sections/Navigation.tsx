@@ -7,9 +7,11 @@ import { LangSwitcher } from "../ui/LangSwitcher";
 import { useI18n } from "@/i18n/I18nProvider";
 import { navLinks } from "@/data/organizers";
 import { useScrolled, useLockBody } from "@/lib/hooks";
+import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 export function Navigation() {
   const { t } = useI18n();
+  const { openModal } = useRegistrationModal();
   const scrolled = useScrolled(20);
   const [open, setOpen] = useState(false);
   const prefersReduced = useReducedMotion();
@@ -59,8 +61,9 @@ export function Navigation() {
             <Trophy size={13} strokeWidth={1.7} />
             {t("award.navLabel")}
           </Link>
-          <a
-            href="#contacts"
+          <button
+            type="button"
+            onClick={openModal}
             className="group inline-flex items-center gap-2.5 rounded-md bg-ink px-4 py-2.5 text-[13px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring"
           >
             {t("cta.register")}
@@ -78,7 +81,7 @@ export function Navigation() {
                 />
               </svg>
             </span>
-          </a>
+          </button>
         </div>
 
         <button
@@ -161,9 +164,9 @@ export function Navigation() {
                     </svg>
                   </span>
                 </Link>
-                <a
-                  href="#contacts"
-                  onClick={() => setOpen(false)}
+                <button
+                  type="button"
+                  onClick={() => { setOpen(false); openModal(); }}
                   className="inline-flex items-center justify-between rounded-2xl bg-ink px-6 py-5 text-white"
                 >
                   <span className="font-medium">{t("cta.register")}</span>
@@ -178,7 +181,7 @@ export function Navigation() {
                       />
                     </svg>
                   </span>
-                </a>
+                </button>
                 <div className="self-start">
                   <LangSwitcher surface="frosted" />
                 </div>

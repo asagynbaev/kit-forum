@@ -26,11 +26,11 @@ const STATUS_TONE: Record<ForumRegistrationStatus, string> = {
 };
 
 const SOURCE_LABEL: Record<string, string> = {
-  contacts:  "Сайт · контакты",
+  contacts:  "Вопрос · Контакты",
   kit_award: "KIT Awards",
-  hero:      "Hero",
-  footer:    "Footer",
-  other:     "Другое",
+  hero:      "Регистрация · Hero",
+  footer:    "Регистрация · Footer",
+  other:     "Регистрация · Модалка",
 };
 
 function formatDate(iso: string) {
@@ -88,7 +88,7 @@ export function RegistrationsTab() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Удалить заявку безвозвратно?")) return;
+    if (!confirm("Удалить запись безвозвратно?")) return;
     const { error } = await supabase.from("forum_registrations").delete().eq("id", id);
     if (error) { showToast(error.message, false); return; }
     showToast("Удалена");
@@ -172,7 +172,7 @@ export function RegistrationsTab() {
         )}
         {rows !== null && filtered.length === 0 && (
           <div className="py-16 text-center text-sm text-gray-400">
-            Пока ни одной заявки
+            Пока нет записей
           </div>
         )}
         {rows !== null && filtered.length > 0 && (

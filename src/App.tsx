@@ -8,22 +8,27 @@ import { CityCTA } from "./components/sections/CityCTA";
 import { Footer } from "./components/sections/Footer";
 import { PageLoader } from "./components/ui/PageLoader";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { RegistrationModal } from "./components/ui/RegistrationModal";
+import { RegistrationModalProvider } from "./context/RegistrationModalContext";
 
 export function App() {
   return (
-    <div className="relative min-h-[100dvh] bg-canvas text-ink overflow-x-clip">
-      <PageLoader />
-      <ScrollToTop />
-      <Navigation />
-      <main>
-        <Hero />
-        <Program />
-        <Speakers />
-        <Partners />
-        <Contacts />
-        <CityCTA />
-      </main>
-      <Footer />
-    </div>
+    <RegistrationModalProvider>
+      <div className="relative min-h-[100dvh] bg-canvas text-ink overflow-x-clip">
+        <PageLoader />
+        <ScrollToTop />
+        <Navigation />
+        <main>
+          <Hero />
+          <Program />
+          <Speakers />
+          <Partners />
+          <Contacts />
+          <CityCTA />
+        </main>
+        <Footer />
+        <RegistrationModal />
+      </div>
+    </RegistrationModalProvider>
   );
 }

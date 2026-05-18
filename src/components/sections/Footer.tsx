@@ -3,6 +3,7 @@ import { Logo } from "../ui/Logo";
 import { LangSwitcher } from "../ui/LangSwitcher";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
+import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 const columns = [
   {
@@ -16,7 +17,7 @@ const columns = [
   {
     titleKey: "footer.col.participate.title",
     links: [
-      { labelKey: "footer.col.participate.link.register", href: "#contacts" },
+      { labelKey: "footer.col.participate.link.register", href: "#contacts", openModal: true },
       { labelKey: "footer.col.participate.link.media", href: "mailto:pr@htp.kg" },
       { labelKey: "footer.col.participate.link.partner", href: "#contacts" },
       { labelKey: "footer.col.participate.link.speaker", href: "mailto:a.osmonalieva@htp.kg" },
@@ -48,8 +49,9 @@ const contactsColumn = {
   ],
 };
 
+const cls = "text-[14px] text-ink hover:text-brand transition-colors duration-300";
+
 function ColLink({ href, children }: Readonly<{ href: string; children: React.ReactNode }>) {
-  const cls = "text-[14px] text-ink hover:text-brand transition-colors duration-300";
   if (href.startsWith("/")) {
     return <Link to={href} className={cls}>{children}</Link>;
   }
@@ -58,6 +60,7 @@ function ColLink({ href, children }: Readonly<{ href: string; children: React.Re
 
 export function Footer() {
   const { t, locale } = useI18n();
+  const { openModal } = useRegistrationModal();
   return (
     <footer className="relative bg-surface text-ink overflow-hidden">
       <div
@@ -103,7 +106,13 @@ export function Footer() {
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.labelKey}>
-                      <ColLink href={link.href}>{t(link.labelKey)}</ColLink>
+                      {"openModal" in link && link.openModal ? (
+                        <button type="button" onClick={openModal} className={cls}>
+                          {t(link.labelKey)}
+                        </button>
+                      ) : (
+                        <ColLink href={link.href}>{t(link.labelKey)}</ColLink>
+                      )}
                     </li>
                   ))}
                 </ul>
