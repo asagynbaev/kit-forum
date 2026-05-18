@@ -17,15 +17,15 @@ type FormState = {
   order_index: number;
 };
 
-async function uploadPhoto(file: File): Promise<string | null> {
+async function uploadPhoto(file: File): Promise<{ url: string } | { error: string }> {
   const ext = file.name.split(".").pop() ?? "jpg";
   const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const { error } = await supabase.storage
     .from("speaker-photos")
     .upload(name, file, { upsert: true, contentType: file.type });
-  if (error) return null;
+  if (error) return { error: error.message };
   const { data } = supabase.storage.from("speaker-photos").getPublicUrl(name);
-  return data.publicUrl;
+  return { url: data.publicUrl };
 }
 
 function PhotoField({
@@ -44,10 +44,10 @@ function PhotoField({
     if (!file.type.startsWith("image/")) { onError("Только изображения"); return; }
     if (file.size > 8 * 1024 * 1024) { onError("Максимум 8 МБ"); return; }
     setUploading(true);
-    const url = await uploadPhoto(file);
+    const res = await uploadPhoto(file);
     setUploading(false);
-    if (!url) { onError("Ошибка загрузки. Проверьте бакет speaker-photos в Supabase Storage."); return; }
-    onChange(url);
+    if ("error" in res) { onError(`Ошибка загрузки: ${res.error}`); return; }
+    onChange(res.url);
   };
 
   return (
@@ -121,7 +121,8 @@ export function SpeakersTab() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("speakers").select("*").order("order_index");
+    const { data, error } = await supabase.from("speakers").select("*").order("order_index");
+    if (error) { showToast(error.message, false); return; }
     setRows(data ?? []);
   };
 

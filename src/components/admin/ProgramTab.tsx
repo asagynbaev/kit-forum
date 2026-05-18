@@ -53,11 +53,12 @@ export function ProgramTab() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const load = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("program_sessions")
       .select("*")
       .order("starts_at")
       .order("order_index");
+    if (error) { showToast(error.message, false); return; }
     setRows(data ?? []);
   };
 

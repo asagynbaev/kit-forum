@@ -22,7 +22,8 @@ export function SocialTab() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("social_links").select("*").order("order_index");
+    const { data, error } = await supabase.from("social_links").select("*").order("order_index");
+    if (error) { showToast(error.message, false); return; }
     setRows(data ?? []);
   };
 
