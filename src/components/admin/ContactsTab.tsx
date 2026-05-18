@@ -3,6 +3,7 @@ import { Pencil, Trash2, Plus, GripVertical } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Database, Json } from "@/lib/database.types";
 import { Field, LocalizedField, Modal, Btn, Toast } from "./shared";
+import { useContactBlocks, type ContactBlock } from "@/lib/useSupabaseData";
 
 type Row = Database["public"]["Tables"]["contact_persons"]["Row"];
 type LocVal = { ru: string; ky: string; en: string };
@@ -16,6 +17,13 @@ interface FormState {
   order_index: number;
 }
 
+interface BlockFormState {
+  title: LocVal;
+  lines_ru: string;
+  lines_ky: string;
+  lines_en: string;
+}
+
 const emptyLoc = (): LocVal => ({ ru: "", ky: "", en: "" });
 
 const emptyForm = (): FormState => ({
@@ -25,6 +33,13 @@ const emptyForm = (): FormState => ({
   phone_href: "",
   emails: "",
   order_index: 0,
+});
+
+const emptyBlockForm = (): BlockFormState => ({
+  title: emptyLoc(),
+  lines_ru: "",
+  lines_ky: "",
+  lines_en: "",
 });
 
 function asLoc(v: Json): LocVal {
@@ -43,6 +58,11 @@ export function ContactsTab() {
   const [form, setForm] = useState<FormState>(emptyForm());
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+
+  const { blocks, reload: reloadBlocks } = useContactBlocks();
+  const [blockModal, setBlockModal] = useState<ContactBlock | null>(null);
+  const [blockForm, setBlockForm] = useState<BlockFormState>(emptyBlockForm());
+  const [blockSaving, setBlockSaving] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -77,6 +97,16 @@ export function ContactsTab() {
     setModal(row);
   };
 
+  const openBlockEdit = (block: ContactBlock) => {
+    setBlockForm({
+      title: { ru: block.title.ru ?? "", ky: block.title.ky ?? "", en: block.title.en ?? "" },
+      lines_ru: block.lines.map((l) => l.ru ?? "").join("\n"),
+      lines_ky: block.lines.map((l) => l.ky ?? "").join("\n"),
+      lines_en: block.lines.map((l) => l.en ?? "").join("\n"),
+    });
+    setBlockModal(block);
+  };
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -102,6 +132,33 @@ export function ContactsTab() {
     load();
   };
 
+  const saveBlock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!blockModal) return;
+    setBlockSaving(true);
+
+    const ruArr = blockForm.lines_ru.split("\n");
+    const kyArr = blockForm.lines_ky.split("\n");
+    const enArr = blockForm.lines_en.split("\n");
+    const len = Math.max(ruArr.length, kyArr.length, enArr.length);
+    const lines = Array.from({ length: len }, (_, i) => ({
+      ru: ruArr[i]?.trim() ?? "",
+      ky: kyArr[i]?.trim() ?? "",
+      en: enArr[i]?.trim() ?? "",
+    })).filter((l) => l.ru || l.ky || l.en);
+
+    const { error } = await supabase
+      .from("contact_blocks")
+      .update({ title: blockForm.title as Json, lines: lines as Json })
+      .eq("id", blockModal.id);
+
+    setBlockSaving(false);
+    if (error) { showToast(error.message, false); return; }
+    showToast("Блок обновлён");
+    setBlockModal(null);
+    reloadBlocks();
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Удалить контакт?")) return;
     const { error } = await supabase.from("contact_persons").delete().eq("id", id);
@@ -114,6 +171,53 @@ export function ContactsTab() {
     <div>
       {toast && <Toast {...toast} />}
 
+      {/* ── Organizer / Venue blocks ─────────────────────────────────────── */}
+      <div className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">Организатор и площадка</h3>
+        <div className="overflow-x-auto rounded-xl border border-gray-100">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <tr>
+                <th className="px-4 py-3">Ярлык</th>
+                <th className="px-4 py-3">Название</th>
+                <th className="px-4 py-3">Строки</th>
+                <th className="px-4 py-3 w-20">Действие</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {blocks.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-sm text-gray-400">
+                    Нет данных. Запусти миграцию <code className="font-mono">supabase-contact-blocks.sql</code>.
+                  </td>
+                </tr>
+              )}
+              {blocks.map((block) => (
+                <tr key={block.id} className="bg-white hover:bg-gray-50/60 transition-colors">
+                  <td className="px-4 py-3 text-xs font-mono text-gray-500">{block.label.ru}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">{block.title.ru}</td>
+                  <td className="px-4 py-3 text-xs text-gray-500 space-y-0.5">
+                    {block.lines.map((l, i) => (
+                      <div key={l.ru || i}>{l.ru}</div>
+                    ))}
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => openBlockEdit(block)}
+                      className="rounded p-1.5 text-gray-400 hover:bg-blue-50 hover:text-brand transition-colors"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── Contact persons ──────────────────────────────────────────────── */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-500">
           {rows.length} контактов в оргкомитете
@@ -188,6 +292,7 @@ export function ContactsTab() {
         </table>
       </div>
 
+      {/* ── Contact person modal ─────────────────────────────────────────── */}
       {modal !== null && (
         <Modal
           title={modal === "add" ? "Добавить контакт" : "Редактировать контакт"}
@@ -237,6 +342,53 @@ export function ContactsTab() {
               <Btn variant="secondary" onClick={() => setModal(null)}>Отмена</Btn>
               <Btn type="submit" variant="primary" disabled={saving}>
                 {saving ? "Сохранение..." : "Сохранить"}
+              </Btn>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* ── Block edit modal ─────────────────────────────────────────────── */}
+      {blockModal !== null && (
+        <Modal
+          title={`Редактировать: ${blockModal.label.ru}`}
+          onClose={() => setBlockModal(null)}
+          size="lg"
+        >
+          <form onSubmit={saveBlock} className="space-y-5">
+            <LocalizedField
+              label="Название *"
+              value={blockForm.title}
+              onChange={(v) => setBlockForm((f) => ({ ...f, title: v }))}
+              required
+            />
+            <div>
+              <p className="mb-2 text-sm font-medium text-gray-700">
+                Строки контента{" "}
+                <span className="text-xs font-normal text-gray-400">(каждая новая строка — отдельный элемент)</span>
+              </p>
+              <div className="space-y-3">
+                {(["ru", "ky", "en"] as const).map((lang) => (
+                  <div key={lang} className="flex gap-2">
+                    <span className="mt-2 w-7 shrink-0 text-[10px] uppercase tracking-widest text-gray-400 font-mono">
+                      {lang}
+                    </span>
+                    <textarea
+                      rows={3}
+                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand resize-y"
+                      value={blockForm[`lines_${lang}`]}
+                      onChange={(e) =>
+                        setBlockForm((f) => ({ ...f, [`lines_${lang}`]: e.target.value }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <Btn variant="secondary" onClick={() => setBlockModal(null)}>Отмена</Btn>
+              <Btn type="submit" variant="primary" disabled={blockSaving}>
+                {blockSaving ? "Сохранение..." : "Сохранить"}
               </Btn>
             </div>
           </form>

@@ -271,6 +271,12 @@ export interface Database {
         };
         Relationships: [];
       };
+      contact_blocks: {
+        Row: { id: string; label: Json; title: Json; lines: Json; order_index: number };
+        Insert: { id?: string; label: Json; title: Json; lines: Json; order_index?: number };
+        Update: { id?: string; label?: Json; title?: Json; lines?: Json; order_index?: number };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

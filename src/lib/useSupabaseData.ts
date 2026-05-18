@@ -198,6 +198,46 @@ export function useContactPersons() {
   return { persons, loading };
 }
 
+// ── CONTACT BLOCKS (Организатор / Площадка) ────────────────────────────────
+
+export interface ContactBlock {
+  id: string;
+  label: Localized;
+  title: Localized;
+  lines: Localized[];
+  order_index: number;
+}
+
+export function useContactBlocks() {
+  const [blocks, setBlocks] = useState<ContactBlock[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = () => {
+    supabase
+      .from("contact_blocks")
+      .select("*")
+      .order("order_index")
+      .then(({ data }) => {
+        if (data) {
+          setBlocks(
+            data.map((r) => ({
+              id: r.id,
+              label: r.label as Localized,
+              title: r.title as Localized,
+              lines: (r.lines as Localized[]) ?? [],
+              order_index: r.order_index,
+            })),
+          );
+        }
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => { load(); }, []);
+
+  return { blocks, loading, reload: load };
+}
+
 export function useSocialLinks() {
   const [links, setLinks] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState(true);

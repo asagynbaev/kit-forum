@@ -7,7 +7,7 @@ import { LiveBadge } from "../ui/LiveBadge";
 import { socialLinks } from "@/data/organizers";
 import { useI18n } from "@/i18n/I18nProvider";
 import { supabase } from "@/lib/supabase";
-import { useContactPersons, type ContactPerson as PersonRow } from "@/lib/useSupabaseData";
+import { useContactPersons, useContactBlocks, type ContactPerson as PersonRow } from "@/lib/useSupabaseData";
 
 const socialIcons: Record<string, JSX.Element> = {
   telegram: (
@@ -103,6 +103,7 @@ export function Contacts() {
   const { t, tr, locale } = useI18n();
   const { persons: dbPersons, loading: personsLoading } = useContactPersons();
   const persons = !personsLoading && dbPersons.length > 0 ? dbPersons : FALLBACK_PERSONS;
+  const { blocks } = useContactBlocks();
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -211,27 +212,20 @@ export function Contacts() {
           <div className="col-span-12 lg:col-span-7">
             <Reveal>
               <dl className="divide-y divide-brand/20 border-y border-brand/20">
-                <ContactRow
-                  label={t("contacts.row.organizer.label")}
-                  primary={t("contacts.row.organizer.primary")}
-                  secondary={
-                    <>
-                      {t("contacts.row.organizer.l1")}<br />
-                      {t("contacts.row.organizer.l2")}<br />
-                      {t("contacts.row.organizer.l3")}
-                    </>
-                  }
-                />
-                <ContactRow
-                  label={t("contacts.row.venue.label")}
-                  primary={t("contacts.row.venue.primary")}
-                  secondary={
-                    <>
-                      {t("contacts.row.venue.l1")}<br />
-                      {t("contacts.row.venue.l2")}
-                    </>
-                  }
-                />
+                {blocks.map((block) => (
+                  <ContactRow
+                    key={block.id}
+                    label={tr(block.label)}
+                    primary={tr(block.title)}
+                    secondary={
+                      <>
+                        {block.lines.map((line, i) => (
+                          <span key={line.ru || i}>{tr(line)}{i < block.lines.length - 1 && <br />}</span>
+                        ))}
+                      </>
+                    }
+                  />
+                ))}
                 {persons.map((p) => (
                   <ContactPerson
                     key={p.id}

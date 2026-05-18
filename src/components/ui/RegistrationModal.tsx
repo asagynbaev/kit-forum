@@ -8,14 +8,25 @@ import { useRegistrationModal } from "@/context/RegistrationModalContext";
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
-interface FormState { name: string; email: string }
-interface ErrorState { name?: string; email?: string }
+interface FormState {
+  name: string;
+  email: string;
+  phone: string;
+  org: string;
+}
+
+interface ErrorState {
+  name?: string;
+  email?: string;
+  phone?: string;
+  org?: string;
+}
 
 export function RegistrationModal() {
   const { open, closeModal } = useRegistrationModal();
   const { t, locale } = useI18n();
 
-  const [form, setForm] = useState<FormState>({ name: "", email: "" });
+  const [form, setForm] = useState<FormState>({ name: "", email: "", phone: "", org: "" });
   const [errors, setErrors] = useState<ErrorState>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -28,7 +39,7 @@ export function RegistrationModal() {
 
   useEffect(() => {
     if (open) {
-      setForm({ name: "", email: "" });
+      setForm({ name: "", email: "", phone: "", org: "" });
       setErrors({});
       setSubmitError(null);
       setSubmitted(false);
@@ -45,6 +56,8 @@ export function RegistrationModal() {
     const e: ErrorState = {};
     if (data.name.trim().length < 2) e.name = t("contacts.field.name.error");
     if (!EMAIL_RX.test(data.email)) e.email = t("contacts.field.email.error");
+    if (!data.phone.trim()) e.phone = t("regModal.field.phone.error");
+    if (!data.org.trim()) e.org = t("regModal.field.org.error");
     return e;
   }
 
@@ -57,7 +70,6 @@ export function RegistrationModal() {
     setSubmitting(true);
     setSubmitError(null);
 
-    // check uniqueness via RPC (SECURITY DEFINER, accessible to anon)
     try {
       const { data: exists } = await supabase.rpc("is_email_registered", {
         p_email: form.email.trim().toLowerCase(),
@@ -68,12 +80,14 @@ export function RegistrationModal() {
         return;
       }
     } catch {
-      // RPC not deployed yet — let DB constraint handle it
+      // RPC not deployed — let DB constraint handle it
     }
 
     const { error } = await supabase.from("forum_registrations").insert({
       full_name: form.name.trim(),
       email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim(),
+      organization: form.org.trim(),
       language: locale,
       source: "other",
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
@@ -93,8 +107,12 @@ export function RegistrationModal() {
     setSubmitted(true);
   }
 
-  const field =
-    "w-full rounded-xl border border-line bg-white px-4 py-3 text-[14px] text-ink placeholder:text-ink/35 outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/15 transition-all duration-200";
+  const field = (hasError: boolean) =>
+    `w-full rounded-xl border px-4 py-3 text-[14px] text-ink placeholder:text-ink/35 outline-none focus:ring-2 transition-all duration-200 ${
+      hasError
+        ? "border-red-400 bg-red-50/40 focus:border-red-400 focus:ring-red-100"
+        : "border-line bg-white focus:border-brand/60 focus:ring-brand/15"
+    }`;
 
   return (
     <AnimatePresence>
@@ -147,10 +165,10 @@ export function RegistrationModal() {
                     </div>
 
                     <form onSubmit={onSubmit} noValidate className="space-y-4">
+                      {/* name */}
                       <div>
                         <label className="block text-[12px] font-medium text-ink/70 mb-1.5">
-                          {t("contacts.field.name.label")}
-                          <span className="text-brand ml-0.5">*</span>
+                          {t("contacts.field.name.label")} <span className="text-brand">*</span>
                         </label>
                         <input
                           type="text"
@@ -160,19 +178,17 @@ export function RegistrationModal() {
                           value={form.name}
                           onChange={(e) => {
                             setForm((f) => ({ ...f, name: e.target.value }));
-                            if (errors.name) setErrors((err) => ({ ...err, name: undefined }));
+                            if (errors.name) setErrors((er) => ({ ...er, name: undefined }));
                           }}
-                          className={`${field} ${errors.name ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
+                          className={field(!!errors.name)}
                         />
-                        {errors.name && (
-                          <p className="mt-1 text-[12px] text-red-500">{errors.name}</p>
-                        )}
+                        {errors.name && <p className="mt-1 text-[12px] text-red-500">{errors.name}</p>}
                       </div>
 
+                      {/* email */}
                       <div>
                         <label className="block text-[12px] font-medium text-ink/70 mb-1.5">
-                          {t("contacts.field.email.label")}
-                          <span className="text-brand ml-0.5">*</span>
+                          {t("contacts.field.email.label")} <span className="text-brand">*</span>
                         </label>
                         <input
                           type="email"
@@ -181,13 +197,49 @@ export function RegistrationModal() {
                           value={form.email}
                           onChange={(e) => {
                             setForm((f) => ({ ...f, email: e.target.value }));
-                            if (errors.email) setErrors((err) => ({ ...err, email: undefined }));
+                            if (errors.email) setErrors((er) => ({ ...er, email: undefined }));
                           }}
-                          className={`${field} ${errors.email ? "border-red-400 focus:border-red-400 focus:ring-red-100" : ""}`}
+                          className={field(!!errors.email)}
                         />
-                        {errors.email && (
-                          <p className="mt-1 text-[12px] text-red-500">{errors.email}</p>
-                        )}
+                        {errors.email && <p className="mt-1 text-[12px] text-red-500">{errors.email}</p>}
+                      </div>
+
+                      {/* phone */}
+                      <div>
+                        <label className="block text-[12px] font-medium text-ink/70 mb-1.5">
+                          {t("regModal.field.phone.label")} <span className="text-brand">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          autoComplete="tel"
+                          placeholder={t("regModal.field.phone.placeholder")}
+                          value={form.phone}
+                          onChange={(e) => {
+                            setForm((f) => ({ ...f, phone: e.target.value }));
+                            if (errors.phone) setErrors((er) => ({ ...er, phone: undefined }));
+                          }}
+                          className={field(!!errors.phone)}
+                        />
+                        {errors.phone && <p className="mt-1 text-[12px] text-red-500">{errors.phone}</p>}
+                      </div>
+
+                      {/* org */}
+                      <div>
+                        <label className="block text-[12px] font-medium text-ink/70 mb-1.5">
+                          {t("regModal.field.org.label")} <span className="text-brand">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          autoComplete="organization"
+                          placeholder={t("regModal.field.org.placeholder")}
+                          value={form.org}
+                          onChange={(e) => {
+                            setForm((f) => ({ ...f, org: e.target.value }));
+                            if (errors.org) setErrors((er) => ({ ...er, org: undefined }));
+                          }}
+                          className={field(!!errors.org)}
+                        />
+                        {errors.org && <p className="mt-1 text-[12px] text-red-500">{errors.org}</p>}
                       </div>
 
                       {submitError && (
