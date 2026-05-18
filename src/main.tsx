@@ -8,6 +8,7 @@ import { ArchivePage } from "./pages/ArchivePage";
 import { PressPage } from "./pages/PressPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { AdminPage } from "./pages/AdminPage";
+import { KitAwardPage } from "./pages/KitAwardPage";
 import { I18nProvider } from "./i18n/I18nProvider";
 import { RouteScrollReset } from "./components/ui/RouteScrollReset";
 
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/press" element={<PressPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/kit-award" element={<KitAwardPage />} />
         </Routes>
       </BrowserRouter>
     </I18nProvider>

@@ -238,6 +238,102 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "contacts.success.bodyB":
       ". Оргкомитет свяжется в течение одного рабочего дня.",
     "contacts.success.reset": "Отправить ещё одну заявку",
+    "contacts.submitError":
+      "Не удалось отправить заявку. Проверьте подключение и попробуйте снова.",
+
+    // ─── KIT Awards
+    "award.navLabel": "KIT Awards",
+    "award.aria": "КИТ Awards 2026",
+    "award.eyebrow": "KIT Awards · /kit-award",
+    "award.back": "На главную",
+    "award.titleA": "КИТ",
+    "award.titleB": "Awards",
+    "award.titleC": "2026",
+    "award.lead":
+      "Главная индустриальная премия Кыргызстана — церемония пройдёт в рамках КИТ Форума 04–05.06.2026. Подайте заявку и заявите о результатах перед лидерами цифровой отрасли.",
+    "award.heroDate": "Церемония · 05.06.2026 · Бишкек",
+    "award.statsApplications": "номинаций",
+    "award.statsCategories": "категорий",
+    "award.statsYears": "лет премии",
+    "award.timelineLabel": "Дедлайны",
+    "award.timeline1.label": "Приём заявок",
+    "award.timeline1.value": "До 15.05.2026",
+    "award.timeline2.label": "Шорт-лист",
+    "award.timeline2.value": "20.05.2026",
+    "award.timeline3.label": "Церемония",
+    "award.timeline3.value": "05.06.2026 · Бишкек",
+    "award.steps.title": "Как это работает",
+    "award.step1.title": "Заявка",
+    "award.step1.body":
+      "Заполните форму с описанием проекта и команды. Это бесплатно.",
+    "award.step2.title": "Экспертное жюри",
+    "award.step2.body":
+      "Заявки оценивает совет из лидеров индустрии, государства и инвесторов.",
+    "award.step3.title": "Шорт-лист",
+    "award.step3.body":
+      "Финалисты получают приглашение, медиа-охват и встречи с партнёрами.",
+    "award.step4.title": "Церемония",
+    "award.step4.body":
+      "Объявление победителей в торжественной обстановке на главной сцене.",
+    "award.nominations.title": "Номинации",
+    "award.nominations.lead":
+      "Четыре ключевые категории, отражающие точки роста цифровой индустрии Кыргызстана: AI, банкинг, образование и пространство сообщества.",
+    "award.nom.ai.name": "AI Adoption",
+    "award.nom.ai.desc":
+      "Лучшее внедрение AI/ML в реальный бизнес-процесс или государственный сервис.",
+    "award.nom.cowork.name": "Best Coworking Space",
+    "award.nom.cowork.desc":
+      "Пространство, ставшее точкой притяжения IT-сообщества.",
+    "award.nom.bank.name": "Best Digital Bank",
+    "award.nom.bank.desc":
+      "Цифровой банк или необанк с лучшим клиентским опытом и продуктом.",
+    "award.nom.edu.name": "Best IT Education Project",
+    "award.nom.edu.desc":
+      "Школа, программа или продукт, готовящие новых разработчиков и инженеров.",
+    "award.form.eyebrow": "Заявка · 01",
+    "award.form.titleA": "Подать заявку",
+    "award.form.titleB": "на премию.",
+    "award.form.lead":
+      "Заявка занимает 2 минуты. Все поля — кроме описания проекта — обязательны. Подтверждение придёт на указанный email.",
+    "award.form.step": "Шаг {n} из {total}",
+    "award.form.next": "Дальше",
+    "award.form.back": "Назад",
+    "award.form.submit": "Отправить заявку",
+    "award.form.submitting": "Отправляем…",
+    "award.form.step1.title": "О вас",
+    "award.form.step2.title": "Номинация",
+    "award.form.step3.title": "Проект",
+    "award.form.name.label": "Полное ФИО",
+    "award.form.name.placeholder": "Айбек Айдаров",
+    "award.form.name.error": "Укажите ФИО — минимум 2 символа",
+    "award.form.email.label": "Email",
+    "award.form.email.placeholder": "name@company.kg",
+    "award.form.email.error": "Введите корректный email",
+    "award.form.phone.label": "Телефон",
+    "award.form.phone.placeholder": "+996 555 ...",
+    "award.form.phone.error": "Укажите контактный номер",
+    "award.form.org.label": "Организация",
+    "award.form.org.placeholder": "Название компании или проекта",
+    "award.form.nomination.label": "Выберите номинацию",
+    "award.form.nomination.error": "Выберите одну номинацию",
+    "award.form.project.label": "Название проекта",
+    "award.form.project.placeholder": "Название продукта или инициативы",
+    "award.form.desc.label": "Описание и достижения",
+    "award.form.desc.placeholder":
+      "Чего достигла команда в 2025—2026? Метрики, охват, влияние на индустрию…",
+    "award.form.desc.error": "Опишите проект — минимум 30 символов",
+    "award.form.website.label": "Сайт",
+    "award.form.website.placeholder": "https://",
+    "award.form.socials.label": "Соц. сети / портфолио",
+    "award.form.socials.placeholder": "https://t.me/… · https://linkedin.com/…",
+    "award.form.submitError":
+      "Не удалось отправить заявку. Проверьте подключение и попробуйте снова.",
+    "award.success.eyebrow": "Заявка принята",
+    "award.success.title": "Спасибо — заявка отправлена.",
+    "award.success.bodyA": "Подтверждение пришло на ",
+    "award.success.bodyB":
+      ". Жюри свяжется по итогам предварительного отбора до 20.05.2026.",
+    "award.success.reset": "Подать ещё одну заявку",
 
     // ─── City CTA (cinematic banner before footer)
     "city.aria": "Бишкек — город форума",
@@ -552,6 +648,102 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "contacts.success.bodyB":
       " дарегине жөнөтүлдү. Уюштуруу комитети бир жумушчу күндүн ичинде сиз менен байланышат.",
     "contacts.success.reset": "Дагы бир арыз жөнөтүү",
+    "contacts.submitError":
+      "Арызды жөнөтүү мүмкүн болбоду. Туташууну текшерип, кайра аракет кылыңыз.",
+
+    // ─── KIT Awards
+    "award.navLabel": "KIT Awards",
+    "award.aria": "КИТ Awards 2026",
+    "award.eyebrow": "KIT Awards · /kit-award",
+    "award.back": "Башкы бетке",
+    "award.titleA": "КИТ",
+    "award.titleB": "Awards",
+    "award.titleC": "2026",
+    "award.lead":
+      "Кыргызстандын негизги тармактык сыйлыгы — салтанаттуу аземи 04–05.06.2026 КИТ Форумунда өтөт. Арыз тапшырып, жетишкендиктериңизди санариптик тармактын лидерлерине айтыңыз.",
+    "award.heroDate": "Салтанат · 05.06.2026 · Бишкек",
+    "award.statsApplications": "номинация",
+    "award.statsCategories": "категория",
+    "award.statsYears": "сыйлыктын жашы",
+    "award.timelineLabel": "Дедлайндар",
+    "award.timeline1.label": "Арыз кабыл алуу",
+    "award.timeline1.value": "15.05.2026 чейин",
+    "award.timeline2.label": "Шорт-лист",
+    "award.timeline2.value": "20.05.2026",
+    "award.timeline3.label": "Салтанаттуу азем",
+    "award.timeline3.value": "05.06.2026 · Бишкек",
+    "award.steps.title": "Бул кантип иштейт",
+    "award.step1.title": "Арыз",
+    "award.step1.body":
+      "Долбоор жана команда жөнүндө форманы толтуруңуз. Акысыз.",
+    "award.step2.title": "Эксперттик жюри",
+    "award.step2.body":
+      "Арыздарды тармак, мамлекет жана инвесторлордун лидерлерден турган кеңеш баалайт.",
+    "award.step3.title": "Шорт-лист",
+    "award.step3.body":
+      "Финалисттер чакыруу, медиа-камтуу жана өнөктөштөр менен жолугушууларды алышат.",
+    "award.step4.title": "Салтанаттуу азем",
+    "award.step4.body":
+      "Жеңүүчүлөр негизги сахнада салтанаттуу шартта жарыяланат.",
+    "award.nominations.title": "Номинациялар",
+    "award.nominations.lead":
+      "Кыргызстандын санариптик тармагынын негизги өсүү чекиттерин чагылдырган төрт ачкыч категория: AI, банкинг, билим жана коомдук мейкиндик.",
+    "award.nom.ai.name": "AI Adoption",
+    "award.nom.ai.desc":
+      "Чыныгы бизнес-процесске же мамлекеттик сервиске AI/MLди мыкты колдонуу.",
+    "award.nom.cowork.name": "Best Coworking Space",
+    "award.nom.cowork.desc":
+      "IT-коомчулуктун тартылуу чекитине айланган мейкиндик.",
+    "award.nom.bank.name": "Best Digital Bank",
+    "award.nom.bank.desc":
+      "Эң мыкты кардар тажрыйбасы жана продуктусу бар санариптик банк.",
+    "award.nom.edu.name": "Best IT Education Project",
+    "award.nom.edu.desc":
+      "Жаңы иштеп чыгуучуларды жана инженерлерди даярдаган мектеп, программа же продукт.",
+    "award.form.eyebrow": "Арыз · 01",
+    "award.form.titleA": "Сыйлыкка арыз",
+    "award.form.titleB": "тапшыруу.",
+    "award.form.lead":
+      "Арыз 2 мүнөттү алат. Долбоордун сүрөттөмөсүнөн башка бардык талаалар милдеттүү. Ырастоо көрсөтүлгөн электрондук почтага келет.",
+    "award.form.step": "{n}/{total}-кадам",
+    "award.form.next": "Кийинки",
+    "award.form.back": "Артка",
+    "award.form.submit": "Арызды жөнөтүү",
+    "award.form.submitting": "Жөнөтүлүүдө…",
+    "award.form.step1.title": "Сиз жөнүндө",
+    "award.form.step2.title": "Номинация",
+    "award.form.step3.title": "Долбоор",
+    "award.form.name.label": "Толук аты-жөнү",
+    "award.form.name.placeholder": "Айбек Айдаров",
+    "award.form.name.error": "Аты-жөнүңүздү көрсөтүңүз — кеминде 2 белги",
+    "award.form.email.label": "Email",
+    "award.form.email.placeholder": "name@company.kg",
+    "award.form.email.error": "Туура email жазыңыз",
+    "award.form.phone.label": "Телефон",
+    "award.form.phone.placeholder": "+996 555 ...",
+    "award.form.phone.error": "Байланыш номерин көрсөтүңүз",
+    "award.form.org.label": "Уюм",
+    "award.form.org.placeholder": "Компаниянын же долбоордун аты",
+    "award.form.nomination.label": "Номинацияны тандаңыз",
+    "award.form.nomination.error": "Бир номинация тандаңыз",
+    "award.form.project.label": "Долбоордун аты",
+    "award.form.project.placeholder": "Продукттун же демилгенин аты",
+    "award.form.desc.label": "Сүрөттөмө жана жетишкендиктер",
+    "award.form.desc.placeholder":
+      "Команда 2025—2026да эмнеге жетишти? Метрикалар, камтуу, тармакка таасири…",
+    "award.form.desc.error": "Долбоорду сүрөттөңүз — кеминде 30 белги",
+    "award.form.website.label": "Сайт",
+    "award.form.website.placeholder": "https://",
+    "award.form.socials.label": "Социалдык тармактар / портфолио",
+    "award.form.socials.placeholder": "https://t.me/… · https://linkedin.com/…",
+    "award.form.submitError":
+      "Арызды жөнөтүү мүмкүн болбоду. Туташууну текшерип, кайра аракет кылыңыз.",
+    "award.success.eyebrow": "Арыз кабыл алынды",
+    "award.success.title": "Рахмат — арыз жөнөтүлдү.",
+    "award.success.bodyA": "Ырастоо ",
+    "award.success.bodyB":
+      " дарегине жөнөтүлдү. Жюри 20.05.2026ге чейин алдын ала тандоонун жыйынтыктары боюнча байланышат.",
+    "award.success.reset": "Дагы бир арыз тапшыруу",
 
     // ─── Шаар (форумдан мурунку cinematic баннер)
     "city.aria": "Бишкек — форумдун шаары",
@@ -866,6 +1058,102 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "contacts.success.bodyB":
       ". The organising committee will be in touch within one business day.",
     "contacts.success.reset": "Submit another request",
+    "contacts.submitError":
+      "Couldn't submit the request. Please check your connection and try again.",
+
+    // ─── KIT Awards
+    "award.navLabel": "KIT Awards",
+    "award.aria": "KIT Awards 2026",
+    "award.eyebrow": "KIT Awards · /kit-award",
+    "award.back": "Back to home",
+    "award.titleA": "KIT",
+    "award.titleB": "Awards",
+    "award.titleC": "2026",
+    "award.lead":
+      "Kyrgyzstan's flagship industry award — the ceremony takes place at KIT Forum 04–05.06.2026. Submit your application and stand before the leaders of the digital industry.",
+    "award.heroDate": "Ceremony · 05.06.2026 · Bishkek",
+    "award.statsApplications": "nominations",
+    "award.statsCategories": "categories",
+    "award.statsYears": "years of the award",
+    "award.timelineLabel": "Deadlines",
+    "award.timeline1.label": "Applications",
+    "award.timeline1.value": "By 15.05.2026",
+    "award.timeline2.label": "Shortlist",
+    "award.timeline2.value": "20.05.2026",
+    "award.timeline3.label": "Ceremony",
+    "award.timeline3.value": "05.06.2026 · Bishkek",
+    "award.steps.title": "How it works",
+    "award.step1.title": "Application",
+    "award.step1.body":
+      "Fill in the form with the project and team description. It's free.",
+    "award.step2.title": "Expert jury",
+    "award.step2.body":
+      "Applications are reviewed by a board of industry, government, and investor leaders.",
+    "award.step3.title": "Shortlist",
+    "award.step3.body":
+      "Finalists receive an invitation, media coverage, and partner meetings.",
+    "award.step4.title": "Ceremony",
+    "award.step4.body":
+      "Winners announced on the main stage in a formal setting.",
+    "award.nominations.title": "Nominations",
+    "award.nominations.lead":
+      "Four focal categories reflecting the growth edges of Kyrgyzstan's digital industry: AI, banking, education, and community space.",
+    "award.nom.ai.name": "AI Adoption",
+    "award.nom.ai.desc":
+      "Best deployment of AI/ML in a real business process or government service.",
+    "award.nom.cowork.name": "Best Coworking Space",
+    "award.nom.cowork.desc":
+      "The venue that became a hub for the IT community.",
+    "award.nom.bank.name": "Best Digital Bank",
+    "award.nom.bank.desc":
+      "Digital bank or neobank with the best customer experience and product.",
+    "award.nom.edu.name": "Best IT Education Project",
+    "award.nom.edu.desc":
+      "A school, programme, or product preparing the next generation of engineers.",
+    "award.form.eyebrow": "Application · 01",
+    "award.form.titleA": "Apply for",
+    "award.form.titleB": "the award.",
+    "award.form.lead":
+      "The application takes 2 minutes. All fields except the project description are required. A confirmation will be sent to the email you provide.",
+    "award.form.step": "Step {n} of {total}",
+    "award.form.next": "Next",
+    "award.form.back": "Back",
+    "award.form.submit": "Submit application",
+    "award.form.submitting": "Sending…",
+    "award.form.step1.title": "About you",
+    "award.form.step2.title": "Nomination",
+    "award.form.step3.title": "Project",
+    "award.form.name.label": "Full name",
+    "award.form.name.placeholder": "Aibek Aidarov",
+    "award.form.name.error": "Please enter your name — at least 2 characters",
+    "award.form.email.label": "Email",
+    "award.form.email.placeholder": "name@company.kg",
+    "award.form.email.error": "Please enter a valid email",
+    "award.form.phone.label": "Phone",
+    "award.form.phone.placeholder": "+996 555 ...",
+    "award.form.phone.error": "Please provide a contact number",
+    "award.form.org.label": "Organisation",
+    "award.form.org.placeholder": "Company or project name",
+    "award.form.nomination.label": "Pick a nomination",
+    "award.form.nomination.error": "Please select one nomination",
+    "award.form.project.label": "Project name",
+    "award.form.project.placeholder": "Name of the product or initiative",
+    "award.form.desc.label": "Description and achievements",
+    "award.form.desc.placeholder":
+      "What did the team achieve in 2025—2026? Metrics, reach, industry impact…",
+    "award.form.desc.error": "Describe the project — at least 30 characters",
+    "award.form.website.label": "Website",
+    "award.form.website.placeholder": "https://",
+    "award.form.socials.label": "Socials / portfolio",
+    "award.form.socials.placeholder": "https://t.me/… · https://linkedin.com/…",
+    "award.form.submitError":
+      "Couldn't submit the application. Please check your connection and try again.",
+    "award.success.eyebrow": "Application received",
+    "award.success.title": "Thank you — application submitted.",
+    "award.success.bodyA": "Confirmation has been sent to ",
+    "award.success.bodyB":
+      ". The jury will be in touch after preliminary review by 20.05.2026.",
+    "award.success.reset": "Submit another application",
 
     // ─── City CTA (cinematic banner before footer)
     "city.aria": "Bishkek — host city of the forum",

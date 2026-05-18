@@ -2,6 +2,29 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 
 export type LocalizedText = { ru: string; ky?: string; en?: string };
 
+export type AppLocale = "ru" | "ky" | "en";
+
+export type ForumRegistrationStatus =
+  | "new"
+  | "contacted"
+  | "confirmed"
+  | "rejected"
+  | "archived";
+
+export type ForumRegistrationSource =
+  | "contacts"
+  | "kit_award"
+  | "hero"
+  | "footer"
+  | "other";
+
+export type AwardApplicationStatus =
+  | "new"
+  | "reviewing"
+  | "shortlisted"
+  | "rejected"
+  | "winner";
+
 export interface Database {
   public: {
     Tables: {
@@ -115,6 +138,102 @@ export interface Database {
           url?: string;
           icon?: string | null;
           order_index?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      forum_registrations: {
+        Row: {
+          id: string;
+          full_name: string;
+          email: string;
+          phone: string | null;
+          organization: string | null;
+          role: string | null;
+          message: string | null;
+          language: AppLocale;
+          status: ForumRegistrationStatus;
+          source: ForumRegistrationSource;
+          user_agent: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          full_name: string;
+          email: string;
+          phone?: string | null;
+          organization?: string | null;
+          role?: string | null;
+          message?: string | null;
+          language?: AppLocale;
+          status?: ForumRegistrationStatus;
+          source?: ForumRegistrationSource;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string;
+          email?: string;
+          phone?: string | null;
+          organization?: string | null;
+          role?: string | null;
+          message?: string | null;
+          language?: AppLocale;
+          status?: ForumRegistrationStatus;
+          source?: ForumRegistrationSource;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      award_applications: {
+        Row: {
+          id: string;
+          full_name: string;
+          email: string;
+          phone: string;
+          nomination: string;
+          organization: string | null;
+          project_name: string | null;
+          project_description: string | null;
+          website: string | null;
+          socials: string | null;
+          language: AppLocale;
+          status: AwardApplicationStatus;
+          user_agent: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          full_name: string;
+          email: string;
+          phone: string;
+          nomination: string;
+          organization?: string | null;
+          project_name?: string | null;
+          project_description?: string | null;
+          website?: string | null;
+          socials?: string | null;
+          language?: AppLocale;
+          status?: AwardApplicationStatus;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string;
+          email?: string;
+          phone?: string;
+          nomination?: string;
+          organization?: string | null;
+          project_name?: string | null;
+          project_description?: string | null;
+          website?: string | null;
+          socials?: string | null;
+          language?: AppLocale;
+          status?: AwardApplicationStatus;
+          user_agent?: string | null;
           created_at?: string;
         };
         Relationships: [];

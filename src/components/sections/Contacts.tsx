@@ -6,6 +6,7 @@ import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
 import { socialLinks } from "@/data/organizers";
 import { useI18n } from "@/i18n/I18nProvider";
+import { supabase } from "@/lib/supabase";
 
 const socialIcons: Record<string, JSX.Element> = {
   telegram: (
@@ -95,7 +96,7 @@ interface ErrorState {
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Contacts() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -104,6 +105,7 @@ export function Contacts() {
   const [errors, setErrors] = useState<ErrorState>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validate = (data: FormState) => {
     const e: ErrorState = {};
@@ -114,22 +116,34 @@ export function Contacts() {
     return e;
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errs = validate(form);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setSubmitting(true);
-    window.setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-    }, 700);
+    setSubmitError(null);
+    const { error } = await supabase.from("forum_registrations").insert({
+      full_name: form.name.trim(),
+      email: form.email.trim(),
+      message: form.message.trim(),
+      language: locale,
+      source: "contacts",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    });
+    setSubmitting(false);
+    if (error) {
+      setSubmitError(t("contacts.submitError"));
+      return;
+    }
+    setSubmitted(true);
   };
 
   const reset = () => {
     setForm({ name: "", email: "", message: "" });
     setSubmitted(false);
     setErrors({});
+    setSubmitError(null);
   };
 
   const onChange = (key: keyof FormState) => (val: string) => {
@@ -376,6 +390,14 @@ export function Contacts() {
                         placeholder={t("contacts.field.message.placeholder")}
                       />
 
+                      {submitError && (
+                        <p
+                          role="alert"
+                          className="py-4 text-[13px] text-red-600 leading-snug"
+                        >
+                          {submitError}
+                        </p>
+                      )}
                       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 py-7">
                         <p className="text-[12px] leading-relaxed text-ink-soft sm:max-w-[420px]">
                           {t("contacts.agreePrefix")}

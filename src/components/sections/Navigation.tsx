@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Logo } from "../ui/Logo";
 import { LangSwitcher } from "../ui/LangSwitcher";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -51,6 +52,13 @@ export function Navigation() {
 
         <div className="hidden lg:flex items-center gap-3">
           <LangSwitcher surface="frosted" />
+          <Link
+            to="/kit-award"
+            className="group inline-flex items-center gap-2 rounded-md border border-line bg-white/55 px-3.5 py-2.5 text-[13px] font-medium text-ink hover:border-brand/40 hover:text-brand active:scale-[0.98] transition-all duration-300 ease-spring backdrop-blur-md"
+          >
+            <Trophy size={13} strokeWidth={1.7} />
+            {t("award.navLabel")}
+          </Link>
           <a
             href="#contacts"
             className="group inline-flex items-center gap-2.5 rounded-md bg-ink px-4 py-2.5 text-[13px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring"
@@ -130,8 +138,29 @@ export function Navigation() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-8 flex flex-col gap-5"
+                className="mt-8 flex flex-col gap-3"
               >
+                <Link
+                  to="/kit-award"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center justify-between rounded-2xl border border-line bg-white px-6 py-5 text-ink hover:border-brand/40"
+                >
+                  <span className="inline-flex items-center gap-3 font-medium">
+                    <Trophy size={16} strokeWidth={1.7} />
+                    {t("award.navLabel")}
+                  </span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-tint text-brand">
+                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="M3 6 H9 M9 6 L6 3 M9 6 L6 9"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </Link>
                 <a
                   href="#contacts"
                   onClick={() => setOpen(false)}

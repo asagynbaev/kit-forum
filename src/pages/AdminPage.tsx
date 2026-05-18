@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2 } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
 import { SocialTab } from "@/components/admin/SocialTab";
+import { RegistrationsTab } from "@/components/admin/RegistrationsTab";
+import { AwardsTab } from "@/components/admin/AwardsTab";
 
-type Tab = "speakers" | "program" | "social";
+type Tab = "registrations" | "awards" | "speakers" | "program" | "social";
 
 // ── Login form ─────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -82,9 +84,11 @@ function Dashboard({ session }: { session: Session }) {
   const [tab, setTab] = useState<Tab>("speakers");
 
   const tabs: { id: Tab; label: string; icon: typeof Users }[] = [
-    { id: "speakers", label: "Спикеры",    icon: Users    },
-    { id: "program",  label: "Программа",  icon: Calendar },
-    { id: "social",   label: "Соц. сети",  icon: Share2   },
+    { id: "registrations", label: "Регистрации", icon: Inbox    },
+    { id: "awards",        label: "KIT Awards",  icon: Trophy   },
+    { id: "speakers",      label: "Спикеры",     icon: Users    },
+    { id: "program",       label: "Программа",   icon: Calendar },
+    { id: "social",        label: "Соц. сети",   icon: Share2   },
   ];
 
   const signOut = () => supabase.auth.signOut();
@@ -137,9 +141,11 @@ function Dashboard({ session }: { session: Session }) {
         </div>
 
         {/* Tab content */}
-        {tab === "speakers" && <SpeakersTab />}
-        {tab === "program"  && <ProgramTab />}
-        {tab === "social"   && <SocialTab />}
+        {tab === "registrations" && <RegistrationsTab />}
+        {tab === "awards"        && <AwardsTab />}
+        {tab === "speakers"      && <SpeakersTab />}
+        {tab === "program"       && <ProgramTab />}
+        {tab === "social"        && <SocialTab />}
       </div>
     </div>
   );
