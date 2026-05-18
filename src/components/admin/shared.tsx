@@ -19,7 +19,30 @@ export function LocalizedField({
   required?: boolean;
 }) {
   const cls =
-    "w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand resize-none";
+    "w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand resize-y";
+
+  if (multiline) {
+    return (
+      <div>
+        <p className="mb-1.5 text-sm font-medium text-gray-700">{label}</p>
+        <div className="space-y-2">
+          {(["ru", "ky", "en"] as const).map((lang) => (
+            <div key={lang} className="flex gap-2">
+              <span className="mt-2 w-7 shrink-0 text-[10px] uppercase tracking-widest text-gray-400 font-mono">{lang}</span>
+              <textarea
+                rows={4}
+                className={cls}
+                value={value[lang]}
+                onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
+                required={required && lang === "ru"}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <p className="mb-1.5 text-sm font-medium text-gray-700">{label}</p>
@@ -27,23 +50,13 @@ export function LocalizedField({
         {(["ru", "ky", "en"] as const).map((lang) => (
           <div key={lang}>
             <p className="mb-1 text-[10px] uppercase tracking-widest text-gray-400">{lang}</p>
-            {multiline ? (
-              <textarea
-                rows={3}
-                className={cls}
-                value={value[lang]}
-                onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
-                required={required && lang === "ru"}
-              />
-            ) : (
-              <input
-                type="text"
-                className={cls}
-                value={value[lang]}
-                onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
-                required={required && lang === "ru"}
-              />
-            )}
+            <input
+              type="text"
+              className={cls}
+              value={value[lang]}
+              onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
+              required={required && lang === "ru"}
+            />
           </div>
         ))}
       </div>
@@ -235,14 +248,17 @@ export function Modal({
   title,
   onClose,
   children,
+  size = "md",
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  size?: "md" | "lg";
 }) {
+  const maxW = size === "lg" ? "max-w-3xl" : "max-w-2xl";
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 pt-12 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+      <div className={`w-full ${maxW} rounded-2xl bg-white shadow-2xl`}>
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-display text-[18px] font-medium text-gray-900 tracking-tight">
             {title}

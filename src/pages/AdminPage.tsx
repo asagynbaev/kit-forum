@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
 import { SocialTab } from "@/components/admin/SocialTab";
 import { RegistrationsTab } from "@/components/admin/RegistrationsTab";
+import { QuestionsTab } from "@/components/admin/QuestionsTab";
 import { AwardsTab } from "@/components/admin/AwardsTab";
 import { ContactsTab } from "@/components/admin/ContactsTab";
 
 type Tab =
   | "registrations"
+  | "questions"
   | "awards"
   | "speakers"
   | "program"
@@ -91,8 +93,9 @@ function Dashboard({ session }: { session: Session }) {
   const [tab, setTab] = useState<Tab>("speakers");
 
   const tabs: { id: Tab; label: string; icon: typeof Users }[] = [
-    { id: "registrations", label: "Регистрации", icon: Inbox    },
-    { id: "awards",        label: "KIT Awards",  icon: Trophy   },
+    { id: "registrations", label: "Регистрации", icon: Inbox         },
+    { id: "questions",     label: "Вопросы",     icon: MessageSquare },
+    { id: "awards",        label: "KIT Awards",  icon: Trophy        },
     { id: "speakers",      label: "Спикеры",     icon: Users    },
     { id: "program",       label: "Программа",   icon: Calendar },
     { id: "contacts",      label: "Контакты",    icon: AtSign   },
@@ -150,6 +153,7 @@ function Dashboard({ session }: { session: Session }) {
 
         {/* Tab content */}
         {tab === "registrations" && <RegistrationsTab />}
+        {tab === "questions"     && <QuestionsTab />}
         {tab === "awards"        && <AwardsTab />}
         {tab === "speakers"      && <SpeakersTab />}
         {tab === "program"       && <ProgramTab />}

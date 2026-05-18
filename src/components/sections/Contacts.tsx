@@ -97,61 +97,7 @@ interface ErrorState {
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ── Fallback contact persons (used when DB is empty / unavailable) ──
-const FALLBACK_PERSONS: PersonRow[] = [
-  {
-    id: "coord",
-    label: { ru: "Общая координация", ky: "Жалпы координация", en: "General coordination" },
-    name:  { ru: "Елена Нечаева",      ky: "Елена Нечаева",      en: "Elena Nechaeva" },
-    phone: "+996 550 077 091",
-    phoneHref: "tel:+996550077091",
-    emails: ["e.nechaeva@htp.kg"],
-    order_index: 0,
-  },
-  {
-    id: "program",
-    label: { ru: "Программа · Спикеры", ky: "Программа · Спикерлер", en: "Programme · Speakers" },
-    name:  { ru: "Айжана Османалиева",   ky: "Айжана Османалиева",     en: "Aizhana Osmonalieva" },
-    phone: "+996 708 686 766",
-    phoneHref: "tel:+996708686766",
-    emails: ["a.osmonalieva@htp.kg"],
-    order_index: 1,
-  },
-  {
-    id: "expo",
-    label: { ru: "EXPO", ky: "EXPO", en: "EXPO" },
-    name:  {
-      ru: "Чубак Темиров · Адилет Дюшембиев",
-      ky: "Чубак Темиров · Адилет Дюшембиев",
-      en: "Chubak Temirov · Adilet Diushembiev",
-    },
-    phone: "+996 555 221 146",
-    phoneHref: "tel:+996555221146",
-    emails: ["c.temirov@htp.kg", "a.diushembiev@htp.kg"],
-    order_index: 2,
-  },
-  {
-    id: "pr",
-    label: { ru: "PR · СМИ", ky: "PR · ЖМК", en: "PR · Media" },
-    name:  { ru: "Айпери",    ky: "Айпери",    en: "Aiperi" },
-    phone: "+996 778 444 208",
-    phoneHref: "tel:+996778444208",
-    emails: ["pr@htp.kg"],
-    order_index: 3,
-  },
-  {
-    id: "startup",
-    label: {
-      ru: "Стартапы · Венчур · Университеты",
-      ky: "Стартаптар · Венчур · Университеттер",
-      en: "Startups · Venture · Universities",
-    },
-    name:  { ru: "Нурзат", ky: "Нурзат", en: "Nurzat" },
-    phone: "+996 777 092 838",
-    phoneHref: "tel:+996777092838",
-    emails: ["future.ecosystem@htp.kg"],
-    order_index: 4,
-  },
-];
+const FALLBACK_PERSONS: PersonRow[] = [];
 
 export function Contacts() {
   const { t, tr, locale } = useI18n();

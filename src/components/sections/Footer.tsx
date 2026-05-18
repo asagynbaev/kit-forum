@@ -4,6 +4,7 @@ import { LangSwitcher } from "../ui/LangSwitcher";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
+import { useContactPersons } from "@/lib/useSupabaseData";
 
 const columns = [
   {
@@ -34,20 +35,6 @@ const columns = [
   },
 ];
 
-// Fourth column (Contacts) has email/phone/address — kept literal (proper data).
-const contactsColumn = {
-  titleKey: "footer.col.contacts.title",
-  links: [
-    { id: "email-1", label: "e.nechaeva@htp.kg", href: "mailto:e.nechaeva@htp.kg" },
-    { id: "email-2", label: "pr@htp.kg", href: "mailto:pr@htp.kg" },
-    { id: "phone", label: "+996 550 077 091", href: "tel:+996550077091" },
-    {
-      id: "address",
-      label: { ru: "Бишкек, ул. Льва Толстого, 1/17Б", ky: "Бишкек, Лев Толстой к., 1/17Б", en: "Bishkek, 1/17B Lev Tolstoy St." },
-      href: "#venue",
-    },
-  ],
-};
 
 const cls = "text-[14px] text-ink hover:text-brand transition-colors duration-300";
 
@@ -59,8 +46,9 @@ function ColLink({ href, children }: Readonly<{ href: string; children: React.Re
 }
 
 export function Footer() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const { openModal } = useRegistrationModal();
+  const { persons } = useContactPersons();
   return (
     <footer className="relative bg-surface text-ink overflow-hidden">
       <div
@@ -120,20 +108,22 @@ export function Footer() {
             ))}
             <div>
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft">
-                {t(contactsColumn.titleKey)}
+                {t("footer.col.contacts.title")}
               </div>
               <ul className="mt-4 space-y-2.5">
-                {contactsColumn.links.map((link) => {
-                  const label =
-                    typeof link.label === "string"
-                      ? link.label
-                      : link.label[locale] ?? link.label.ru;
-                  return (
-                    <li key={link.id}>
-                      <ColLink href={link.href}>{label}</ColLink>
-                    </li>
-                  );
-                })}
+                {persons[0]?.emails.map((email) => (
+                  <li key={email}>
+                    <a href={`mailto:${email}`} className={cls}>{email}</a>
+                  </li>
+                ))}
+                {persons[0]?.phone && (
+                  <li>
+                    <a href={persons[0].phoneHref} className={cls}>{persons[0].phone}</a>
+                  </li>
+                )}
+                <li>
+                  <a href="#venue" className={cls}>{t("contacts.row.venue.l2")}</a>
+                </li>
               </ul>
             </div>
           </div>

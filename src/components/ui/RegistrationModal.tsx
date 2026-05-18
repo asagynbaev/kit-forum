@@ -234,8 +234,8 @@ function SuccessView({ onClose, t }: { onClose: () => void; t: (k: string) => st
       <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand/10 text-brand">
         <CheckCircle size={36} strokeWidth={1.4} />
       </div>
-      <h2 className="text-[22px] font-bold text-ink mb-2">{t("contacts.success.title")}</h2>
-      <p className="text-[14px] text-ink/60 leading-relaxed mb-7">{t("contacts.success.bodyB")}</p>
+      <h2 className="text-[22px] font-bold text-ink mb-2">{t("regModal.success.title")}</h2>
+      <p className="text-[14px] text-ink/60 leading-relaxed mb-7">{t("regModal.success.body")}</p>
       <button
         type="button"
         onClick={onClose}

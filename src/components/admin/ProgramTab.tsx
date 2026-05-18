@@ -8,10 +8,19 @@ type Row = Database["public"]["Tables"]["program_sessions"]["Row"];
 type LV = { ru: string; ky: string; en: string };
 
 const BISHKEK = 6 * 60 * 60_000;
-const utcToLocal = (utcStr: string) =>
-  new Date(new Date(utcStr).getTime() + BISHKEK).toISOString().slice(0, 16);
-const localToUTC = (localStr: string) =>
-  new Date(new Date(localStr + ":00Z").getTime() - BISHKEK).toISOString();
+
+// Returns "YYYY-MM-DD" and "HH:MM" in Bishkek time
+function utcToLocal(utcStr: string): { date: string; time: string } {
+  const d = new Date(new Date(utcStr).getTime() + BISHKEK);
+  return {
+    date: d.toISOString().slice(0, 10),
+    time: d.toISOString().slice(11, 16),
+  };
+}
+
+function localToUTC(date: string, time: string): string {
+  return new Date(new Date(`${date}T${time}:00Z`).getTime() - BISHKEK).toISOString();
+}
 
 const SESSION_TYPES = [
   { value: "keynote",   label: "Keynote"    },
@@ -40,7 +49,8 @@ const emptyForm = () => ({
   room: emptyLV(),
   session_type: "keynote" as Row["session_type"],
   track: "general",
-  starts_at: "",
+  starts_date: "",
+  starts_time: "",
   duration_min: 60,
   order_index: 0,
 });
@@ -71,6 +81,7 @@ export function ProgramTab() {
 
   const openAdd = () => { setForm(emptyForm()); setModal("add"); };
   const openEdit = (row: Row) => {
+    const local = row.starts_at ? utcToLocal(row.starts_at) : null;
     setForm({
       title: row.title as LV,
       description: (row.description ?? emptyLV()) as LV,
@@ -78,7 +89,8 @@ export function ProgramTab() {
       room: (row.room ?? emptyLV()) as LV,
       session_type: row.session_type,
       track: row.track ?? "general",
-      starts_at: row.starts_at ? utcToLocal(row.starts_at) : "",
+      starts_date: local?.date ?? "",
+      starts_time: local?.time ?? "",
       duration_min: row.duration_min ?? 60,
       order_index: row.order_index,
     });
@@ -95,7 +107,7 @@ export function ProgramTab() {
       room: form.room.ru ? form.room : null,
       session_type: form.session_type,
       track: form.track,
-      starts_at: form.starts_at ? localToUTC(form.starts_at) : null,
+      starts_at: form.starts_date && form.starts_time ? localToUTC(form.starts_date, form.starts_time) : null,
       duration_min: form.duration_min,
       order_index: form.order_index,
     };
@@ -145,7 +157,7 @@ export function ProgramTab() {
               {group.map((row) => (
                 <tr key={row.id} className="bg-white hover:bg-gray-50/60 transition-colors">
                   <td className="px-4 py-2.5 font-mono text-xs text-gray-500 whitespace-nowrap">
-                    {row.starts_at ? utcToLocal(row.starts_at).slice(11, 16) : "—"}
+                    {row.starts_at ? utcToLocal(row.starts_at).time : "—"}
                     {row.duration_min ? ` · ${row.duration_min}мин` : ""}
                   </td>
                   <td className="px-4 py-2.5 font-medium text-gray-900 max-w-[260px] truncate">
@@ -187,8 +199,9 @@ export function ProgramTab() {
         <Modal
           title={modal === "add" ? "Добавить сессию" : "Редактировать сессию"}
           onClose={() => setModal(null)}
+          size="lg"
         >
-          <form onSubmit={save} className="space-y-4">
+          <form onSubmit={save} className="space-y-5">
             <LocalizedField label="Название *" value={lv("title")} onChange={setLv("title")} required />
             <LocalizedField label="Описание" value={lv("description")} onChange={setLv("description")} multiline />
             <LocalizedField label="Спикеры (текст)" value={lv("speakers_label")} onChange={setLv("speakers_label")} />
@@ -197,9 +210,12 @@ export function ProgramTab() {
               <SelectField label="Тип" value={form.session_type} onChange={(v) => setForm((f) => ({ ...f, session_type: v as Row["session_type"] }))} options={SESSION_TYPES} />
               <SelectField label="Трек" value={form.track} onChange={(v) => setForm((f) => ({ ...f, track: v }))} options={TRACKS} />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div className="col-span-2">
-                <Field label="Начало (Бишкек)" value={form.starts_at} type="datetime-local" onChange={(v) => setForm((f) => ({ ...f, starts_at: v }))} />
+                <Field label="Дата начала (Бишкек)" value={form.starts_date} type="date" onChange={(v) => setForm((f) => ({ ...f, starts_date: v }))} />
+              </div>
+              <div>
+                <Field label="Время (24ч)" value={form.starts_time} type="time" onChange={(v) => setForm((f) => ({ ...f, starts_time: v }))} />
               </div>
               <Field label="Длит. (мин)" value={form.duration_min} type="number" onChange={(v) => setForm((f) => ({ ...f, duration_min: Number(v) }))} />
             </div>
