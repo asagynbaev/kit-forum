@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Trash2, Mail, Phone, Loader2, RefreshCw } from "lucide-react";
+import { Search, Trash2, Mail, Phone, Loader2, RefreshCw, Download } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type {
   Database,
@@ -32,6 +32,24 @@ const SOURCE_LABEL: Record<string, string> = {
   footer:    "Регистрация · Footer",
   other:     "Регистрация · Модалка",
 };
+
+function escapeCsv(v: unknown): string {
+  return `"${String(v ?? "").replace(/"/g, '""')}"`;
+}
+
+function downloadCsv(headers: string[], rows: string[][], filename: string) {
+  const bom = "﻿";
+  const content = [headers, ...rows].map((r) => r.map(escapeCsv).join(",")).join("\r\n");
+  const blob = new Blob([bom + content], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 function formatDate(iso: string) {
   try {
@@ -97,6 +115,21 @@ export function RegistrationsTab() {
     if (selected?.id === id) setSelected(null);
   };
 
+  const exportCsv = () => {
+    if (!rows) return;
+    const headers = ["ФИО", "Email", "Телефон", "Организация", "Статус", "Источник", "Дата"];
+    const data = rows.map((r) => [
+      r.full_name,
+      r.email,
+      r.phone ?? "",
+      r.organization ?? "",
+      STATUS_LABEL[r.status],
+      SOURCE_LABEL[r.source] ?? r.source,
+      formatDate(r.created_at),
+    ]);
+    downloadCsv(headers, data, `registrations-${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
   const filtered = useMemo(() => {
     if (!rows) return [];
     const q = query.trim().toLowerCase();
@@ -160,6 +193,9 @@ export function RegistrationsTab() {
           </div>
           <Btn variant="secondary" onClick={load}>
             <RefreshCw size={13} /> Обновить
+          </Btn>
+          <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
+            <Download size={13} /> Excel
           </Btn>
         </div>
       </div>

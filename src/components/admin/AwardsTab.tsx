@@ -7,6 +7,7 @@ import {
   Loader2,
   RefreshCw,
   ExternalLink,
+  Download,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type {
@@ -40,6 +41,40 @@ const NOMINATION_LABEL: Record<string, string> = {
   bank:   "Best Digital Bank",
   edu:    "Best IT Education Project",
 };
+
+const QUESTION_LABEL: Record<string, string> = {
+  ai_tools:  "AI-инструменты и технологии",
+  results:   "Конкретные результаты",
+  processes: "Автоматизированные процессы",
+  metrics:   "Изменение бизнес-показателей",
+  programs:  "Программы и курсы",
+  students:  "Количество студентов / участников",
+  graduates: "Результаты выпускников",
+  concept:   "Концепция коворкинга",
+  capacity:  "Вместимость и резиденты",
+  services:  "Услуги и события",
+  products:  "Цифровые продукты",
+  users:     "Активные пользователи",
+  digital:   "Цифровые технологии",
+};
+
+function escapeCsv(v: unknown): string {
+  return `"${String(v ?? "").replace(/"/g, '""')}"`;
+}
+
+function downloadCsv(headers: string[], rows: string[][], filename: string) {
+  const bom = "﻿";
+  const content = [headers, ...rows].map((r) => r.map(escapeCsv).join(",")).join("\r\n");
+  const blob = new Blob([bom + content], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 function formatDate(iso: string) {
   try {
@@ -98,6 +133,33 @@ export function AwardsTab() {
     showToast("Удалена");
     setRows((rs) => rs?.filter((r) => r.id !== id) ?? rs);
     if (selected?.id === id) setSelected(null);
+  };
+
+  const exportCsv = () => {
+    if (!rows) return;
+    const headers = [
+      "ФИО", "Email", "Телефон", "Организация", "Номинация",
+      "Проект", "Описание проекта", "Ответы",
+      "Сайт", "Соц. сети", "Статус", "Дата",
+    ];
+    const data = rows.map((r) => {
+      const answers = r.questionnaire
+        ? Object.entries(r.questionnaire as Record<string, string>)
+            .filter(([, v]) => v)
+            .map(([k, v]) => `${QUESTION_LABEL[k] ?? k}: ${v}`)
+            .join("\n")
+        : "";
+      return [
+        r.full_name, r.email, r.phone,
+        r.organization ?? "",
+        NOMINATION_LABEL[r.nomination] ?? r.nomination,
+        r.project_name ?? "", r.project_description ?? "",
+        answers,
+        r.website ?? "", r.socials ?? "",
+        STATUS_LABEL[r.status], formatDate(r.created_at),
+      ];
+    });
+    downloadCsv(headers, data, `awards-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
   const filtered = useMemo(() => {
@@ -174,6 +236,9 @@ export function AwardsTab() {
           </div>
           <Btn variant="secondary" onClick={load}>
             <RefreshCw size={13} /> Обновить
+          </Btn>
+          <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
+            <Download size={13} /> Excel
           </Btn>
         </div>
       </div>
@@ -309,6 +374,17 @@ export function AwardsTab() {
               </div>
             )}
 
+            {selected.questionnaire &&
+              Object.entries(selected.questionnaire as Record<string, string>).map(([qid, answer]) =>
+                answer ? (
+                  <QuestionBlock
+                    key={qid}
+                    label={QUESTION_LABEL[qid] ?? qid}
+                    text={answer}
+                  />
+                ) : null,
+              )}
+
             <div>
               <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Статус</p>
               <div className="flex flex-wrap gap-2">
@@ -342,6 +418,17 @@ function Cell({ label, children }: CellProps) {
     <div>
       <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">{label}</p>
       <div className="text-sm text-gray-800 break-words">{children}</div>
+    </div>
+  );
+}
+
+function QuestionBlock({ label, text }: { label: string; text: string }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">{label}</p>
+      <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap rounded-lg bg-gray-50 p-3 border border-gray-100">
+        {text}
+      </p>
     </div>
   );
 }

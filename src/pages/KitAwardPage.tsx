@@ -30,6 +30,30 @@ const NOMINATIONS = [
   { id: "edu",    icon: "E"  },
 ] as const;
 
+const QUESTIONS: Record<NominationId, Array<{ id: string; labelKey: string; ph: string }>> = {
+  ai: [
+    { id: "ai_tools",  labelKey: "award.q.ai.tools.label",     ph: "award.q.ai.tools.ph"     },
+    { id: "results",   labelKey: "award.q.ai.results.label",   ph: "award.q.ai.results.ph"   },
+    { id: "processes", labelKey: "award.q.ai.processes.label", ph: "award.q.ai.processes.ph" },
+    { id: "metrics",   labelKey: "award.q.ai.metrics.label",   ph: "award.q.ai.metrics.ph"   },
+  ],
+  edu: [
+    { id: "programs",  labelKey: "award.q.edu.programs.label",  ph: "award.q.edu.programs.ph"  },
+    { id: "students",  labelKey: "award.q.edu.students.label",  ph: "award.q.edu.students.ph"  },
+    { id: "graduates", labelKey: "award.q.edu.graduates.label", ph: "award.q.edu.graduates.ph" },
+  ],
+  cowork: [
+    { id: "concept",  labelKey: "award.q.cowork.concept.label",  ph: "award.q.cowork.concept.ph"  },
+    { id: "capacity", labelKey: "award.q.cowork.capacity.label", ph: "award.q.cowork.capacity.ph" },
+    { id: "services", labelKey: "award.q.cowork.services.label", ph: "award.q.cowork.services.ph" },
+  ],
+  bank: [
+    { id: "products", labelKey: "award.q.bank.products.label", ph: "award.q.bank.products.ph" },
+    { id: "users",    labelKey: "award.q.bank.users.label",    ph: "award.q.bank.users.ph"    },
+    { id: "digital",  labelKey: "award.q.bank.digital.label",  ph: "award.q.bank.digital.ph"  },
+  ],
+};
+
 type NominationId = (typeof NOMINATIONS)[number]["id"];
 
 // ── Form types ─────────────────────────────────────────────────────────────
@@ -44,6 +68,7 @@ interface FormState {
   description: string;
   website: string;
   socials: string;
+  questionnaire: Record<string, string>;
 }
 
 interface ErrorState {
@@ -55,7 +80,7 @@ interface ErrorState {
 }
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const STEPS = 3;
+const STEPS = 4;
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const emptyForm = (): FormState => ({
@@ -68,6 +93,7 @@ const emptyForm = (): FormState => ({
   description: "",
   website: "",
   socials: "",
+  questionnaire: {},
 });
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -77,7 +103,7 @@ export function KitAwardPage() {
   const prefersReduced = useReducedMotion();
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<ErrorState>({});
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -89,7 +115,7 @@ export function KitAwardPage() {
     }
   };
 
-  const validateStep = (s: 1 | 2 | 3): ErrorState => {
+  const validateStep = (s: 1 | 2 | 3 | 4): ErrorState => {
     const e: ErrorState = {};
     if (s === 1) {
       if (form.fullName.trim().length < 2) e.fullName = t("award.form.name.error");
@@ -109,12 +135,12 @@ export function KitAwardPage() {
     const errs = validateStep(step);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    if (step < STEPS) setStep((s) => (s + 1) as 1 | 2 | 3);
+    if (step < STEPS) setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
   };
 
   const goBack = () => {
     setSubmitError(null);
-    if (step > 1) setStep((s) => (s - 1) as 1 | 2 | 3);
+    if (step > 1) setStep((s) => (s - 1) as 1 | 2 | 3 | 4);
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -132,6 +158,9 @@ export function KitAwardPage() {
       organization: form.organization.trim() || null,
       project_name: form.projectName.trim() || null,
       project_description: form.description.trim() || null,
+      questionnaire: Object.keys(form.questionnaire).length > 0
+        ? Object.fromEntries(Object.entries(form.questionnaire).filter(([, v]) => v.trim()))
+        : null,
       website: form.website.trim() || null,
       socials: form.socials.trim() || null,
       language: locale,
@@ -589,16 +618,16 @@ export function KitAwardPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          {[1, 2, 3].map((n) => (
+                          {[1, 2, 3, 4].map((n) => (
                             <span
                               key={n}
                               aria-hidden
                               className={`h-[3px] rounded-full transition-all duration-500 ease-spring ${
                                 n === step
-                                  ? "w-10 bg-brand"
+                                  ? "w-8 bg-brand"
                                   : n < step
-                                  ? "w-6 bg-ink"
-                                  : "w-6 bg-line"
+                                  ? "w-5 bg-ink"
+                                  : "w-5 bg-line"
                               }`}
                             />
                           ))}
@@ -747,6 +776,33 @@ export function KitAwardPage() {
                                     placeholder={t("award.form.socials.placeholder")}
                                   />
                                 </div>
+                              </div>
+                            </StepWrap>
+                          )}
+
+                          {step === 4 && (
+                            <StepWrap key="s4">
+                              <StepHeader index={4} title={t("award.form.step4.title")} />
+                              <div className="mt-7 flex flex-col gap-7">
+                                {form.nomination
+                                  ? QUESTIONS[form.nomination].map((q) => (
+                                      <FieldArea
+                                        key={q.id}
+                                        id={`award-q-${q.id}`}
+                                        label={t(q.labelKey)}
+                                        value={form.questionnaire[q.id] ?? ""}
+                                        onChange={(v) =>
+                                          update("questionnaire", { ...form.questionnaire, [q.id]: v })
+                                        }
+                                        placeholder={t(q.ph)}
+                                        rows={4}
+                                      />
+                                    ))
+                                  : (
+                                    <p className="text-sm text-ink-soft py-4">
+                                      ← Вернитесь на шаг 2 и выберите номинацию
+                                    </p>
+                                  )}
                               </div>
                             </StepWrap>
                           )}

@@ -230,6 +230,7 @@ export interface Database {
           organization: string | null;
           project_name: string | null;
           project_description: string | null;
+          questionnaire: Json | null;
           website: string | null;
           socials: string | null;
           language: AppLocale;
@@ -246,6 +247,7 @@ export interface Database {
           organization?: string | null;
           project_name?: string | null;
           project_description?: string | null;
+          questionnaire?: Json | null;
           website?: string | null;
           socials?: string | null;
           language?: AppLocale;
@@ -262,6 +264,7 @@ export interface Database {
           organization?: string | null;
           project_name?: string | null;
           project_description?: string | null;
+          questionnaire?: Json | null;
           website?: string | null;
           socials?: string | null;
           language?: AppLocale;
