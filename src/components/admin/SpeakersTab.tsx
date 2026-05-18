@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Plus, Upload, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { Database } from "@/lib/database.types";
-import { LocalizedField, Field, Modal, Btn, Toast } from "./shared";
+import { LocalizedField, Field, Modal, Btn, Toast, CountryCombobox } from "./shared";
 
 type Row = Database["public"]["Tables"]["speakers"]["Row"];
 type LV = { ru: string; ky: string; en: string };
@@ -246,14 +246,17 @@ export function SpeakersTab() {
               onChange={(url) => setForm((f) => ({ ...f, photo: url }))}
               onError={(msg) => showToast(msg, false)}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Флаг (эмодзи)" value={form.country_flag} onChange={(v) => setForm((f) => ({ ...f, country_flag: v }))} required />
-              <Field label="Порядок" value={form.order_index} type="number" onChange={(v) => setForm((f) => ({ ...f, order_index: Number(v) }))} />
-            </div>
             <LocalizedField label="Имя *" value={lv("name")} onChange={setLv("name")} required />
             <LocalizedField label="Роль *" value={lv("role")} onChange={setLv("role")} required />
             <LocalizedField label="Тема доклада" value={lv("topic")} onChange={setLv("topic")} />
-            <LocalizedField label="Страна *" value={lv("country")} onChange={setLv("country")} required />
+            <div className="grid grid-cols-[1fr_120px] gap-4">
+              <CountryCombobox
+                value={{ flag: form.country_flag, name: form.country }}
+                onChange={(c) => setForm((f) => ({ ...f, country_flag: c.flag, country: c.name }))}
+                required
+              />
+              <Field label="Порядок" value={form.order_index} type="number" onChange={(v) => setForm((f) => ({ ...f, order_index: Number(v) }))} />
+            </div>
             <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
               <Btn variant="secondary" onClick={() => setModal(null)}>Отмена</Btn>
               <Btn type="submit" variant="primary" disabled={saving}>
