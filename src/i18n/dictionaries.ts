@@ -295,6 +295,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.form.lead":
       "Заявка занимает 2 минуты. Все поля — кроме описания проекта — обязательны. Подтверждение придёт на указанный email.",
     "award.form.step": "Шаг {n} из {total}",
+    "award.form.selectedBadge": "Выбрано",
     "award.form.next": "Дальше",
     "award.form.back": "Назад",
     "award.form.submit": "Отправить заявку",
@@ -704,6 +705,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.form.lead":
       "Арыз 2 мүнөттү алат. Долбоордун сүрөттөмөсүнөн башка бардык талаалар милдеттүү. Ырастоо көрсөтүлгөн электрондук почтага келет.",
     "award.form.step": "{n}/{total}-кадам",
+    "award.form.selectedBadge": "Тандалды",
     "award.form.next": "Кийинки",
     "award.form.back": "Артка",
     "award.form.submit": "Арызды жөнөтүү",
@@ -1113,6 +1115,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.form.lead":
       "The application takes 2 minutes. All fields except the project description are required. A confirmation will be sent to the email you provide.",
     "award.form.step": "Step {n} of {total}",
+    "award.form.selectedBadge": "Selected",
     "award.form.next": "Next",
     "award.form.back": "Back",
     "award.form.submit": "Submit application",

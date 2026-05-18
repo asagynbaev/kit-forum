@@ -409,46 +409,69 @@ export function KitAwardPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-line rounded-2xl overflow-hidden ring-1 ring-line">
-            {NOMINATIONS.map((nom, i) => (
-              <Reveal key={nom.id} delay={Math.min(i * 0.03, 0.18)}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    update("nomination", nom.id);
-                    setStep(2);
-                    setTimeout(() => {
-                      document.getElementById("apply")?.scrollIntoView({
-                        behavior: prefersReduced ? "auto" : "smooth",
-                        block: "start",
-                      });
-                    }, 50);
-                  }}
-                  className="group w-full text-left h-full bg-canvas hover:bg-tint/40 transition-colors duration-300 ease-spring px-6 py-7 md:px-8 md:py-9 flex flex-col gap-4"
-                >
-                  <div className="flex items-center justify-between">
+            {NOMINATIONS.map((nom, i) => {
+              const active = form.nomination === nom.id;
+              return (
+                <Reveal key={nom.id} delay={Math.min(i * 0.03, 0.18)}>
+                  <button
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => {
+                      update("nomination", nom.id);
+                      setStep(2);
+                      setTimeout(() => {
+                        document.getElementById("apply")?.scrollIntoView({
+                          behavior: prefersReduced ? "auto" : "smooth",
+                          block: "start",
+                        });
+                      }, 50);
+                    }}
+                    className={`group w-full text-left h-full transition-colors duration-300 ease-spring px-6 py-7 md:px-8 md:py-9 flex flex-col gap-4 ${
+                      active
+                        ? "bg-brand/[0.06] ring-2 ring-inset ring-brand"
+                        : "bg-canvas hover:bg-tint/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        aria-hidden
+                        className={`inline-flex h-11 w-11 items-center justify-center rounded-md font-mono text-[14px] tracking-tight transition-colors duration-300 ${
+                          active
+                            ? "bg-brand text-white"
+                            : "bg-ink text-white group-hover:bg-brand"
+                        }`}
+                      >
+                        {nom.icon}
+                      </span>
+                      {active ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-2.5 py-1 font-mono text-[9px] tracking-[0.22em] uppercase text-white">
+                          <Check size={10} strokeWidth={2.4} />
+                          {t("award.form.selectedBadge")}
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] tracking-[0.22em] text-ink-mute group-hover:text-brand transition-colors duration-300">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-display text-[19px] md:text-[20px] leading-tight tracking-tight font-medium">
+                      {t(`award.nom.${nom.id}.name`)}
+                    </h3>
+                    <p className="text-[13px] sm:text-[14px] leading-relaxed text-ink-soft">
+                      {t(`award.nom.${nom.id}.desc`)}
+                    </p>
                     <span
-                      aria-hidden
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-ink text-white font-mono text-[14px] tracking-tight group-hover:bg-brand transition-colors duration-300"
+                      className={`mt-auto inline-flex items-center gap-2 text-[12px] font-mono tracking-[0.16em] uppercase transition-colors duration-300 ${
+                        active ? "text-brand" : "text-ink group-hover:text-brand"
+                      }`}
                     >
-                      {nom.icon}
+                      <span aria-hidden className="h-px w-6 bg-current" />
+                      {t("award.form.submit")}
                     </span>
-                    <span className="font-mono text-[10px] tracking-[0.22em] text-ink-mute group-hover:text-brand transition-colors duration-300">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h3 className="font-display text-[19px] md:text-[20px] leading-tight tracking-tight font-medium">
-                    {t(`award.nom.${nom.id}.name`)}
-                  </h3>
-                  <p className="text-[13px] sm:text-[14px] leading-relaxed text-ink-soft">
-                    {t(`award.nom.${nom.id}.desc`)}
-                  </p>
-                  <span className="mt-auto inline-flex items-center gap-2 text-[12px] font-mono tracking-[0.16em] uppercase text-ink group-hover:text-brand transition-colors duration-300">
-                    <span aria-hidden className="h-px w-6 bg-current" />
-                    {t("award.form.submit")}
-                  </span>
-                </button>
-              </Reveal>
-            ))}
+                  </button>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -549,13 +572,23 @@ export function KitAwardPage() {
                       noValidate
                     >
                       {/* Stepper header */}
-                      <div className="flex items-center justify-between border-b border-line px-6 md:px-8 py-5">
-                        <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft">
-                          {t("award.form.step")
-                            .replace("{n}", String(step))
-                            .replace("{total}", String(STEPS))}
-                        </span>
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex items-center justify-between gap-3 border-b border-line px-6 md:px-8 py-5">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft shrink-0">
+                            {t("award.form.step")
+                              .replace("{n}", String(step))
+                              .replace("{total}", String(STEPS))}
+                          </span>
+                          {form.nomination && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-2.5 py-1 font-mono text-[9px] tracking-[0.22em] uppercase text-brand truncate">
+                              <Check size={10} strokeWidth={2.4} className="shrink-0" />
+                              <span className="truncate">
+                                {t("award.form.selectedBadge")}: {t(`award.nom.${form.nomination}.name`)}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
                           {[1, 2, 3].map((n) => (
                             <span
                               key={n}
