@@ -149,7 +149,6 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "speakers.confirmedBadge": "Подтверждено · {count} спикеров",
     "speakers.viewAllLead":
       "Состав спикеров расширяется. Полный список с биографиями и сессиями доступен на отдельной странице.",
-    "speakers.cardCountryHint": "Подробнее",
 
     // ─── Speakers page
     "speakersPage.eyebrow": "Все спикеры · /speakers",
@@ -557,7 +556,6 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "speakers.confirmedBadge": "Ырасталды · {count} спикер",
     "speakers.viewAllLead":
       "Спикерлердин курамы кеңейүүдө. Биографиялары жана сессиялары менен толук тизме өзүнчө барактан жеткиликтүү.",
-    "speakers.cardCountryHint": "Толугураак",
 
     // ─── Спикерлер бети
     "speakersPage.eyebrow": "Бардык спикерлер · /speakers",
@@ -968,7 +966,6 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "speakers.confirmedBadge": "Confirmed · {count} speakers",
     "speakers.viewAllLead":
       "The speaker line-up keeps growing. The full list — with biographies and sessions — is on a dedicated page.",
-    "speakers.cardCountryHint": "Read more",
 
     // ─── Speakers page
     "speakersPage.eyebrow": "All speakers · /speakers",

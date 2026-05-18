@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Plus, Upload, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { compressToWebp } from "@/lib/imageCompress";
 import type { Database } from "@/lib/database.types";
 import { LocalizedField, Field, Modal, Btn, Toast, CountryCombobox } from "./shared";
+
+const TARGET_PHOTO_BYTES = 100_000;
 
 type Row = Database["public"]["Tables"]["speakers"]["Row"];
 type LV = { ru: string; ky: string; en: string };
@@ -18,11 +21,10 @@ type FormState = {
 };
 
 async function uploadPhoto(file: File): Promise<{ url: string } | { error: string }> {
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
   const { error } = await supabase.storage
     .from("speaker-photos")
-    .upload(name, file, { upsert: true, contentType: file.type });
+    .upload(name, file, { upsert: true, contentType: "image/webp" });
   if (error) return { error: error.message };
   const { data } = supabase.storage.from("speaker-photos").getPublicUrl(name);
   return { url: data.publicUrl };
@@ -44,10 +46,16 @@ function PhotoField({
     if (!file.type.startsWith("image/")) { onError("Только изображения"); return; }
     if (file.size > 8 * 1024 * 1024) { onError("Максимум 8 МБ"); return; }
     setUploading(true);
-    const res = await uploadPhoto(file);
-    setUploading(false);
-    if ("error" in res) { onError(`Ошибка загрузки: ${res.error}`); return; }
-    onChange(res.url);
+    try {
+      const compressed = await compressToWebp(file, TARGET_PHOTO_BYTES);
+      const res = await uploadPhoto(compressed);
+      if ("error" in res) { onError(`Ошибка загрузки: ${res.error}`); return; }
+      onChange(res.url);
+    } catch (e) {
+      onError(`Не удалось обработать изображение: ${e instanceof Error ? e.message : "unknown"}`);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (

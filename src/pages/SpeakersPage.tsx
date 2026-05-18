@@ -131,7 +131,7 @@ export function SpeakersPage() {
 }
 
 function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
-  const { t, tr } = useI18n();
+  const { tr } = useI18n();
 
   return (
     <article className="group/card">
@@ -153,13 +153,9 @@ function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
         </span>
         <div
           aria-hidden
-          className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 rounded-sm border border-brand/40 bg-white/90 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase font-mono text-ink-soft backdrop-blur-md opacity-0 translate-y-1 transition-all duration-500 ease-spring group-hover/card:opacity-100 group-hover/card:translate-y-0"
+          className="absolute inset-x-3 bottom-3 flex items-center justify-center rounded-sm border border-brand/40 bg-white/90 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase font-mono text-ink-soft backdrop-blur-md opacity-0 translate-y-1 transition-all duration-500 ease-spring group-hover/card:opacity-100 group-hover/card:translate-y-0"
         >
           <span>{tr(speaker.country)}</span>
-          <span className="inline-flex items-center gap-1 text-brand">
-            {t("speakers.cardCountryHint")}
-            <ArrowUpRight size={12} strokeWidth={1.5} />
-          </span>
         </div>
       </div>
 
