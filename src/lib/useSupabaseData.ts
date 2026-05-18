@@ -154,6 +154,50 @@ export interface SocialLink {
   order_index: number;
 }
 
+// ── CONTACT PERSONS ────────────────────────
+
+export interface ContactPerson {
+  id: string;
+  label: Localized;
+  name: Localized;
+  phone: string;
+  phoneHref: string;
+  emails: string[];
+  order_index: number;
+}
+
+export function useContactPersons() {
+  const [persons, setPersons] = useState<ContactPerson[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from("contact_persons")
+      .select("*")
+      .order("order_index")
+      .then(({ data }) => {
+        if (data) {
+          setPersons(
+            data.map((row) => ({
+              id: row.id,
+              label: row.label as Localized,
+              name: row.name as Localized,
+              phone: row.phone,
+              phoneHref: row.phone_href || `tel:${row.phone.replace(/[^+\d]/g, "")}`,
+              emails: row.emails
+                ? row.emails.split("·").map((s) => s.trim()).filter(Boolean)
+                : [],
+              order_index: row.order_index,
+            })),
+          );
+        }
+        setLoading(false);
+      });
+  }, []);
+
+  return { persons, loading };
+}
+
 export function useSocialLinks() {
   const [links, setLinks] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState(true);

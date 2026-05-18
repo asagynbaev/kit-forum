@@ -112,6 +112,39 @@ export interface Database {
         Update: { session_id?: string; speaker_id?: string };
         Relationships: [];
       };
+      contact_persons: {
+        Row: {
+          id: string;
+          label: Json;
+          name: Json;
+          phone: string;
+          phone_href: string;
+          emails: string;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          label: Json;
+          name: Json;
+          phone?: string;
+          phone_href?: string;
+          emails?: string;
+          order_index?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: Json;
+          name?: Json;
+          phone?: string;
+          phone_href?: string;
+          emails?: string;
+          order_index?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       social_links: {
         Row: {
           id: string;

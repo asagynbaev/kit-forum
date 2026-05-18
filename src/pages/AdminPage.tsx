@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
 import { SocialTab } from "@/components/admin/SocialTab";
 import { RegistrationsTab } from "@/components/admin/RegistrationsTab";
 import { AwardsTab } from "@/components/admin/AwardsTab";
+import { ContactsTab } from "@/components/admin/ContactsTab";
 
-type Tab = "registrations" | "awards" | "speakers" | "program" | "social";
+type Tab =
+  | "registrations"
+  | "awards"
+  | "speakers"
+  | "program"
+  | "contacts"
+  | "social";
 
 // ── Login form ─────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -88,6 +95,7 @@ function Dashboard({ session }: { session: Session }) {
     { id: "awards",        label: "KIT Awards",  icon: Trophy   },
     { id: "speakers",      label: "Спикеры",     icon: Users    },
     { id: "program",       label: "Программа",   icon: Calendar },
+    { id: "contacts",      label: "Контакты",    icon: AtSign   },
     { id: "social",        label: "Соц. сети",   icon: Share2   },
   ];
 
@@ -145,6 +153,7 @@ function Dashboard({ session }: { session: Session }) {
         {tab === "awards"        && <AwardsTab />}
         {tab === "speakers"      && <SpeakersTab />}
         {tab === "program"       && <ProgramTab />}
+        {tab === "contacts"      && <ContactsTab />}
         {tab === "social"        && <SocialTab />}
       </div>
     </div>
