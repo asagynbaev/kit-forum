@@ -45,7 +45,7 @@ export function DigitalNomadBanner() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.85, ease }}
-          className="relative max-w-5xl rounded-[28px] sm:rounded-[32px] overflow-hidden p-7 sm:p-10 md:p-12"
+          className="relative max-w-5xl rounded-[24px] sm:rounded-[32px] overflow-hidden p-4 sm:p-9 md:p-12"
           style={{
             background:
               "linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 40%, rgba(10,22,40,0.18) 100%)",
@@ -80,14 +80,14 @@ export function DigitalNomadBanner() {
             <div className="col-span-12 md:col-span-5">
               {/* Eyebrow */}
               <Reveal>
-                <div className="flex flex-wrap items-center gap-2 mb-5">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 mb-5">
                   <span
-                    className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.07em] uppercase text-ink"
+                    className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.07em] uppercase text-ink shrink-0"
                     style={{ background: "#CCFF00" }}
                   >
                     {t("nomad.tag")}
                   </span>
-                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/55">
+                  <span className="font-mono text-[10px] tracking-[0.14em] sm:tracking-[0.2em] uppercase text-white/55 min-w-0">
                     {t("nomad.eyebrow")}
                   </span>
                 </div>
@@ -154,7 +154,7 @@ export function DigitalNomadBanner() {
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center gap-3 rounded-xl bg-brand px-6 py-3.5 text-[14px] font-medium text-white shadow-glow hover:bg-brand-deep active:scale-[0.98] transition-all duration-300 ease-spring"
+                    className="group inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-xl bg-brand px-6 py-3.5 text-[14px] font-medium text-white shadow-glow hover:bg-brand-deep active:scale-[0.98] transition-all duration-300 ease-spring"
                   >
                     <MessageCircle
                       size={16}
@@ -164,7 +164,7 @@ export function DigitalNomadBanner() {
                     {t("nomad.cta")}
                   </a>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.18em] uppercase text-white/40">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] tracking-[0.1em] sm:tracking-[0.18em] uppercase text-white/40">
                     <span>ololoAkJol</span>
                     <span aria-hidden className="text-white/20">·</span>
                     <span>Issyk-Kul · KGZ</span>

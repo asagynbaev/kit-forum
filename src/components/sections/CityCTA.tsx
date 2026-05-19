@@ -19,7 +19,7 @@ export function CityCTA() {
     <section
       id="venue"
       aria-label={t("city.aria")}
-      className="v-section relative bg-canvas"
+      className="v-section relative bg-canvas overflow-hidden"
     >
       <div aria-hidden className="absolute inset-0 blueprint-bg-faded pointer-events-none" />
 
@@ -56,12 +56,12 @@ export function CityCTA() {
                 {t("venue.addressLabel")}
               </div>
               <div
-                className="font-display font-medium leading-[1.1] tracking-tightest text-ink"
-                style={{ fontSize: "clamp(1.1rem, 1.4vw + 0.6rem, 1.5rem)" }}
+                className="font-display font-medium leading-[1.15] tracking-tightest text-ink break-words"
+                style={{ fontSize: "clamp(1rem, 1.4vw + 0.55rem, 1.5rem)" }}
               >
                 {tr(venue.name)}
               </div>
-              <address className="mt-3 not-italic text-[13px] sm:text-[14px] leading-relaxed text-ink-soft">
+              <address className="mt-3 not-italic text-[13px] sm:text-[14px] leading-relaxed text-ink-soft break-words">
                 {venue.addressLines.map((line) => (
                   <div key={line.ru}>{tr(line)}</div>
                 ))}
@@ -70,7 +70,7 @@ export function CityCTA() {
 
             {/* Details */}
             <div className="col-span-12 md:col-span-8 min-w-0">
-              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 md:border-l md:border-brand/20 md:pl-10">
+              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 md:border-l md:border-brand/20 md:pl-10 min-w-0">
                 {venue.details.map((d, i) => {
                   const Icon = detailIcons[i] ?? Car;
                   return (
