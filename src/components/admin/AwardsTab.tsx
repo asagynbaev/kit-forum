@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
   Trash2,
@@ -8,6 +8,7 @@ import {
   RefreshCw,
   ExternalLink,
   Download,
+  Upload,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type {
@@ -18,6 +19,42 @@ import { Btn, Toast } from "./shared";
 import { Drawer } from "./RegistrationsTab";
 
 type Row = Database["public"]["Tables"]["award_applications"]["Row"];
+
+const NOMINATION_FROM_LABEL: Record<string, string> = {
+  "ai adoption":                  "ai",
+  "best coworking space":         "cowork",
+  "best digital bank":            "bank",
+  "best it education project":    "edu",
+  "ai":     "ai",
+  "cowork": "cowork",
+  "bank":   "bank",
+  "edu":    "edu",
+};
+
+type ParsedAward = {
+  full_name: string;
+  email: string;
+  phone: string;
+  nomination: string;
+  project_name: string | null;
+  project_description: string | null;
+  questionnaire: Record<string, string> | null;
+  status: "new";
+  language: "ru";
+};
+
+type AwardDupEntry = {
+  incoming: ParsedAward;
+  existingName: string;
+  existingEmail: string;
+  reason: "email" | "name";
+};
+
+type AwardImportPreview = {
+  toInsert: ParsedAward[];
+  duplicates: AwardDupEntry[];
+  inFileDups: ParsedAward[];
+};
 
 const STATUS_LABEL: Record<AwardApplicationStatus, string> = {
   new:         "Новая",
@@ -43,19 +80,25 @@ const NOMINATION_LABEL: Record<string, string> = {
 };
 
 const QUESTION_LABEL: Record<string, string> = {
-  ai_tools:  "AI-инструменты и технологии",
-  results:   "Конкретные результаты",
-  processes: "Автоматизированные процессы",
-  metrics:   "Изменение бизнес-показателей",
-  programs:  "Программы и курсы",
-  students:  "Количество студентов / участников",
-  graduates: "Результаты выпускников",
-  concept:   "Концепция коворкинга",
-  capacity:  "Вместимость и резиденты",
-  services:  "Услуги и события",
-  products:  "Цифровые продукты",
-  users:     "Активные пользователи",
-  digital:   "Цифровые технологии",
+  // AI Adoption
+  ai_tools:  "Какие AI-инструменты или технологии вы внедрили?",
+  results:   "Какие конкретные результаты достигнуты (снижение затрат, рост эффективности)?",
+  processes: "Какие внутренние процессы были автоматизированы с помощью AI?",
+  metrics:   "Как изменились бизнес-показатели после внедрения AI?",
+  // Best IT Education Project
+  programs:  "Какие программы или курсы вы предлагаете?",
+  students:  "Сколько студентов или участников прошло обучение?",
+  graduates: "Какие результаты показывают выпускники (трудоустройство, проекты)?",
+  // Best Coworking Space
+  infra:        "Какие услуги и инфраструктуру вы предоставляете резидентам?",
+  it_companies: "Какие IT-компании, стартапы или проекты базируются у вас?",
+  events:       "Какие мероприятия или инициативы вы проводите для сообщества?",
+  growth:       "Какие показатели загрузки и роста вы можете подтвердить?",
+  // Best Digital Bank
+  dp:   "Какие цифровые продукты и сервисы вы внедрили за последний год?",
+  um:   "Какие ключевые пользовательские метрики (MAU, DAU, retention, NPS) вы достигли?",
+  pr:   "Какие бизнес-процессы были оптимизированы за счёт цифровизации?",
+  tech: "Какие инновационные технологии (AI, автоматизация, open banking и др.) используются?",
 };
 
 function escapeCsv(v: unknown): string {
@@ -93,13 +136,17 @@ export function AwardsTab() {
   const [nomFilter, setNomFilter] = useState<string>("all");
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [selected, setSelected] = useState<Row | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importPreview, setImportPreview] = useState<AwardImportPreview | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setRows(null);
     const { data, error } = await supabase
       .from("award_applications")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(10000);
     if (error) {
       setToast({ msg: error.message, ok: false });
       setRows([]);
@@ -135,28 +182,213 @@ export function AwardsTab() {
     if (selected?.id === id) setSelected(null);
   };
 
+  const deleteAll = async () => {
+    if (!confirm(`Удалить все ${rows?.length ?? 0} заявок безвозвратно?`)) return;
+    const { error } = await supabase.from("award_applications").delete().not("id", "is", null);
+    if (error) { showToast(error.message, false); return; }
+    showToast("Все заявки удалены");
+    setRows([]);
+    setSelected(null);
+  };
+
+  const importFile = async (file: File) => {
+    setImporting(true);
+    try {
+      const XLSX = await import("xlsx");
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer);
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
+
+      const pick = (r: Record<string, unknown>, ...keys: string[]): string => {
+        for (const k of keys) {
+          const v = r[k];
+          if (v !== undefined && v !== null && String(v).trim() !== "") return String(v).trim();
+        }
+        return "";
+      };
+
+      // Reverse map: human-readable label → question id
+      const LABEL_TO_ID = Object.fromEntries(
+        Object.entries(QUESTION_LABEL).map(([id, label]) => [label, id])
+      );
+
+      const parseAnswers = (raw: string) => {
+        const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+        let project_name: string | null = null;
+        let project_description: string | null = null;
+        const questionnaire: Record<string, string> = {};
+        for (const line of lines) {
+          const sep = line.indexOf(": ");
+          if (sep === -1) continue;
+          const label = line.slice(0, sep).trim();
+          const value = line.slice(sep + 2).trim();
+          if (label === "Название вашего проекта/стартапа") {
+            project_name = value;
+          } else if (label === "Описание программы (до 300 слов)") {
+            project_description = value;
+          } else if (LABEL_TO_ID[label]) {
+            questionnaire[LABEL_TO_ID[label]] = value;
+          }
+        }
+        return {
+          project_name,
+          project_description,
+          questionnaire: Object.keys(questionnaire).length > 0 ? questionnaire : null,
+        };
+      };
+
+      const records: ParsedAward[] = raw
+        .map((r) => {
+          const nomRaw = pick(r,
+            "nomination__title", "nomination_title", "nomination", "Номинация",
+            "Номинация/Номинация", "nomination title", "Номинация (nomination)", "Категория",
+          ).toLowerCase();
+          const nomination = NOMINATION_FROM_LABEL[nomRaw] ?? nomRaw;
+          const answersRaw = pick(r, "Ответы", "answers");
+          const parsed = answersRaw ? parseAnswers(answersRaw) : { project_name: null, project_description: null, questionnaire: null };
+          return {
+            full_name: pick(r, "full_name", "ФИО", "ФИО/Аты-жөнү", "Имя", "Имя и фамилия", "name", "Name"),
+            email: pick(r, "email", "Email", "Электронная почта", "E-mail", "почта").toLowerCase(),
+            phone: pick(r, "number", "phone", "Телефон", "Контактный номер телефона", "Номер телефона", "tel", "Tel"),
+            nomination,
+            project_name: pick(r, "project_name", "Проект", "Название проекта", "Название вашего проекта/стартапа", "project") || parsed.project_name || null,
+            project_description: parsed.project_description,
+            questionnaire: parsed.questionnaire,
+            status: "new" as const,
+            language: "ru" as const,
+          };
+        })
+        .filter((r) => r.full_name && r.email && r.nomination);
+
+      if (records.length === 0) {
+        const sampleKeys = raw.length > 0 ? Object.keys(raw[0]).join(", ") : "нет строк";
+        showToast(`Нет подходящих строк. Колонки в файле: ${sampleKeys}`, false);
+        return;
+      }
+
+      const { data: existing } = await supabase
+        .from("award_applications")
+        .select("email, full_name, nomination");
+
+      // key = email::nomination (same person can apply for different nominations)
+      const existingMap = new Map(
+        (existing ?? []).map((e) => [`${e.email.toLowerCase()}::${e.nomination}`, e.full_name])
+      );
+      const existingNames = new Map(
+        (existing ?? []).map((e) => [`${e.full_name.toLowerCase().trim()}::${e.nomination}`, e.email])
+      );
+
+      const toInsert: ParsedAward[] = [];
+      const duplicates: AwardDupEntry[] = [];
+      const inFileDups: ParsedAward[] = [];
+      const seenKeys = new Set<string>();
+
+      for (const r of records) {
+        const email = r.email.toLowerCase();
+        const name = r.full_name.toLowerCase().trim();
+        const nom = r.nomination;
+        const emailKey = `${email}::${nom}`;
+        const nameKey = `${name}::${nom}`;
+
+        if (seenKeys.has(emailKey) || seenKeys.has(nameKey)) {
+          inFileDups.push(r);
+          continue;
+        }
+        seenKeys.add(emailKey);
+        seenKeys.add(nameKey);
+
+        if (existingMap.has(emailKey)) {
+          duplicates.push({ incoming: r, existingName: existingMap.get(emailKey)!, existingEmail: email, reason: "email" });
+        } else if (existingNames.has(nameKey)) {
+          duplicates.push({ incoming: r, existingName: r.full_name, existingEmail: existingNames.get(nameKey)!, reason: "name" });
+        } else {
+          toInsert.push(r);
+        }
+      }
+
+      if (duplicates.length === 0 && inFileDups.length === 0) {
+        await doInsert(toInsert);
+      } else {
+        setImportPreview({ toInsert, duplicates, inFileDups });
+      }
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Ошибка при импорте", false);
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const doInsert = async (records: ParsedAward[]) => {
+    if (records.length === 0) { showToast("Нечего импортировать"); return; }
+    const { error } = await supabase.from("award_applications").insert(records);
+    if (error) { showToast(error.message, false); return; }
+    showToast(`Импортировано ${records.length} заявок`);
+    load();
+  };
+
+  const confirmImport = async (merge: boolean) => {
+    const preview = importPreview;
+    setImportPreview(null);
+    if (!preview) return;
+    const { toInsert, duplicates } = preview;
+    if (merge) {
+      const updates = duplicates.filter((d) => d.reason === "email");
+      const nameOnlyInserts = duplicates.filter((d) => d.reason === "name").map((d) => d.incoming);
+      await Promise.all(
+        updates.map((d) =>
+          supabase.from("award_applications")
+            .update({ full_name: d.incoming.full_name, phone: d.incoming.phone, nomination: d.incoming.nomination })
+            .eq("email", d.existingEmail)
+        )
+      );
+      const allToInsert = [...toInsert, ...nameOnlyInserts];
+      if (allToInsert.length > 0) await supabase.from("award_applications").insert(allToInsert);
+      showToast(`Импортировано ${toInsert.length + nameOnlyInserts.length}, обновлено ${updates.length}`);
+    } else {
+      await doInsert(toInsert);
+    }
+    load();
+  };
+
   const exportCsv = () => {
     if (!rows) return;
-    const headers = [
-      "ФИО", "Email", "Телефон", "Организация", "Номинация",
-      "Проект", "Описание проекта", "Ответы",
-      "Сайт", "Соц. сети", "Статус", "Дата",
-    ];
+    const headers = ["id", "full_name", "email", "number", "nomination_title", "created_at", "Ответы"];
     const data = rows.map((r) => {
-      const answers = r.questionnaire
-        ? Object.entries(r.questionnaire as Record<string, string>)
-            .filter(([, v]) => v)
-            .map(([k, v]) => `${QUESTION_LABEL[k] ?? k}: ${v}`)
-            .join("\n")
-        : "";
+      const parts: string[] = [];
+      if (r.project_name) parts.push(`Название вашего проекта/стартапа: ${r.project_name}`);
+      if (r.project_description) parts.push(`Описание программы (до 300 слов): ${r.project_description}`);
+      parts.push(`ФИО/Аты-жөнү: ${r.full_name}`);
+      if (r.questionnaire) {
+        const qs = r.questionnaire as Record<string, string>;
+        // nomination-specific questions first, then contact info at end for AI nomination
+        const isAi = r.nomination === "ai";
+        const qEntries = Object.entries(qs).filter(([, v]) => v);
+        if (isAi) {
+          const firstTwo = qEntries.slice(0, 2);
+          const rest = qEntries.slice(2);
+          firstTwo.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
+          parts.push(`Контактный номер телефона: ${r.phone}`);
+          parts.push(`Электронная почта: ${r.email}`);
+          rest.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
+        } else {
+          parts.push(`Контактный номер телефона: ${r.phone}`);
+          parts.push(`Электронная почта: ${r.email}`);
+          qEntries.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
+        }
+      } else {
+        parts.push(`Контактный номер телефона: ${r.phone}`);
+        parts.push(`Электронная почта: ${r.email}`);
+      }
       return [
-        r.full_name, r.email, r.phone,
-        r.organization ?? "",
+        r.id,
+        r.full_name,
+        r.email,
+        r.phone,
         NOMINATION_LABEL[r.nomination] ?? r.nomination,
-        r.project_name ?? "", r.project_description ?? "",
-        answers,
-        r.website ?? "", r.socials ?? "",
-        STATUS_LABEL[r.status], formatDate(r.created_at),
+        formatDate(r.created_at),
+        parts.join("\n"),
       ];
     });
     downloadCsv(headers, data, `awards-${new Date().toISOString().slice(0, 10)}.csv`);
@@ -193,6 +425,14 @@ export function AwardsTab() {
   return (
     <div>
       {toast && <Toast {...toast} />}
+      {importPreview && (
+        <ImportAwardDupesModal
+          preview={importPreview}
+          onMerge={() => confirmImport(true)}
+          onSkip={() => confirmImport(false)}
+          onCancel={() => setImportPreview(null)}
+        />
+      )}
 
       <div className="mb-4 flex flex-wrap items-center gap-3 justify-between">
         <div className="flex flex-wrap items-center gap-2">
@@ -239,6 +479,20 @@ export function AwardsTab() {
           </Btn>
           <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
             <Download size={13} /> Excel
+          </Btn>
+          <Btn variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={importing}>
+            {importing ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+            Загрузить
+          </Btn>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) importFile(f); }}
+          />
+          <Btn variant="danger" onClick={deleteAll} disabled={!rows || rows.length === 0}>
+            <Trash2 size={13} /> Удалить все
           </Btn>
         </div>
       </div>
@@ -429,6 +683,122 @@ function QuestionBlock({ label, text }: { label: string; text: string }) {
       <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap rounded-lg bg-gray-50 p-3 border border-gray-100">
         {text}
       </p>
+    </div>
+  );
+}
+
+interface ImportAwardDupesModalProps {
+  preview: AwardImportPreview;
+  onMerge: () => void;
+  onSkip: () => void;
+  onCancel: () => void;
+}
+
+function ImportAwardDupesModal({ preview, onMerge, onSkip, onCancel }: ImportAwardDupesModalProps) {
+  const { toInsert, duplicates, inFileDups } = preview;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100">
+          <h3 className="font-display text-[17px] font-medium tracking-tight">Перед импортом</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Новых: <span className="font-medium text-gray-800">{toInsert.length}</span>
+            {duplicates.length > 0 && (<>{" · "}Совпадают с базой: <span className="font-medium text-amber-600">{duplicates.length}</span></>)}
+            {inFileDups.length > 0 && (<>{" · "}Повторяются в файле: <span className="font-medium text-orange-500">{inFileDups.length}</span></>)}
+          </p>
+        </div>
+
+        <div className="overflow-y-auto max-h-[55vh] px-6 py-4 space-y-5">
+          {duplicates.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 mb-2">
+                Совпадают с базой данных — {duplicates.length}
+              </p>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                    <th className="pb-2 pr-4">Из файла</th>
+                    <th className="pb-2 pr-4">Совпадает с</th>
+                    <th className="pb-2">Причина</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {duplicates.map((d, i) => (
+                    <tr key={i} className="align-top">
+                      <td className="py-2.5 pr-4">
+                        <div className="font-medium text-gray-900">{d.incoming.full_name}</div>
+                        <div className="text-xs text-gray-400">{d.incoming.email}</div>
+                      </td>
+                      <td className="py-2.5 pr-4">
+                        <div className="font-medium text-gray-900">{d.existingName}</div>
+                        <div className="text-xs text-gray-400">{d.existingEmail}</div>
+                      </td>
+                      <td className="py-2.5">
+                        <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                          d.reason === "email"
+                            ? "bg-amber-50 text-amber-700 ring-amber-200"
+                            : "bg-blue-50 text-blue-700 ring-blue-200"
+                        }`}>
+                          {d.reason === "email" ? "По email" : "По имени"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {inFileDups.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-orange-500 mb-2">
+                Повторяются в файле — {inFileDups.length} (будут пропущены)
+              </p>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                    <th className="pb-2 pr-4">ФИО</th>
+                    <th className="pb-2 pr-4">Email</th>
+                    <th className="pb-2">Номинация</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {inFileDups.map((r, i) => (
+                    <tr key={i} className="align-top">
+                      <td className="py-2 pr-4 font-medium text-gray-900">{r.full_name}</td>
+                      <td className="py-2 pr-4 text-gray-500">{r.email}</td>
+                      <td className="py-2 text-gray-400">{r.nomination}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-gray-400 max-w-xs">
+            {duplicates.length > 0 && <><b>Объединить</b> — обновит совпадения по email, добавит остальных. </>}
+            Записи, повторяющиеся в файле, всегда пропускаются.
+          </p>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={onCancel}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+              Отмена
+            </button>
+            <button type="button" onClick={onSkip}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+              Пропустить дубли
+            </button>
+            {duplicates.length > 0 && (
+              <button type="button" onClick={onMerge}
+                className="rounded-lg bg-brand px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-deep transition-colors">
+                Объединить
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

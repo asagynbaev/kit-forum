@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Search, Trash2, Mail, Phone, Loader2, RefreshCw, Download } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search, Trash2, Mail, Phone, Loader2, RefreshCw, Download, Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type {
   Database,
@@ -8,6 +8,31 @@ import type {
 import { Btn, Toast } from "./shared";
 
 type Row = Database["public"]["Tables"]["forum_registrations"]["Row"];
+
+type ParsedRecord = {
+  full_name: string;
+  email: string;
+  phone: string | null;
+  organization: string | null;
+  role: string | null;
+  message: string | null;
+  source: "other";
+  status: "new";
+  language: "ru";
+};
+
+type DuplicateEntry = {
+  incoming: ParsedRecord;
+  existingName: string;
+  existingEmail: string;
+  reason: "email" | "name";
+};
+
+type ImportPreview = {
+  toInsert: ParsedRecord[];
+  duplicates: DuplicateEntry[];
+  inFileDups: ParsedRecord[];
+};
 
 const STATUS_LABEL: Record<ForumRegistrationStatus, string> = {
   new:       "Новая",
@@ -72,14 +97,18 @@ export function RegistrationsTab() {
   const [statusFilter, setStatusFilter] = useState<ForumRegistrationStatus | "all">("all");
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [selected, setSelected] = useState<Row | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setRows(null);
     const { data, error } = await supabase
       .from("forum_registrations")
       .select("*")
-      .neq("source", "contacts")
-      .order("created_at", { ascending: false });
+      .or("source.neq.contacts,source.is.null")
+      .order("created_at", { ascending: false })
+      .limit(10000);
     if (error) {
       setToast({ msg: error.message, ok: false });
       setRows([]);
@@ -113,6 +142,159 @@ export function RegistrationsTab() {
     showToast("Удалена");
     setRows((rs) => rs?.filter((r) => r.id !== id) ?? rs);
     if (selected?.id === id) setSelected(null);
+  };
+
+  const importFile = async (file: File) => {
+    setImporting(true);
+    try {
+      const XLSX = await import("xlsx");
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer);
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
+
+      const records: ParsedRecord[] = raw
+        .map((r) => ({
+          full_name: String(r.full_name ?? r["ФИО"] ?? "").trim(),
+          email: String(r.email ?? r["Email"] ?? "").trim().toLowerCase(),
+          phone: String(r.number ?? r["Телефон"] ?? r.phone ?? "").trim() || null,
+          organization: String(r.place_of_work ?? r["Организация"] ?? "").trim() || null,
+          role: String(r.activity_scope ?? r["Должность"] ?? "").trim() || null,
+          message: String(r.participation_purpose ?? r["Сообщение"] ?? "").trim() || null,
+          source: "other" as const,
+          status: "new" as const,
+          language: "ru" as const,
+        }))
+        .filter((r) => r.full_name && r.email);
+
+      if (records.length === 0) {
+        showToast("Нет подходящих строк (нужны full_name и email)", false);
+        return;
+      }
+
+      const { data: existing } = await supabase
+        .from("forum_registrations")
+        .select("email, full_name")
+        .or("source.neq.contacts,source.is.null");
+
+      const existingMap = new Map(
+        (existing ?? []).map((e) => [e.email.toLowerCase(), e.full_name])
+      );
+      const existingNames = new Map(
+        (existing ?? []).map((e) => [e.full_name.toLowerCase().trim(), e.email])
+      );
+
+      const toInsert: ParsedRecord[] = [];
+      const duplicates: DuplicateEntry[] = [];
+      const inFileDups: ParsedRecord[] = [];
+      const seenEmails = new Set<string>();
+      const seenNames = new Set<string>();
+
+      for (const r of records) {
+        const email = r.email.toLowerCase();
+        const name = r.full_name.toLowerCase().trim();
+
+        if (seenEmails.has(email) || seenNames.has(name)) {
+          inFileDups.push(r);
+          continue;
+        }
+        seenEmails.add(email);
+        seenNames.add(name);
+
+        if (existingMap.has(email)) {
+          duplicates.push({
+            incoming: r,
+            existingName: existingMap.get(email)!,
+            existingEmail: email,
+            reason: "email",
+          });
+        } else if (existingNames.has(name)) {
+          duplicates.push({
+            incoming: r,
+            existingName: r.full_name,
+            existingEmail: existingNames.get(name)!,
+            reason: "name",
+          });
+        } else {
+          toInsert.push(r);
+        }
+      }
+
+      if (duplicates.length === 0 && inFileDups.length === 0) {
+        await doInsert(toInsert);
+      } else {
+        setImportPreview({ toInsert, duplicates, inFileDups });
+      }
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Ошибка при импорте", false);
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const doInsert = async (records: ParsedRecord[]) => {
+    if (records.length === 0) { showToast("Нечего импортировать"); return; }
+    const { error } = await supabase.from("forum_registrations").insert(records);
+    if (error) { showToast(error.message, false); return; }
+    showToast(`Импортировано ${records.length} записей`);
+    load();
+  };
+
+  const confirmImport = async (merge: boolean) => {
+    const preview = importPreview;
+    setImportPreview(null);
+    if (!preview) return;
+
+    const { toInsert, duplicates } = preview;
+
+    if (merge) {
+      // Update email-duplicates, insert name-only duplicates as new
+      const updates = duplicates.filter((d) => d.reason === "email");
+      const nameOnlyInserts = duplicates
+        .filter((d) => d.reason === "name")
+        .map((d) => d.incoming);
+
+      await Promise.all(
+        updates.map((d) =>
+          supabase
+            .from("forum_registrations")
+            .update({
+              full_name: d.incoming.full_name,
+              phone: d.incoming.phone,
+              organization: d.incoming.organization,
+              role: d.incoming.role,
+              message: d.incoming.message,
+            })
+            .eq("email", d.existingEmail)
+            .or("source.neq.contacts,source.is.null")
+        )
+      );
+
+      const allToInsert = [...toInsert, ...nameOnlyInserts];
+      if (allToInsert.length > 0) {
+        await supabase.from("forum_registrations").insert(allToInsert);
+      }
+
+      showToast(
+        `Импортировано ${toInsert.length + nameOnlyInserts.length}, обновлено ${updates.length}`
+      );
+    } else {
+      await doInsert(toInsert);
+    }
+    load();
+  };
+
+  const deleteAll = async () => {
+    if (!confirm(`Удалить все ${rows?.length ?? 0} записей безвозвратно?`)) return;
+    const { error } = await supabase
+      .from("forum_registrations")
+      .delete()
+      .or("source.neq.contacts,source.is.null");
+    if (error) { showToast(error.message, false); return; }
+    showToast("Все записи удалены");
+    setRows([]);
+    setSelected(null);
   };
 
   const exportCsv = () => {
@@ -159,6 +341,14 @@ export function RegistrationsTab() {
   return (
     <div>
       {toast && <Toast {...toast} />}
+      {importPreview && (
+        <ImportDupesModal
+          preview={importPreview}
+          onMerge={() => confirmImport(true)}
+          onSkip={() => confirmImport(false)}
+          onCancel={() => setImportPreview(null)}
+        />
+      )}
 
       {/* Filters */}
       <div className="mb-4 flex flex-wrap items-center gap-3 justify-between">
@@ -197,6 +387,20 @@ export function RegistrationsTab() {
           <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
             <Download size={13} /> Excel
           </Btn>
+          <Btn variant="danger" onClick={deleteAll} disabled={!rows || rows.length === 0}>
+            <Trash2 size={13} /> Удалить все
+          </Btn>
+          <Btn variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={importing}>
+            {importing ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+            Загрузить
+          </Btn>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) importFile(f); }}
+          />
         </div>
       </div>
 
@@ -367,6 +571,122 @@ export function DetailRow({ label, children }: DetailRowProps) {
     <div>
       <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">{label}</p>
       <div className="text-sm text-gray-800 break-words">{children}</div>
+    </div>
+  );
+}
+
+interface ImportDupesModalProps {
+  preview: ImportPreview;
+  onMerge: () => void;
+  onSkip: () => void;
+  onCancel: () => void;
+}
+
+function ImportDupesModal({ preview, onMerge, onSkip, onCancel }: ImportDupesModalProps) {
+  const { toInsert, duplicates, inFileDups } = preview;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100">
+          <h3 className="font-display text-[17px] font-medium tracking-tight">Перед импортом</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Новых: <span className="font-medium text-gray-800">{toInsert.length}</span>
+            {duplicates.length > 0 && (<>{" · "}Совпадают с базой: <span className="font-medium text-amber-600">{duplicates.length}</span></>)}
+            {inFileDups.length > 0 && (<>{" · "}Повторяются в файле: <span className="font-medium text-orange-500">{inFileDups.length}</span></>)}
+          </p>
+        </div>
+
+        <div className="overflow-y-auto max-h-[55vh] px-6 py-4 space-y-5">
+          {duplicates.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 mb-2">
+                Совпадают с базой данных — {duplicates.length}
+              </p>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                    <th className="pb-2 pr-4">Из файла</th>
+                    <th className="pb-2 pr-4">Совпадает с</th>
+                    <th className="pb-2">Причина</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {duplicates.map((d, i) => (
+                    <tr key={i} className="align-top">
+                      <td className="py-2.5 pr-4">
+                        <div className="font-medium text-gray-900">{d.incoming.full_name}</div>
+                        <div className="text-xs text-gray-400">{d.incoming.email}</div>
+                      </td>
+                      <td className="py-2.5 pr-4">
+                        <div className="font-medium text-gray-900">{d.existingName}</div>
+                        <div className="text-xs text-gray-400">{d.existingEmail}</div>
+                      </td>
+                      <td className="py-2.5">
+                        <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                          d.reason === "email"
+                            ? "bg-amber-50 text-amber-700 ring-amber-200"
+                            : "bg-blue-50 text-blue-700 ring-blue-200"
+                        }`}>
+                          {d.reason === "email" ? "По email" : "По имени"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {inFileDups.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-orange-500 mb-2">
+                Повторяются в файле — {inFileDups.length} (будут пропущены)
+              </p>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                    <th className="pb-2 pr-4">ФИО</th>
+                    <th className="pb-2 pr-4">Email</th>
+                    <th className="pb-2">Телефон</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {inFileDups.map((r, i) => (
+                    <tr key={i} className="align-top">
+                      <td className="py-2 pr-4 font-medium text-gray-900">{r.full_name}</td>
+                      <td className="py-2 pr-4 text-gray-500">{r.email}</td>
+                      <td className="py-2 text-gray-400">{r.phone ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-gray-400 max-w-xs">
+            {duplicates.length > 0 && <><b>Объединить</b> — обновит совпадения по email, добавит остальных. </>}
+            Записи, повторяющиеся в файле, всегда пропускаются.
+          </p>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={onCancel}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+              Отмена
+            </button>
+            <button type="button" onClick={onSkip}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+              Пропустить дубли
+            </button>
+            {duplicates.length > 0 && (
+              <button type="button" onClick={onMerge}
+                className="rounded-lg bg-brand px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-deep transition-colors">
+                Объединить
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

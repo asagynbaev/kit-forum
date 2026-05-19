@@ -43,14 +43,16 @@ const QUESTIONS: Record<NominationId, Array<{ id: string; labelKey: string; ph: 
     { id: "graduates", labelKey: "award.q.edu.graduates.label", ph: "award.q.edu.graduates.ph" },
   ],
   cowork: [
-    { id: "concept",  labelKey: "award.q.cowork.concept.label",  ph: "award.q.cowork.concept.ph"  },
-    { id: "capacity", labelKey: "award.q.cowork.capacity.label", ph: "award.q.cowork.capacity.ph" },
-    { id: "services", labelKey: "award.q.cowork.services.label", ph: "award.q.cowork.services.ph" },
+    { id: "infra",        labelKey: "award.q.cowork.infra.label",        ph: "award.q.cowork.infra.ph"        },
+    { id: "it_companies", labelKey: "award.q.cowork.it_companies.label", ph: "award.q.cowork.it_companies.ph" },
+    { id: "events",       labelKey: "award.q.cowork.events.label",       ph: "award.q.cowork.events.ph"       },
+    { id: "growth",       labelKey: "award.q.cowork.growth.label",       ph: "award.q.cowork.growth.ph"       },
   ],
   bank: [
-    { id: "products", labelKey: "award.q.bank.products.label", ph: "award.q.bank.products.ph" },
-    { id: "users",    labelKey: "award.q.bank.users.label",    ph: "award.q.bank.users.ph"    },
-    { id: "digital",  labelKey: "award.q.bank.digital.label",  ph: "award.q.bank.digital.ph"  },
+    { id: "dp",   labelKey: "award.q.bank.dp.label",   ph: "award.q.bank.dp.ph"   },
+    { id: "um",   labelKey: "award.q.bank.um.label",   ph: "award.q.bank.um.ph"   },
+    { id: "pr",   labelKey: "award.q.bank.pr.label",   ph: "award.q.bank.pr.ph"   },
+    { id: "tech", labelKey: "award.q.bank.tech.label", ph: "award.q.bank.tech.ph" },
   ],
 };
 
@@ -62,12 +64,9 @@ interface FormState {
   fullName: string;
   email: string;
   phone: string;
-  organization: string;
   nomination: NominationId | "";
   projectName: string;
   description: string;
-  website: string;
-  socials: string;
   questionnaire: Record<string, string>;
 }
 
@@ -76,23 +75,21 @@ interface ErrorState {
   email?: string;
   phone?: string;
   nomination?: string;
+  projectName?: string;
   description?: string;
 }
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const STEPS = 4;
+const STEPS = 2;
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const emptyForm = (): FormState => ({
   fullName: "",
   email: "",
   phone: "",
-  organization: "",
   nomination: "",
   projectName: "",
   description: "",
-  website: "",
-  socials: "",
   questionnaire: {},
 });
 
@@ -103,7 +100,7 @@ export function KitAwardPage() {
   const prefersReduced = useReducedMotion();
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<ErrorState>({});
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -115,18 +112,17 @@ export function KitAwardPage() {
     }
   };
 
-  const validateStep = (s: 1 | 2 | 3 | 4): ErrorState => {
+  const validateStep = (s: 1 | 2): ErrorState => {
     const e: ErrorState = {};
-    if (s === 1) {
-      if (form.fullName.trim().length < 2) e.fullName = t("award.form.name.error");
-      if (!EMAIL_RX.test(form.email)) e.email = t("award.form.email.error");
-      if (form.phone.trim().length < 4) e.phone = t("award.form.phone.error");
-    }
-    if (s === 2 && !form.nomination) {
+    if (s === 1 && !form.nomination) {
       e.nomination = t("award.form.nomination.error");
     }
-    if (s === 3 && form.description.trim().length < 30) {
-      e.description = t("award.form.desc.error");
+    if (s === 2) {
+      if (form.projectName.trim().length < 2) e.projectName = t("award.form.project.error");
+      if (form.description.trim().length < 30) e.description = t("award.form.desc.error");
+      if (form.fullName.trim().length < 2) e.fullName = t("award.form.name.error");
+      if (form.phone.trim().length < 4) e.phone = t("award.form.phone.error");
+      if (!EMAIL_RX.test(form.email)) e.email = t("award.form.email.error");
     }
     return e;
   };
@@ -135,17 +131,17 @@ export function KitAwardPage() {
     const errs = validateStep(step);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    if (step < STEPS) setStep((s) => (s + 1) as 1 | 2 | 3 | 4);
+    if (step < STEPS) setStep((s) => (s + 1) as 1 | 2);
   };
 
   const goBack = () => {
     setSubmitError(null);
-    if (step > 1) setStep((s) => (s - 1) as 1 | 2 | 3 | 4);
+    if (step > 1) setStep((s) => (s - 1) as 1 | 2);
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const errs = validateStep(3);
+    const errs = validateStep(2);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setSubmitting(true);
@@ -155,14 +151,11 @@ export function KitAwardPage() {
       email: form.email.trim(),
       phone: form.phone.trim(),
       nomination: form.nomination as string,
-      organization: form.organization.trim() || null,
       project_name: form.projectName.trim() || null,
       project_description: form.description.trim() || null,
       questionnaire: Object.keys(form.questionnaire).length > 0
         ? Object.fromEntries(Object.entries(form.questionnaire).filter(([, v]) => v.trim()))
         : null,
-      website: form.website.trim() || null,
-      socials: form.socials.trim() || null,
       language: locale,
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
     });
@@ -177,7 +170,7 @@ export function KitAwardPage() {
   const resetAll = () => {
     setForm(emptyForm());
     setErrors({});
-    setStep(1);
+    setStep(1 as 1 | 2);
     setSubmitted(false);
     setSubmitError(null);
   };
@@ -447,7 +440,7 @@ export function KitAwardPage() {
                     aria-pressed={active}
                     onClick={() => {
                       update("nomination", nom.id);
-                      setStep(2);
+                      setStep(1);
                       setTimeout(() => {
                         document.getElementById("apply")?.scrollIntoView({
                           behavior: prefersReduced ? "auto" : "smooth",
@@ -618,7 +611,7 @@ export function KitAwardPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          {[1, 2, 3, 4].map((n) => (
+                          {[1, 2].map((n) => (
                             <span
                               key={n}
                               aria-hidden
@@ -634,58 +627,11 @@ export function KitAwardPage() {
                         </div>
                       </div>
 
-                      <div className="px-6 md:px-8 py-7 md:py-9 min-h-[420px]">
+                      <div className="px-6 md:px-8 py-7 md:py-9">
                         <AnimatePresence mode="wait">
                           {step === 1 && (
                             <StepWrap key="s1">
-                              <StepHeader index={1} title={t("award.form.step1.title")} />
-                              <div className="mt-7 flex flex-col gap-7">
-                                <Field
-                                  id="award-name"
-                                  label={t("award.form.name.label")}
-                                  value={form.fullName}
-                                  onChange={(v) => update("fullName", v)}
-                                  placeholder={t("award.form.name.placeholder")}
-                                  autoComplete="name"
-                                  error={errors.fullName}
-                                />
-                                <div className="grid sm:grid-cols-2 gap-7">
-                                  <Field
-                                    id="award-email"
-                                    label={t("award.form.email.label")}
-                                    type="email"
-                                    value={form.email}
-                                    onChange={(v) => update("email", v)}
-                                    placeholder={t("award.form.email.placeholder")}
-                                    autoComplete="email"
-                                    error={errors.email}
-                                  />
-                                  <Field
-                                    id="award-phone"
-                                    label={t("award.form.phone.label")}
-                                    type="tel"
-                                    value={form.phone}
-                                    onChange={(v) => update("phone", v)}
-                                    placeholder={t("award.form.phone.placeholder")}
-                                    autoComplete="tel"
-                                    error={errors.phone}
-                                  />
-                                </div>
-                                <Field
-                                  id="award-org"
-                                  label={t("award.form.org.label")}
-                                  value={form.organization}
-                                  onChange={(v) => update("organization", v)}
-                                  placeholder={t("award.form.org.placeholder")}
-                                  autoComplete="organization"
-                                />
-                              </div>
-                            </StepWrap>
-                          )}
-
-                          {step === 2 && (
-                            <StepWrap key="s2">
-                              <StepHeader index={2} title={t("award.form.step2.title")} />
+                              <StepHeader index={1} title={t("award.form.step2.title")} />
                               <p className="mt-3 text-[13px] font-mono tracking-[0.16em] uppercase text-ink-soft">
                                 {t("award.form.nomination.label")}
                               </p>
@@ -740,69 +686,75 @@ export function KitAwardPage() {
                             </StepWrap>
                           )}
 
-                          {step === 3 && (
-                            <StepWrap key="s3">
-                              <StepHeader index={3} title={t("award.form.step3.title")} />
-                              <div className="mt-7 flex flex-col gap-7">
-                                <Field
+                          {step === 2 && (
+                            <StepWrap key="s2">
+                              <StepHeader index={2} title={t("award.form.step3.title")} />
+                              <div className="mt-7 flex flex-col gap-6">
+                                <FieldCard
                                   id="award-project"
                                   label={t("award.form.project.label")}
                                   value={form.projectName}
                                   onChange={(v) => update("projectName", v)}
                                   placeholder={t("award.form.project.placeholder")}
+                                  error={errors.projectName}
+                                  required
                                 />
-                                <FieldArea
+                                <FieldCardArea
                                   id="award-desc"
                                   label={t("award.form.desc.label")}
                                   value={form.description}
                                   onChange={(v) => update("description", v)}
                                   placeholder={t("award.form.desc.placeholder")}
                                   error={errors.description}
+                                  required
                                 />
-                                <div className="grid sm:grid-cols-2 gap-7">
-                                  <Field
-                                    id="award-site"
-                                    label={t("award.form.website.label")}
-                                    type="url"
-                                    value={form.website}
-                                    onChange={(v) => update("website", v)}
-                                    placeholder={t("award.form.website.placeholder")}
+                                <FieldCard
+                                  id="award-name"
+                                  label={t("award.form.name.label")}
+                                  value={form.fullName}
+                                  onChange={(v) => update("fullName", v)}
+                                  placeholder={t("award.form.name.placeholder")}
+                                  autoComplete="name"
+                                  error={errors.fullName}
+                                  required
+                                />
+                                <div className="grid sm:grid-cols-2 gap-6">
+                                  <FieldCard
+                                    id="award-phone"
+                                    label={t("award.form.phone.label")}
+                                    type="tel"
+                                    value={form.phone}
+                                    onChange={(v) => update("phone", v)}
+                                    placeholder={t("award.form.phone.placeholder")}
+                                    autoComplete="tel"
+                                    error={errors.phone}
+                                    required
                                   />
-                                  <Field
-                                    id="award-socials"
-                                    label={t("award.form.socials.label")}
-                                    value={form.socials}
-                                    onChange={(v) => update("socials", v)}
-                                    placeholder={t("award.form.socials.placeholder")}
+                                  <FieldCard
+                                    id="award-email"
+                                    label={t("award.form.email.label")}
+                                    type="email"
+                                    value={form.email}
+                                    onChange={(v) => update("email", v)}
+                                    placeholder={t("award.form.email.placeholder")}
+                                    autoComplete="email"
+                                    error={errors.email}
+                                    required
                                   />
                                 </div>
-                              </div>
-                            </StepWrap>
-                          )}
-
-                          {step === 4 && (
-                            <StepWrap key="s4">
-                              <StepHeader index={4} title={t("award.form.step4.title")} />
-                              <div className="mt-7 flex flex-col gap-7">
-                                {form.nomination
-                                  ? QUESTIONS[form.nomination].map((q) => (
-                                      <FieldArea
-                                        key={q.id}
-                                        id={`award-q-${q.id}`}
-                                        label={t(q.labelKey)}
-                                        value={form.questionnaire[q.id] ?? ""}
-                                        onChange={(v) =>
-                                          update("questionnaire", { ...form.questionnaire, [q.id]: v })
-                                        }
-                                        placeholder={t(q.ph)}
-                                        rows={4}
-                                      />
-                                    ))
-                                  : (
-                                    <p className="text-sm text-ink-soft py-4">
-                                      ← Вернитесь на шаг 2 и выберите номинацию
-                                    </p>
-                                  )}
+                                {form.nomination && QUESTIONS[form.nomination].map((q) => (
+                                  <FieldCardArea
+                                    key={q.id}
+                                    id={`award-q-${q.id}`}
+                                    label={t(q.labelKey)}
+                                    value={form.questionnaire[q.id] ?? ""}
+                                    onChange={(v) =>
+                                      update("questionnaire", { ...form.questionnaire, [q.id]: v })
+                                    }
+                                    placeholder={t(q.ph)}
+                                    required
+                                  />
+                                ))}
                               </div>
                             </StepWrap>
                           )}
@@ -913,7 +865,7 @@ function StepHeader({ index, title }: StepHeaderProps) {
   );
 }
 
-interface FieldProps {
+interface FieldCardProps {
   id: string;
   label: string;
   value: string;
@@ -922,75 +874,67 @@ interface FieldProps {
   type?: string;
   autoComplete?: string;
   error?: string;
+  required?: boolean;
 }
 
-function Field({
+function FieldCard({
   id, label, value, onChange,
-  placeholder, type = "text", autoComplete, error,
-}: FieldProps) {
+  placeholder, type = "text", autoComplete, error, required,
+}: FieldCardProps) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-2"
-      >
-        {label}
+      <label htmlFor={id} className="block text-[14px] font-medium text-ink mb-1.5">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={!!error}
-        className={`w-full bg-transparent border-0 border-b py-2.5 text-[17px] md:text-[19px] text-ink placeholder:text-ink-soft/45 outline-none transition-colors duration-300 ${
-          error
-            ? "border-red-400 focus:border-red-500"
-            : "border-line focus:border-ink"
-        }`}
-      />
+      <div className={`rounded-lg border transition-colors duration-200 ${error ? "border-red-400" : "border-gray-200 focus-within:border-brand"}`}>
+        <input
+          id={id}
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={!!error}
+          className="w-full bg-transparent px-3.5 py-3 text-[15px] text-ink placeholder:text-ink-soft/50 outline-none"
+        />
+      </div>
       {error && (
-        <span className="mt-2 inline-block text-[12px] text-red-600 leading-snug">
-          {error}
-        </span>
+        <span className="mt-1.5 inline-block text-[12px] text-red-600">{error}</span>
       )}
     </div>
   );
 }
 
-interface FieldAreaProps extends Omit<FieldProps, "type" | "autoComplete"> {
+interface FieldCardAreaProps extends Omit<FieldCardProps, "type" | "autoComplete"> {
   rows?: number;
+  maxLength?: number;
 }
 
-function FieldArea({
-  id, label, value, onChange, placeholder, error, rows = 4,
-}: FieldAreaProps) {
+function FieldCardArea({
+  id, label, value, onChange, placeholder, error, required, rows = 6, maxLength = 2000,
+}: FieldCardAreaProps) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-2"
-      >
-        {label}
+      <label htmlFor={id} className="block text-[14px] font-medium text-ink mb-1.5">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      <textarea
-        id={id}
-        rows={rows}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={!!error}
-        className={`w-full resize-none bg-transparent border-0 border-b py-2.5 text-[16px] md:text-[18px] text-ink placeholder:text-ink-soft/45 outline-none transition-colors duration-300 leading-relaxed ${
-          error
-            ? "border-red-400 focus:border-red-500"
-            : "border-line focus:border-ink"
-        }`}
-      />
+      <div className={`rounded-lg border transition-colors duration-200 ${error ? "border-red-400" : "border-gray-200 focus-within:border-brand"}`}>
+        <textarea
+          id={id}
+          rows={rows}
+          value={value}
+          placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value)}
+          maxLength={maxLength}
+          aria-invalid={!!error}
+          className="w-full resize-none bg-transparent px-3.5 pt-3 pb-1 text-[15px] text-ink placeholder:text-ink-soft/50 outline-none leading-relaxed"
+        />
+        <div className="flex justify-end px-3.5 pb-2">
+          <span className="text-[11px] text-gray-400 tabular-nums">{value.length}/{maxLength}</span>
+        </div>
+      </div>
       {error && (
-        <span className="mt-2 inline-block text-[12px] text-red-600 leading-snug">
-          {error}
-        </span>
+        <span className="mt-1.5 inline-block text-[12px] text-red-600">{error}</span>
       )}
     </div>
   );
