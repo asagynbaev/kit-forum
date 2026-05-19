@@ -403,6 +403,21 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "city.metaCity": "Бишкек · КР",
     "city.metaDate": "4–5 июня 2026",
 
+    // ─── Digital Nomad After-party
+    "nomad.aria": "Digital Nomad After-Party · 6–7 июня 2026 · Иссык-Куль",
+    "nomad.eyebrow": "After-party · 06–07.06.2026",
+    "nomad.tag": "После форума",
+    "nomad.titleA": "DIGITAL",
+    "nomad.titleB": "NOMAD",
+    "nomad.titleC": "after-party",
+    "nomad.venue": "at ololoAkJol in Issyk-Kul",
+    "nomad.address": "с. Кош-Көл, Иссык-Кульская область, Кыргызская Республика",
+    "nomad.date": "6–7 июня 2026",
+    "nomad.lead": "Два дня на берегу Иссык-Куля — нетворкинг, отдых и насыщенная программа после КИТ Форума.",
+    "nomad.cta": "Забронировать номер",
+    "nomad.whatsappMsg": "Здравствуйте, хочу забронировать номер на Digital Nomad after party",
+    "nomad.organizer": "High Technology Park · ololo creative hubs",
+
     // ─── Footer
     "footer.col.forum.title": "Форум",
     "footer.col.forum.link.about": "О форуме",
@@ -867,6 +882,21 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "city.metaCity": "Бишкек · КР",
     "city.metaDate": "4–5-июнь, 2026",
 
+    // ─── Digital Nomad After-party
+    "nomad.aria": "Digital Nomad After-Party · 6–7-июнь 2026 · Ысык-Көл",
+    "nomad.eyebrow": "After-party · 06–07.06.2026",
+    "nomad.tag": "Форумдан кийин",
+    "nomad.titleA": "DIGITAL",
+    "nomad.titleB": "NOMAD",
+    "nomad.titleC": "after-party",
+    "nomad.venue": "at ololoAkJol in Issyk-Kul",
+    "nomad.address": "Кош-Көл айылы, Ысык-Көл облусу, Кыргыз Республикасы",
+    "nomad.date": "6–7-июнь 2026",
+    "nomad.lead": "Ысык-Көлдүн жагасында эки күн — КИТ Форумдан кийин тармактык байланыш, эс алуу жана бай программа.",
+    "nomad.cta": "Номер брондоо",
+    "nomad.whatsappMsg": "Саламатсызбы! Digital Nomad after party иш-чарасына номер брондогубуз келет.",
+    "nomad.organizer": "High Technology Park · ololo creative hubs",
+
     // ─── Подвал
     "footer.col.forum.title": "Форум",
     "footer.col.forum.link.about": "Форум жөнүндө",
@@ -1330,6 +1360,21 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
       "The capital of Kyrgyzstan will host Central Asia's digital industry leaders. Two days of dialogue, decisions, and encounters — where tradition meets the technologies of tomorrow.",
     "city.metaCity": "Bishkek · KR",
     "city.metaDate": "4–5 June 2026",
+
+    // ─── Digital Nomad After-party
+    "nomad.aria": "Digital Nomad After-Party · 6–7 June 2026 · Issyk-Kul",
+    "nomad.eyebrow": "After-party · 06–07.06.2026",
+    "nomad.tag": "Post-forum",
+    "nomad.titleA": "DIGITAL",
+    "nomad.titleB": "NOMAD",
+    "nomad.titleC": "after-party",
+    "nomad.venue": "at ololoAkJol in Issyk-Kul",
+    "nomad.address": "Kosh-Köl Village, Issyk-Kul Region, Kyrgyz Republic",
+    "nomad.date": "6–7 June 2026",
+    "nomad.lead": "Two days on the shores of Issyk-Kul — networking, relaxation and a packed programme right after KIT Forum.",
+    "nomad.cta": "Book a room",
+    "nomad.whatsappMsg": "Hello, I would like to book a room for the Digital Nomad after party",
+    "nomad.organizer": "High Technology Park · ololo creative hubs",
 
     // ─── Footer
     "footer.col.forum.title": "Forum",
