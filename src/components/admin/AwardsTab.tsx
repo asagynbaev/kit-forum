@@ -101,22 +101,13 @@ const QUESTION_LABEL: Record<string, string> = {
   tech: "Какие инновационные технологии (AI, автоматизация, open banking и др.) используются?",
 };
 
-function escapeCsv(v: unknown): string {
-  return `"${String(v ?? "").replace(/"/g, '""')}"`;
-}
-
-function downloadCsv(headers: string[], rows: string[][], filename: string) {
-  const bom = "﻿";
-  const content = [headers, ...rows].map((r) => r.map(escapeCsv).join(",")).join("\r\n");
-  const blob = new Blob([bom + content], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+async function downloadXlsx(headers: string[], rows: unknown[][], filename: string, colWidths?: number[]) {
+  const XLSX = await import("xlsx");
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  if (colWidths) ws["!cols"] = colWidths.map((wch) => ({ wch }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  XLSX.writeFile(wb, filename);
 }
 
 function formatDate(iso: string) {
@@ -352,46 +343,29 @@ export function AwardsTab() {
     load();
   };
 
-  const exportCsv = () => {
+  const exportXlsx = async () => {
     if (!rows) return;
-    const headers = ["id", "full_name", "email", "number", "nomination_title", "created_at", "Ответы"];
+    const headers = ["ФИО", "Email", "Телефон", "Номинация", "Проект", "Статус", "Дата", "Ответы на вопросы"];
     const data = rows.map((r) => {
-      const parts: string[] = [];
-      if (r.project_name) parts.push(`Название вашего проекта/стартапа: ${r.project_name}`);
-      if (r.project_description) parts.push(`Описание программы (до 300 слов): ${r.project_description}`);
-      parts.push(`ФИО/Аты-жөнү: ${r.full_name}`);
-      if (r.questionnaire) {
-        const qs = r.questionnaire as Record<string, string>;
-        // nomination-specific questions first, then contact info at end for AI nomination
-        const isAi = r.nomination === "ai";
-        const qEntries = Object.entries(qs).filter(([, v]) => v);
-        if (isAi) {
-          const firstTwo = qEntries.slice(0, 2);
-          const rest = qEntries.slice(2);
-          firstTwo.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
-          parts.push(`Контактный номер телефона: ${r.phone}`);
-          parts.push(`Электронная почта: ${r.email}`);
-          rest.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
-        } else {
-          parts.push(`Контактный номер телефона: ${r.phone}`);
-          parts.push(`Электронная почта: ${r.email}`);
-          qEntries.forEach(([k, v]) => parts.push(`${QUESTION_LABEL[k] ?? k}: ${v}`));
-        }
-      } else {
-        parts.push(`Контактный номер телефона: ${r.phone}`);
-        parts.push(`Электронная почта: ${r.email}`);
-      }
+      const qs = r.questionnaire as Record<string, string> | null;
+      const answers = qs
+        ? Object.entries(qs)
+            .filter(([, v]) => v)
+            .map(([k, v]) => `${QUESTION_LABEL[k] ?? k}:\n${v}`)
+            .join("\n\n")
+        : "";
       return [
-        r.id,
         r.full_name,
         r.email,
-        r.phone,
+        r.phone ?? "",
         NOMINATION_LABEL[r.nomination] ?? r.nomination,
+        r.project_name ?? "",
+        STATUS_LABEL[r.status],
         formatDate(r.created_at),
-        parts.join("\n"),
+        answers,
       ];
     });
-    downloadCsv(headers, data, `awards-${new Date().toISOString().slice(0, 10)}.csv`);
+    await downloadXlsx(headers, data, `awards-${new Date().toISOString().slice(0, 10)}.xlsx`, [30, 30, 16, 25, 25, 14, 18, 60]);
   };
 
   const filtered = useMemo(() => {
@@ -477,7 +451,7 @@ export function AwardsTab() {
           <Btn variant="secondary" onClick={load}>
             <RefreshCw size={13} /> Обновить
           </Btn>
-          <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
+          <Btn variant="secondary" onClick={exportXlsx} disabled={!rows || rows.length === 0}>
             <Download size={13} /> Excel
           </Btn>
           <Btn variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={importing}>

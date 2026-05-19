@@ -58,22 +58,13 @@ const SOURCE_LABEL: Record<string, string> = {
   other:     "Регистрация · Модалка",
 };
 
-function escapeCsv(v: unknown): string {
-  return `"${String(v ?? "").replace(/"/g, '""')}"`;
-}
-
-function downloadCsv(headers: string[], rows: string[][], filename: string) {
-  const bom = "﻿";
-  const content = [headers, ...rows].map((r) => r.map(escapeCsv).join(",")).join("\r\n");
-  const blob = new Blob([bom + content], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+async function downloadXlsx(headers: string[], rows: unknown[][], filename: string, colWidths?: number[]) {
+  const XLSX = await import("xlsx");
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  if (colWidths) ws["!cols"] = colWidths.map((wch) => ({ wch }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  XLSX.writeFile(wb, filename);
 }
 
 function formatDate(iso: string) {
@@ -297,19 +288,20 @@ export function RegistrationsTab() {
     setSelected(null);
   };
 
-  const exportCsv = () => {
+  const exportXlsx = async () => {
     if (!rows) return;
-    const headers = ["ФИО", "Email", "Телефон", "Организация", "Статус", "Источник", "Дата"];
+    const headers = ["ФИО", "Email", "Телефон", "Организация", "Роль", "Статус", "Источник", "Дата"];
     const data = rows.map((r) => [
       r.full_name,
       r.email,
       r.phone ?? "",
       r.organization ?? "",
+      r.role ?? "",
       STATUS_LABEL[r.status],
       SOURCE_LABEL[r.source] ?? r.source,
       formatDate(r.created_at),
     ]);
-    downloadCsv(headers, data, `registrations-${new Date().toISOString().slice(0, 10)}.csv`);
+    await downloadXlsx(headers, data, `registrations-${new Date().toISOString().slice(0, 10)}.xlsx`, [30, 30, 16, 30, 20, 14, 22, 18]);
   };
 
   const filtered = useMemo(() => {
@@ -384,7 +376,7 @@ export function RegistrationsTab() {
           <Btn variant="secondary" onClick={load}>
             <RefreshCw size={13} /> Обновить
           </Btn>
-          <Btn variant="secondary" onClick={exportCsv} disabled={!rows || rows.length === 0}>
+          <Btn variant="secondary" onClick={exportXlsx} disabled={!rows || rows.length === 0}>
             <Download size={13} /> Excel
           </Btn>
           <Btn variant="danger" onClick={deleteAll} disabled={!rows || rows.length === 0}>
