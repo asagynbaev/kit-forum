@@ -268,26 +268,11 @@
     display: none;
   }
 
-  /* Digital Nomad banner — Issyk-Kul teal/summer backdrop */
+  /* Digital Nomad banner — Issyk-Kul photo backdrop */
   .nomad-backdrop {
     background:
-      radial-gradient(
-        ellipse 80% 60% at 50% 100%,
-        rgba(0, 180, 220, 0.28) 0%,
-        rgba(0, 140, 200, 0.14) 35%,
-        transparent 70%
-      ),
-      radial-gradient(
-        ellipse 60% 50% at 10% 80%,
-        rgba(0, 212, 255, 0.18) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 55% 45% at 85% 20%,
-        rgba(0, 100, 200, 0.16) 0%,
-        transparent 60%
-      ),
-      linear-gradient(180deg, #060e1e 0%, #0a1628 50%, #060e1e 100%);
+      linear-gradient(180deg, rgba(6,14,30,0.55) 0%, rgba(6,14,30,0.25) 40%, rgba(6,14,30,0.25) 60%, rgba(6,14,30,0.55) 100%),
+      url("/images/nomad-bg.webp") center / cover no-repeat;
   }
 
   /* City CTA — cyberpunk backdrop (CSS-only, used as fallback under photo) */

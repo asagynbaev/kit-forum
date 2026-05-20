@@ -75,7 +75,7 @@ export function DigitalNomadBanner() {
             }}
           />
 
-          <div className="relative grid grid-cols-12 gap-y-8 gap-x-10 items-start">
+          <div className="relative grid grid-cols-12 gap-y-6 md:gap-x-10 items-start">
             {/* ── Left: title block ── */}
             <div className="col-span-12 md:col-span-5">
               {/* Eyebrow */}
@@ -87,7 +87,7 @@ export function DigitalNomadBanner() {
                   >
                     {t("nomad.tag")}
                   </span>
-                  <span className="font-mono text-[10px] tracking-[0.14em] sm:tracking-[0.2em] uppercase text-white/55 min-w-0">
+                  <span className="font-mono text-[10px] tracking-[0.08em] sm:tracking-[0.2em] uppercase text-white/55 min-w-0 break-words">
                     {t("nomad.eyebrow")}
                   </span>
                 </div>
@@ -95,7 +95,7 @@ export function DigitalNomadBanner() {
 
               {/* Organizer */}
               <Reveal delay={0.05}>
-                <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.15em] uppercase text-white/45 mb-5">
+                <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.08em] sm:tracking-[0.15em] uppercase text-white/45 mb-5 break-words">
                   {t("nomad.organizer")}
                 </p>
               </Reveal>
@@ -131,7 +131,7 @@ export function DigitalNomadBanner() {
 
               {/* Address */}
               <Reveal delay={0.2}>
-                <address className="mt-3 not-italic font-mono text-[10px] tracking-[0.1em] text-white/55">
+                <address className="mt-3 not-italic font-mono text-[10px] tracking-[0.06em] sm:tracking-[0.1em] text-white/55 break-words">
                   {t("nomad.address")}
                 </address>
               </Reveal>
@@ -141,7 +141,7 @@ export function DigitalNomadBanner() {
             <div className="col-span-12 md:col-span-7 flex flex-col justify-between gap-6 md:pt-2">
               <Reveal delay={0.12}>
                 <p
-                  className="text-white/85 leading-[1.6] max-w-[36rem]"
+                  className="text-white/85 leading-[1.6] w-full max-w-[36rem]"
                   style={{ fontSize: "clamp(0.95rem, 1.2vw + 0.5rem, 1.15rem)" }}
                 >
                   {t("nomad.lead")}
