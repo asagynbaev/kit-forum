@@ -49,7 +49,7 @@ export function CityCTA() {
 
         {/* ── Venue block ── */}
         <Reveal delay={0.14}>
-          <div className="mt-14 sm:mt-16 border-t border-brand/20 pt-10 sm:pt-12 grid grid-cols-12 gap-y-10 gap-x-10">
+          <div className="mt-14 sm:mt-16 border-t border-brand/20 pt-10 sm:pt-12 grid grid-cols-12 gap-y-10 md:gap-x-10">
             {/* Address */}
             <div className="col-span-12 md:col-span-4 min-w-0">
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-soft mb-4">
@@ -124,7 +124,7 @@ export function CityCTA() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease, delay: 0.3 }}
-              className="sm:ml-auto flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.2em] uppercase text-ink-mute tabular tnums"
+              className="sm:ml-auto flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] tracking-[0.1em] sm:tracking-[0.2em] uppercase text-ink-mute tabular tnums"
             >
               <span>{t("city.metaCity")}</span>
               <span aria-hidden className="h-1 w-1 rounded-full bg-ink/20" />
