@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare, Building2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
@@ -9,6 +9,7 @@ import { RegistrationsTab } from "@/components/admin/RegistrationsTab";
 import { QuestionsTab } from "@/components/admin/QuestionsTab";
 import { AwardsTab } from "@/components/admin/AwardsTab";
 import { ContactsTab } from "@/components/admin/ContactsTab";
+import { PartnersTab } from "@/components/admin/PartnersTab";
 
 type Tab =
   | "registrations"
@@ -17,7 +18,8 @@ type Tab =
   | "speakers"
   | "program"
   | "contacts"
-  | "social";
+  | "social"
+  | "partners";
 
 // ── Login form ─────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -96,10 +98,11 @@ function Dashboard({ session }: { session: Session }) {
     { id: "registrations", label: "Регистрации", icon: Inbox         },
     { id: "questions",     label: "Вопросы",     icon: MessageSquare },
     { id: "awards",        label: "KIT Awards",  icon: Trophy        },
-    { id: "speakers",      label: "Спикеры",     icon: Users    },
-    { id: "program",       label: "Программа",   icon: Calendar },
-    { id: "contacts",      label: "Контакты",    icon: AtSign   },
-    { id: "social",        label: "Соц. сети",   icon: Share2   },
+    { id: "speakers",      label: "Спикеры",     icon: Users         },
+    { id: "program",       label: "Программа",   icon: Calendar      },
+    { id: "partners",      label: "Партнёры",    icon: Building2     },
+    { id: "contacts",      label: "Контакты",    icon: AtSign        },
+    { id: "social",        label: "Соц. сети",   icon: Share2        },
   ];
 
   const signOut = () => supabase.auth.signOut();
@@ -157,6 +160,7 @@ function Dashboard({ session }: { session: Session }) {
         {tab === "awards"        && <AwardsTab />}
         {tab === "speakers"      && <SpeakersTab />}
         {tab === "program"       && <ProgramTab />}
+        {tab === "partners"      && <PartnersTab />}
         {tab === "contacts"      && <ContactsTab />}
         {tab === "social"        && <SocialTab />}
       </div>

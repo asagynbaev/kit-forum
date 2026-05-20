@@ -280,6 +280,33 @@ export interface Database {
         Update: { id?: string; label?: Json; title?: Json; lines?: Json; order_index?: number };
         Relationships: [];
       };
+      partners: {
+        Row: {
+          id: string;
+          name: string;
+          logo_url: string;
+          order_index: number;
+          is_visible: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          logo_url: string;
+          order_index?: number;
+          is_visible?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          logo_url?: string;
+          order_index?: number;
+          is_visible?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

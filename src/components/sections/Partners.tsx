@@ -1,15 +1,45 @@
-import { partners, type Partner } from "@/data/partners";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { partners as staticPartners } from "@/data/partners";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Reveal } from "../ui/Reveal";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const mid = Math.ceil(partners.length / 2);
-const rowA = partners.slice(0, mid);
-const rowB = partners.slice(mid);
+type PartnerRow = { id: string; name: string; logo_url: string };
+
+function usePartners() {
+  const [partners, setPartners] = useState<PartnerRow[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("partners")
+      .select("id, name, logo_url, order_index")
+      .eq("is_visible", true)
+      .order("order_index")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setPartners(data.map((r) => ({ id: r.id, name: r.name, logo_url: r.logo_url })));
+        }
+      });
+  }, []);
+
+  return partners;
+}
 
 export function Partners() {
   const { t } = useI18n();
+  const dbPartners = usePartners();
+
+  const partners: PartnerRow[] =
+    dbPartners.length > 0
+      ? dbPartners
+      : staticPartners.map((p) => ({ id: p.id, name: p.name, logo_url: p.src }));
+
+  const mid = Math.ceil(partners.length / 2);
+  const rowA = partners.slice(0, mid);
+  const rowB = partners.slice(mid);
+
   return (
     <section
       id="partners"
@@ -47,7 +77,7 @@ function MarqueeRow({
   items,
   direction,
 }: {
-  items: Partner[];
+  items: PartnerRow[];
   direction: "left" | "right";
 }) {
   const loop = [...items, ...items];
@@ -81,17 +111,19 @@ function MarqueeRow({
   );
 }
 
-function PartnerTile({ partner }: { partner: Partner }) {
-  const webp = partner.src.replace(/\.png$/, ".webp");
+function PartnerTile({ partner }: { partner: PartnerRow }) {
+  const src = partner.logo_url;
+  const webpSrc = src.endsWith(".png") ? src.replace(/\.png$/, ".webp") : null;
+
   return (
     <div
       title={partner.name}
       className="grid h-20 w-40 sm:h-24 sm:w-48 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-line transition-all duration-500 ease-spring grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:ring-brand/30 hover:-translate-y-0.5 hover:shadow-soft px-4"
     >
       <picture>
-        <source srcSet={webp} type="image/webp" />
+        {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
         <img
-          src={partner.src}
+          src={src}
           alt={partner.name}
           width={240}
           height={120}
