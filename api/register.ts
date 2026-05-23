@@ -44,16 +44,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.warn("[register] RPC check failed (non-fatal):", err);
   }
 
-  // Insert registration
-  const { error } = await supabase.from("forum_registrations").insert({
-    full_name: full_name.trim(),
-    email: email.trim().toLowerCase(),
-    phone: phone.trim(),
-    organization: organization.trim(),
-    language: language ?? "ru",
-    source: source ?? "other",
-    user_agent: user_agent ?? null,
-  });
+  // Insert registration, get ID back
+  const { data: inserted, error } = await supabase
+    .from("forum_registrations")
+    .insert({
+      full_name: full_name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      organization: organization.trim(),
+      language: language ?? "ru",
+      source: source ?? "other",
+      user_agent: user_agent ?? null,
+    })
+    .select("id")
+    .single();
 
   if (error) {
     console.error("[register] Supabase insert error:", error.code, error.message);
@@ -71,6 +75,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: registrationEmail(full_name.trim()),
     });
     console.log("[register] Email sent ✓ to:", email.trim().toLowerCase());
+
+    // Auto-update status to "contacted" after successful email
+    await supabase
+      .from("forum_registrations")
+      .update({ status: "contacted" })
+      .eq("id", inserted.id);
+    console.log("[register] Status → contacted ✓");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[register] Email FAILED:", msg);

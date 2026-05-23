@@ -41,17 +41,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log("[award] New application:", email.trim(), "nomination:", nomination);
 
-  const { error } = await supabase.from("award_applications").insert({
-    full_name:           full_name.trim(),
-    email:               email.trim(),
-    phone:               phone.trim(),
-    nomination:          nomination,
-    project_name:        project_name?.trim() || null,
-    project_description: project_description?.trim() || null,
-    questionnaire:       questionnaire ?? null,
-    language:            language ?? "ru",
-    user_agent:          user_agent ?? null,
-  });
+  const { data: inserted, error } = await supabase
+    .from("award_applications")
+    .insert({
+      full_name:           full_name.trim(),
+      email:               email.trim(),
+      phone:               phone.trim(),
+      nomination:          nomination,
+      project_name:        project_name?.trim() || null,
+      project_description: project_description?.trim() || null,
+      questionnaire:       questionnaire ?? null,
+      language:            language ?? "ru",
+      user_agent:          user_agent ?? null,
+    })
+    .select("id")
+    .single();
 
   if (error) {
     console.error("[award] Supabase insert error:", error.code, error.message);
@@ -68,6 +72,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: awardEmail(full_name.trim(), nomination, project_name?.trim()),
     });
     console.log("[award] Email sent ✓ to:", email.trim());
+
+    // Auto-update status to "reviewing" after successful email
+    await supabase
+      .from("award_applications")
+      .update({ status: "reviewing" })
+      .eq("id", inserted.id);
+    console.log("[award] Status → reviewing ✓");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[award] Email FAILED:", msg);
