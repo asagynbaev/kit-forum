@@ -478,6 +478,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "pressPage.tag.program": "Программа",
     "pressPage.tag.media": "СМИ",
     "pressPage.readMore": "Читать полностью",
+    "pressPage.empty": "Скоро здесь появятся пресс-релизы.",
     "pressPage.footerCopyright": "© 2026 КИТ Форум · Парк высоких технологий КР",
     "pressPage.footerStatus": "Пресс-центр",
 
@@ -964,6 +965,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "pressPage.tag.program": "Программа",
     "pressPage.tag.media": "ЖМК",
     "pressPage.readMore": "Толук окуу",
+    "pressPage.empty": "Жакында бул жерде пресс-релиздер пайда болот.",
     "pressPage.footerCopyright": "© 2026 КИТ Форум · КР Жогорку технологиялар паркы",
     "pressPage.footerStatus": "Пресс-борбор",
 
@@ -1450,6 +1452,7 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "pressPage.tag.program": "Programme",
     "pressPage.tag.media": "Media",
     "pressPage.readMore": "Read more",
+    "pressPage.empty": "Press releases will appear here soon.",
     "pressPage.footerCopyright": "© 2026 KIT Forum · High Technology Park of the KR",
     "pressPage.footerStatus": "Press centre",
 

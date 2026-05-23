@@ -307,6 +307,42 @@ export interface Database {
         };
         Relationships: [];
       };
+      press_releases: {
+        Row: {
+          id: string;
+          date_label: string;
+          tag: string;
+          title: Json;
+          lead: Json;
+          body: Json | null;
+          order_index: number;
+          is_visible: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          date_label: string;
+          tag?: string;
+          title: Json;
+          lead: Json;
+          body?: Json | null;
+          order_index?: number;
+          is_visible?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          date_label?: string;
+          tag?: string;
+          title?: Json;
+          lead?: Json;
+          body?: Json | null;
+          order_index?: number;
+          is_visible?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

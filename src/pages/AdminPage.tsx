@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare, Building2 } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare, Building2, Newspaper } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
@@ -10,6 +10,7 @@ import { QuestionsTab } from "@/components/admin/QuestionsTab";
 import { AwardsTab } from "@/components/admin/AwardsTab";
 import { ContactsTab } from "@/components/admin/ContactsTab";
 import { PartnersTab } from "@/components/admin/PartnersTab";
+import { PressTab } from "@/components/admin/PressTab";
 
 type Tab =
   | "registrations"
@@ -19,7 +20,8 @@ type Tab =
   | "program"
   | "contacts"
   | "social"
-  | "partners";
+  | "partners"
+  | "press";
 
 // ── Login form ─────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -101,6 +103,7 @@ function Dashboard({ session }: { session: Session }) {
     { id: "speakers",      label: "Спикеры",     icon: Users         },
     { id: "program",       label: "Программа",   icon: Calendar      },
     { id: "partners",      label: "Партнёры",    icon: Building2     },
+    { id: "press",         label: "Пресс-центр", icon: Newspaper     },
     { id: "contacts",      label: "Контакты",    icon: AtSign        },
     { id: "social",        label: "Соц. сети",   icon: Share2        },
   ];
@@ -161,6 +164,7 @@ function Dashboard({ session }: { session: Session }) {
         {tab === "speakers"      && <SpeakersTab />}
         {tab === "program"       && <ProgramTab />}
         {tab === "partners"      && <PartnersTab />}
+        {tab === "press"         && <PressTab />}
         {tab === "contacts"      && <ContactsTab />}
         {tab === "social"        && <SocialTab />}
       </div>
