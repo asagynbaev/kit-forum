@@ -17,6 +17,10 @@ CREATE INDEX IF NOT EXISTS press_releases_order_idx
 
 ALTER TABLE public.press_releases ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "anon_read" ON public.press_releases;
+DROP POLICY IF EXISTS "auth_read" ON public.press_releases;
+DROP POLICY IF EXISTS "auth_all"  ON public.press_releases;
+
 CREATE POLICY "anon_read" ON public.press_releases FOR SELECT TO anon         USING (is_visible = true);
 CREATE POLICY "auth_read" ON public.press_releases FOR SELECT TO authenticated USING (true);
 CREATE POLICY "auth_all"  ON public.press_releases FOR ALL    TO authenticated USING (true) WITH CHECK (true);
