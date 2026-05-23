@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Mail, Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, Loader2 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
 import { LangSwitcher } from "../components/ui/LangSwitcher";
 import { useI18n, type Localized } from "@/i18n/I18nProvider";
@@ -12,6 +12,7 @@ type PressRelease = {
   tag: string;
   title: Localized<string>;
   lead: Localized<string>;
+  body: Localized<string> | null;
 };
 
 const tagKey = (tag: string) => `pressPage.tag.${tag}`;
@@ -22,17 +23,25 @@ const tagColors: Record<string, string> = {
   partners: "bg-violet-50 text-violet-700",
   program: "bg-amber-50 text-amber-700",
   media: "bg-sky-50 text-sky-700",
+  insight: "bg-rose-50 text-rose-700",
+  recap: "bg-teal-50 text-teal-700",
 };
+
+function hasBody(body: Localized<string> | null): boolean {
+  if (!body) return false;
+  return Boolean(body.ru?.trim() || body.ky?.trim() || body.en?.trim());
+}
 
 export function PressPage() {
   const { t, tr } = useI18n();
   const [releases, setReleases] = useState<PressRelease[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     supabase
       .from("press_releases")
-      .select("id, date_label, tag, title, lead, order_index")
+      .select("id, date_label, tag, title, lead, body, order_index")
       .eq("is_visible", true)
       .order("order_index", { ascending: false })
       .order("created_at", { ascending: false })
@@ -45,12 +54,22 @@ export function PressPage() {
               tag: r.tag,
               title: r.title as Localized<string>,
               lead: r.lead as Localized<string>,
+              body: r.body as Localized<string> | null,
             })),
           );
         }
         setLoading(false);
       });
   }, []);
+
+  const toggle = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-[100dvh] bg-canvas text-ink flex flex-col">
@@ -92,13 +111,6 @@ export function PressPage() {
               <ArrowLeft size={13} strokeWidth={1.6} />
               {t("pressPage.back")}
             </Link>
-            <a
-              href="mailto:pr@htp.kg"
-              className="group inline-flex items-center gap-2.5 rounded-xl bg-brand px-4 py-2.5 text-[13px] font-medium text-white hover:bg-brand-deep active:scale-[0.98] transition-all duration-300"
-            >
-              <Mail size={13} strokeWidth={1.6} />
-              {t("pressPage.contact")}
-            </a>
           </div>
         </div>
       </div>
@@ -106,59 +118,79 @@ export function PressPage() {
       {/* Press releases */}
       <main className="flex-1 py-10 md:py-14">
         <div className="container-edge">
-          {loading ? (
+          {loading && (
             <div className="flex justify-center py-16">
               <Loader2 size={24} className="animate-spin text-brand" />
             </div>
-          ) : releases.length === 0 ? (
+          )}
+          {!loading && releases.length === 0 && (
             <p className="text-center text-ink-soft text-sm py-16">
               {t("pressPage.empty")}
             </p>
-          ) : (
+          )}
+          {!loading && releases.length > 0 && (
             <div className="flex flex-col gap-6 max-w-[800px]">
-              {releases.map((pr) => (
-                <article
-                  key={pr.id}
-                  className="group rounded-2xl border border-line bg-surface hover:border-brand/25 hover:shadow-sm transition-all duration-300 overflow-hidden"
-                >
-                  <div className="p-6 md:p-8">
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                      <span
-                        className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-[0.14em] uppercase font-medium ${
-                          tagColors[pr.tag] ?? "bg-surface text-ink-soft"
+              {releases.map((pr) => {
+                const isOpen = expanded.has(pr.id);
+                const showBody = hasBody(pr.body);
+                return (
+                  <article
+                    key={pr.id}
+                    className="group rounded-2xl border border-line bg-surface hover:border-brand/25 hover:shadow-sm transition-all duration-300 overflow-hidden"
+                  >
+                    <div className="p-6 md:p-8">
+                      <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <span
+                          className={`inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-[0.14em] uppercase font-medium ${
+                            tagColors[pr.tag] ?? "bg-surface text-ink-soft"
+                          }`}
+                        >
+                          {t(tagKey(pr.tag))}
+                        </span>
+                        <span className="font-mono text-[10px] tracking-[0.14em] text-ink-soft">
+                          {pr.date}
+                        </span>
+                      </div>
+
+                      <h2 className="font-display font-medium text-[18px] md:text-[20px] leading-snug tracking-tight text-ink text-balance">
+                        {tr(pr.title)}
+                      </h2>
+
+                      <p
+                        className={`mt-3 text-[14px] leading-[1.6] text-ink-soft ${
+                          isOpen ? "" : "line-clamp-3"
                         }`}
                       >
-                        {t(tagKey(pr.tag))}
-                      </span>
-                      <span className="font-mono text-[10px] tracking-[0.14em] text-ink-soft">
-                        {pr.date}
-                      </span>
+                        {tr(pr.lead)}
+                      </p>
+
+                      {showBody && isOpen && pr.body && (
+                        <div className="mt-4 text-[14px] leading-[1.7] text-ink space-y-3 whitespace-pre-line">
+                          {tr(pr.body)}
+                        </div>
+                      )}
+
+                      {showBody && (
+                        <div className="mt-5 pt-4 border-t border-line">
+                          <button
+                            type="button"
+                            onClick={() => toggle(pr.id)}
+                            className="inline-flex items-center gap-2 text-[13px] font-medium text-brand hover:text-brand-deep transition-colors duration-200"
+                            aria-expanded={isOpen}
+                          >
+                            {isOpen ? t("pressPage.collapse") : t("pressPage.readMore")}
+                            <ChevronDown
+                              size={14}
+                              strokeWidth={1.6}
+                              className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                        </div>
+                      )}
                     </div>
-
-                    <h2 className="font-display font-medium text-[18px] md:text-[20px] leading-snug tracking-tight text-ink text-balance">
-                      {tr(pr.title)}
-                    </h2>
-
-                    <p className="mt-3 text-[14px] leading-[1.6] text-ink-soft line-clamp-3">
-                      {tr(pr.lead)}
-                    </p>
-
-                    <div className="mt-5 pt-4 border-t border-line">
-                      <a
-                        href="/#contacts"
-                        className="group/btn inline-flex items-center gap-2 text-[13px] font-medium text-brand hover:text-brand-deep transition-colors duration-200"
-                      >
-                        {t("pressPage.readMore")}
-                        <ArrowRight
-                          size={13}
-                          strokeWidth={1.6}
-                          className="transition-transform duration-300 group-hover/btn:translate-x-0.5"
-                        />
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </div>

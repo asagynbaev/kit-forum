@@ -12,6 +12,7 @@ type FormState = {
   tag: string;
   title: LV;
   lead: LV;
+  body: LV;
   order_index: number;
   is_visible: boolean;
 };
@@ -22,6 +23,8 @@ const TAG_OPTIONS = [
   { value: "partners", label: "Партнёры" },
   { value: "program", label: "Программа" },
   { value: "media", label: "СМИ" },
+  { value: "insight", label: "Инсайт" },
+  { value: "recap", label: "Итоги" },
 ];
 
 const TAG_LABEL: Record<string, string> = Object.fromEntries(
@@ -34,7 +37,12 @@ const TAG_PILL: Record<string, string> = {
   partners: "bg-violet-50 text-violet-700",
   program: "bg-amber-50 text-amber-700",
   media: "bg-sky-50 text-sky-700",
+  insight: "bg-rose-50 text-rose-700",
+  recap: "bg-teal-50 text-teal-700",
 };
+
+const emptyLv = (): LV => ({ ru: "", ky: "", en: "" });
+const isLvEmpty = (v: LV) => !v.ru.trim() && !v.ky.trim() && !v.en.trim();
 
 function todayLabel(): string {
   const d = new Date();
@@ -46,8 +54,9 @@ function todayLabel(): string {
 const empty = (): FormState => ({
   date_label: todayLabel(),
   tag: "announcement",
-  title: { ru: "", ky: "", en: "" },
-  lead: { ru: "", ky: "", en: "" },
+  title: emptyLv(),
+  lead: emptyLv(),
+  body: emptyLv(),
   order_index: 0,
   is_visible: true,
 });
@@ -88,6 +97,7 @@ export function PressTab() {
       tag: row.tag,
       title: row.title as LV,
       lead: row.lead as LV,
+      body: (row.body ?? emptyLv()) as LV,
       order_index: row.order_index,
       is_visible: row.is_visible,
     });
@@ -97,10 +107,11 @@ export function PressTab() {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    const payload = { ...form, body: isLvEmpty(form.body) ? null : form.body };
     const isEdit = modal !== "add" && modal !== null;
     const { error } = isEdit
-      ? await supabase.from("press_releases").update(form).eq("id", (modal as Row).id)
-      : await supabase.from("press_releases").insert(form);
+      ? await supabase.from("press_releases").update(payload).eq("id", modal.id)
+      : await supabase.from("press_releases").insert(payload);
     setSaving(false);
     if (error) { showToast(error.message, false); return; }
     showToast(isEdit ? "Пресс-релиз обновлён" : "Пресс-релиз добавлен");
@@ -255,6 +266,18 @@ export function PressTab() {
               multiline
               required
             />
+
+            <div>
+              <LocalizedField
+                label="Полный текст (необязательно)"
+                value={form.body}
+                onChange={(v) => setForm((f) => ({ ...f, body: v }))}
+                multiline
+              />
+              <p className="mt-1.5 text-xs text-gray-500">
+                Если заполнено, на странице появится кнопка «Читать полностью», раскрывающая этот текст. Пустые строки сохраняют разделение на абзацы.
+              </p>
+            </div>
 
             <div className="pb-1">
               <label className="flex items-center gap-2 cursor-pointer">

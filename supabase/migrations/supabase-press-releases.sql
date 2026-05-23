@@ -21,15 +21,13 @@ CREATE POLICY "anon_read" ON public.press_releases FOR SELECT TO anon         US
 CREATE POLICY "auth_read" ON public.press_releases FOR SELECT TO authenticated USING (true);
 CREATE POLICY "auth_all"  ON public.press_releases FOR ALL    TO authenticated USING (true) WITH CHECK (true);
 
+-- If a previous version of this migration was applied, drop the accreditation
+-- entry — there is no media accreditation for KIT Forum 2026.
+DELETE FROM public.press_releases
+WHERE title->>'ru' = 'Открыта аккредитация СМИ на КИТ Форум 2026';
+
 -- Seed with the existing static releases
 INSERT INTO public.press_releases (date_label, tag, title, lead, order_index) VALUES
-  (
-    '01.04.2026',
-    'media',
-    '{"ru":"Открыта аккредитация СМИ на КИТ Форум 2026","ky":"КИТ Форум 2026га ЖМК аккредитациясы ачылды","en":"Media accreditation for KIT Forum 2026 now open"}'::jsonb,
-    '{"ru":"Парк высоких технологий КР объявляет об открытии аккредитации для представителей средств массовой информации. Заявки принимаются по адресу pr@htp.kg до 25 мая 2026 года. Аккредитованным СМИ будет обеспечен доступ ко всем открытым пленарным сессиям, пресс-конференциям и эксклюзивным брифингам оргкомитета.","ky":"КР Жогорку технологиялар паркы жалпы коммуникация каражаттарынын өкүлдөрүн аккредитациялоону баштаганын жарыялайт. Арыздар 2026-жылдын 25-майына чейин pr@htp.kg дарегине кабыл алынат. Аккредитацияланган ЖМК бардык ачык пленардык сессияларга, маалымат жыйындарына жана уюштуруу комитетинин өзгөчө брифингдерине кире алат.","en":"The High Technology Park of the KR announces the opening of accreditation for media representatives. Applications are accepted at pr@htp.kg until 25 May 2026. Accredited media will have access to all open plenary sessions, press conferences, and exclusive organising committee briefings."}'::jsonb,
-    50
-  ),
   (
     '10.03.2026',
     'partners',
