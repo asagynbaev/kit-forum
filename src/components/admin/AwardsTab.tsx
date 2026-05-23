@@ -86,9 +86,10 @@ const QUESTION_LABEL: Record<string, string> = {
   processes: "Какие внутренние процессы были автоматизированы с помощью AI?",
   metrics:   "Как изменились бизнес-показатели после внедрения AI?",
   // Best IT Education Project
-  programs:  "Какие программы или курсы вы предлагаете?",
-  students:  "Сколько студентов или участников прошло обучение?",
-  graduates: "Какие результаты показывают выпускники (трудоустройство, проекты)?",
+  programs:     "Какие программы или курсы вы предлагаете?",
+  students:     "Сколько студентов или участников прошло обучение?",
+  graduates:    "Какие результаты показывают выпускники (трудоустройство, проекты)?",
+  partnerships: "Есть ли партнёрства с IT-компаниями?",
   // Best Coworking Space
   infra:        "Какие услуги и инфраструктуру вы предоставляете резидентам?",
   it_companies: "Какие IT-компании, стартапы или проекты базируются у вас?",
@@ -204,27 +205,74 @@ export function AwardsTab() {
         Object.entries(QUESTION_LABEL).map(([id, label]) => [label, id])
       );
 
+      // Labels that anchor a new section in the merged "Ответы" column.
+      // Anything between two anchors (or after the last one) is value continuation.
+      const PROJECT_NAME_LABEL = "Название вашего проекта/стартапа";
+      const PROJECT_DESC_LABEL = "Описание программы (до 300 слов)";
+      const SKIP_LABELS = new Set([
+        "ФИО", "ФИО/Аты-жөнү",
+        "Контактный номер телефона",
+        "Электронная почта",
+      ]);
+      const ANCHOR_LABELS = new Set<string>([
+        PROJECT_NAME_LABEL,
+        PROJECT_DESC_LABEL,
+        ...SKIP_LABELS,
+        ...Object.values(QUESTION_LABEL),
+      ]);
+
+      // Recognise a line as "<known label>: <value start>".
+      // Tolerant to extra text appended to the label after the trailing "?"
+      // (e.g. accidental prompt residue from the source survey).
+      const matchAnchor = (line: string): { label: string; rest: string } | null => {
+        const colon = line.indexOf(":");
+        if (colon <= 0) return null;
+        const raw = line.slice(0, colon).trim();
+        const rest = line.slice(colon + 1).replace(/^\s/, "");
+        if (ANCHOR_LABELS.has(raw)) return { label: raw, rest };
+        const q = raw.indexOf("?");
+        if (q > 0) {
+          const trimmed = raw.slice(0, q + 1);
+          if (ANCHOR_LABELS.has(trimmed)) return { label: trimmed, rest };
+        }
+        return null;
+      };
+
       const parseAnswers = (raw: string) => {
-        const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
-        let project_name: string | null = null;
-        let project_description: string | null = null;
-        const questionnaire: Record<string, string> = {};
-        for (const line of lines) {
-          const sep = line.indexOf(": ");
-          if (sep === -1) continue;
-          const label = line.slice(0, sep).trim();
-          const value = line.slice(sep + 2).trim();
-          if (label === "Название вашего проекта/стартапа") {
-            project_name = value;
-          } else if (label === "Описание программы (до 300 слов)") {
-            project_description = value;
-          } else if (LABEL_TO_ID[label]) {
-            questionnaire[LABEL_TO_ID[label]] = value;
+        const sections: Record<string, string[]> = {};
+        let currentLabel: string | null = null;
+        let currentBuf: string[] = [];
+        const flush = () => {
+          if (currentLabel) sections[currentLabel] = currentBuf;
+          currentLabel = null;
+          currentBuf = [];
+        };
+        for (const rawLine of raw.split("\n")) {
+          const trimmed = rawLine.trim();
+          const m = trimmed ? matchAnchor(trimmed) : null;
+          if (m) {
+            flush();
+            currentLabel = m.label;
+            currentBuf = m.rest ? [m.rest] : [];
+          } else if (currentLabel) {
+            currentBuf.push(rawLine);
           }
         }
+        flush();
+
+        const clean = (lines: string[] | undefined): string =>
+          (lines ?? []).join("\n").replace(/^\s+|\s+$/g, "");
+
+        const questionnaire: Record<string, string> = {};
+        for (const [label, lines] of Object.entries(sections)) {
+          const id = LABEL_TO_ID[label];
+          if (!id) continue;
+          const value = clean(lines);
+          if (value) questionnaire[id] = value;
+        }
         return {
-          project_name,
-          project_description,
+          project_name: clean(sections[PROJECT_NAME_LABEL]) || null,
+          project_description: clean(sections[PROJECT_DESC_LABEL]) || null,
           questionnaire: Object.keys(questionnaire).length > 0 ? questionnaire : null,
         };
       };

@@ -38,9 +38,10 @@ const QUESTIONS: Record<NominationId, Array<{ id: string; labelKey: string; ph: 
     { id: "metrics",   labelKey: "award.q.ai.metrics.label",   ph: "award.q.ai.metrics.ph"   },
   ],
   edu: [
-    { id: "programs",  labelKey: "award.q.edu.programs.label",  ph: "award.q.edu.programs.ph"  },
-    { id: "students",  labelKey: "award.q.edu.students.label",  ph: "award.q.edu.students.ph"  },
-    { id: "graduates", labelKey: "award.q.edu.graduates.label", ph: "award.q.edu.graduates.ph" },
+    { id: "programs",     labelKey: "award.q.edu.programs.label",     ph: "award.q.edu.programs.ph"     },
+    { id: "students",     labelKey: "award.q.edu.students.label",     ph: "award.q.edu.students.ph"     },
+    { id: "graduates",    labelKey: "award.q.edu.graduates.label",    ph: "award.q.edu.graduates.ph"    },
+    { id: "partnerships", labelKey: "award.q.edu.partnerships.label", ph: "award.q.edu.partnerships.ph" },
   ],
   cowork: [
     { id: "infra",        labelKey: "award.q.cowork.infra.label",        ph: "award.q.cowork.infra.ph"        },
