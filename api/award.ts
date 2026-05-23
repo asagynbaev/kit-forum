@@ -3,8 +3,8 @@ import nodemailer from "nodemailer";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!,
+  process.env.SUPABASE_URL ?? "",
+  process.env.SUPABASE_ANON_KEY ?? "",
 );
 
 const transporter = nodemailer.createTransport({
@@ -25,6 +25,8 @@ const NOMINATION_LABELS: Record<string, string> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log("[award] →", req.method, new Date().toISOString());
+
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const {
@@ -33,8 +35,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } = req.body ?? {};
 
   if (!full_name || !email || !phone || !nomination) {
+    console.warn("[award] Missing fields:", { full_name: !!full_name, email: !!email, phone: !!phone, nomination: !!nomination });
     return res.status(400).json({ error: "Missing required fields" });
   }
+
+  console.log("[award] New application:", email.trim(), "nomination:", nomination);
 
   const { error } = await supabase.from("award_applications").insert({
     full_name:           full_name.trim(),
@@ -48,7 +53,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     user_agent:          user_agent ?? null,
   });
 
-  if (error) return res.status(500).json({ error: error.message });
+  if (error) {
+    console.error("[award] Supabase insert error:", error.code, error.message);
+    return res.status(500).json({ error: error.message });
+  }
+
+  console.log("[award] Saved to DB ✓, sending email to:", email.trim());
 
   // Send confirmation email (non-blocking)
   transporter
@@ -58,7 +68,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       subject: "Заявка на КИТ Премию 2026 получена",
       html: awardEmail(full_name.trim(), nomination, project_name?.trim()),
     })
-    .catch((err) => console.error("Email error:", err));
+    .then(() => console.log("[award] Email sent ✓ to:", email.trim()))
+    .catch((err) => console.error("[award] Email FAILED:", err.message ?? err));
 
   return res.status(200).json({ ok: true });
 }
