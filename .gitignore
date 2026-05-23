@@ -17,3 +17,18 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Claude Code local files
+.agents/
+.claude/
+skills-lock.json
+
+# Backup files
+.backups/
+
+# Data exports (potentially sensitive)
+*.xlsx
+*.xls
