@@ -63,16 +63,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log("[register] Saved to DB ✓, sending email to:", email.trim().toLowerCase());
 
-  // Send confirmation email (non-blocking)
-  transporter
-    .sendMail({
+  try {
+    await transporter.sendMail({
       from: `"КИТ Форум 2026" <${process.env.SMTP_USER}>`,
       to: email.trim().toLowerCase(),
       subject: "Подтверждение регистрации — КИТ Форум 2026",
       html: registrationEmail(full_name.trim()),
-    })
-    .then(() => console.log("[register] Email sent ✓ to:", email.trim().toLowerCase()))
-    .catch((err) => console.error("[register] Email FAILED:", err.message ?? err));
+    });
+    console.log("[register] Email sent ✓ to:", email.trim().toLowerCase());
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[register] Email FAILED:", msg);
+  }
 
   return res.status(200).json({ ok: true });
 }

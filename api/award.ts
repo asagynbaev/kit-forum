@@ -60,16 +60,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log("[award] Saved to DB ✓, sending email to:", email.trim());
 
-  // Send confirmation email (non-blocking)
-  transporter
-    .sendMail({
+  try {
+    await transporter.sendMail({
       from: `"КИТ Форум 2026" <${process.env.SMTP_USER}>`,
       to: email.trim(),
       subject: "Заявка на КИТ Премию 2026 получена",
       html: awardEmail(full_name.trim(), nomination, project_name?.trim()),
-    })
-    .then(() => console.log("[award] Email sent ✓ to:", email.trim()))
-    .catch((err) => console.error("[award] Email FAILED:", err.message ?? err));
+    });
+    console.log("[award] Email sent ✓ to:", email.trim());
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[award] Email FAILED:", msg);
+  }
 
   return res.status(200).json({ ok: true });
 }
