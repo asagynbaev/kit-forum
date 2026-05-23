@@ -9,7 +9,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 const detailIcons = [Car, BadgeCheck, Accessibility];
 
-const googleDirectionsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(venue.googleQuery)}`;
+const twoGisHref = `https://2gis.kg/bishkek/directions/points/%2F${venue.coordinates.lng}%2C${venue.coordinates.lat}`;
 
 export function CityCTA() {
   const { t, tr } = useI18n();
@@ -107,7 +107,7 @@ export function CityCTA() {
                 </span>
               </button>
               <a
-                href={googleDirectionsHref}
+                href={twoGisHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-3 rounded-xl border border-ink/15 px-6 py-3.5 text-[14px] font-medium text-ink hover:border-ink/30 hover:bg-ink/[0.03] active:scale-[0.98] transition-all duration-300 ease-spring"
