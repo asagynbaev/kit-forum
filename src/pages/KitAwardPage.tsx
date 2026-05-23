@@ -19,7 +19,6 @@ import { LangSwitcher } from "../components/ui/LangSwitcher";
 import { LiveBadge } from "../components/ui/LiveBadge";
 import { Reveal } from "../components/ui/Reveal";
 import { useI18n } from "@/i18n/I18nProvider";
-import { supabase } from "@/lib/supabase";
 
 // ── Nominations ────────────────────────────────────────────────────────────
 
@@ -147,25 +146,34 @@ export function KitAwardPage() {
     if (Object.keys(errs).length > 0) return;
     setSubmitting(true);
     setSubmitError(null);
-    const { error } = await supabase.from("award_applications").insert({
-      full_name: form.fullName.trim(),
-      email: form.email.trim(),
-      phone: form.phone.trim(),
-      nomination: form.nomination as string,
-      project_name: form.projectName.trim() || null,
-      project_description: form.description.trim() || null,
-      questionnaire: Object.keys(form.questionnaire).length > 0
-        ? Object.fromEntries(Object.entries(form.questionnaire).filter(([, v]) => v.trim()))
-        : null,
-      language: locale,
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-    });
-    setSubmitting(false);
-    if (error) {
+    try {
+      const res = await fetch("/api/award", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name:           form.fullName.trim(),
+          email:               form.email.trim(),
+          phone:               form.phone.trim(),
+          nomination:          form.nomination,
+          project_name:        form.projectName.trim() || null,
+          project_description: form.description.trim() || null,
+          questionnaire:       Object.keys(form.questionnaire).length > 0
+            ? Object.fromEntries(Object.entries(form.questionnaire).filter(([, v]) => v.trim()))
+            : null,
+          language:   locale,
+          user_agent: navigator.userAgent,
+        }),
+      });
+      if (!res.ok) {
+        setSubmitError(t("award.form.submitError"));
+        return;
+      }
+      setSubmitted(true);
+    } catch {
       setSubmitError(t("award.form.submitError"));
-      return;
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitted(true);
   };
 
   const resetAll = () => {

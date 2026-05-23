@@ -2,7 +2,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import { supabase } from "@/lib/supabase";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -71,40 +70,35 @@ export function RegistrationModal() {
     setSubmitError(null);
 
     try {
-      const { data: exists } = await supabase.rpc("is_email_registered", {
-        p_email: form.email.trim().toLowerCase(),
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          phone: form.phone.trim(),
+          organization: form.org.trim(),
+          language: locale,
+          source: "other",
+          user_agent: navigator.userAgent,
+        }),
       });
-      if (exists === true) {
+
+      if (res.status === 409) {
         setErrors({ email: t("regModal.field.email.errorDuplicate") });
-        setSubmitting(false);
         return;
       }
-    } catch {
-      // RPC not deployed — let DB constraint handle it
-    }
-
-    const { error } = await supabase.from("forum_registrations").insert({
-      full_name: form.name.trim(),
-      email: form.email.trim().toLowerCase(),
-      phone: form.phone.trim(),
-      organization: form.org.trim(),
-      language: locale,
-      source: "other",
-      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-    });
-
-    setSubmitting(false);
-
-    if (error) {
-      if (error.code === "23505") {
-        setErrors({ email: t("regModal.field.email.errorDuplicate") });
-      } else {
+      if (!res.ok) {
         setSubmitError(t("contacts.submitError"));
+        return;
       }
-      return;
-    }
 
-    setSubmitted(true);
+      setSubmitted(true);
+    } catch {
+      setSubmitError(t("contacts.submitError"));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const field = (hasError: boolean) =>

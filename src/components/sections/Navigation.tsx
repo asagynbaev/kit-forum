@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "../ui/Logo";
@@ -14,18 +14,18 @@ export function Navigation() {
   const { openModal } = useRegistrationModal();
   const scrolled = useScrolled(20);
   const [open, setOpen] = useState(false);
-  const prefersReduced = useReducedMotion();
   useLockBody(open);
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc);
+    globalThis.addEventListener("keydown", onEsc);
+    return () => globalThis.removeEventListener("keydown", onEsc);
   }, []);
 
   return (
+    <>
     <header
       id="top"
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-spring ${
@@ -100,6 +100,8 @@ export function Navigation() {
         </button>
       </div>
 
+    </header>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -107,11 +109,11 @@ export function Navigation() {
             role="dialog"
             aria-modal="true"
             aria-label={t("nav.menuAria")}
-            initial={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-            className="lg:hidden fixed inset-0 top-[72px] bg-white/95 backdrop-blur-2xl overflow-y-auto"
+            className="lg:hidden fixed inset-0 top-[72px] z-40 bg-white/95 backdrop-blur-2xl overflow-y-auto"
           >
             <div className="container-edge py-10 sm:py-12 flex flex-col gap-2">
               {navLinks.map((link, i) => (
@@ -190,6 +192,6 @@ export function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
