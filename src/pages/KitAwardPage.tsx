@@ -1,6 +1,7 @@
 import {
   useState,
   useMemo,
+  useEffect,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -13,12 +14,14 @@ import {
   Check,
   Trophy,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import { Logo } from "../components/ui/Logo";
 import { LangSwitcher } from "../components/ui/LangSwitcher";
 import { LiveBadge } from "../components/ui/LiveBadge";
 import { Reveal } from "../components/ui/Reveal";
 import { useI18n } from "@/i18n/I18nProvider";
+import { supabase } from "@/lib/supabase";
 
 // ── Nominations ────────────────────────────────────────────────────────────
 
@@ -104,6 +107,7 @@ export function KitAwardPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [regOpen, setRegOpen] = useState<boolean | null>(null);
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -176,6 +180,15 @@ export function KitAwardPage() {
     }
   };
 
+  useEffect(() => {
+    supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "award_registration_open")
+      .single()
+      .then(({ data }) => setRegOpen(data?.value !== "false"));
+  }, []);
+
   const resetAll = () => {
     setForm(emptyForm());
     setErrors({});
@@ -195,6 +208,46 @@ export function KitAwardPage() {
 
   return (
     <div className="relative min-h-[100dvh] bg-canvas text-ink overflow-x-clip">
+      {/* ── Registration closed modal ── */}
+      <AnimatePresence>
+        {regOpen === false && (
+          <motion.div
+            key="closed-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/85 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.5, ease }}
+              className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+            >
+              <div className="bg-ink px-8 pt-10 pb-8 text-center">
+                <div className="mx-auto mb-5 inline-grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
+                  <Lock size={22} className="text-white/70" />
+                </div>
+                <h2 className="font-display font-medium text-white text-[22px] tracking-tight leading-snug">
+                  {t("award.closed.title")}
+                </h2>
+              </div>
+              <div className="px-8 py-8 text-center">
+                <p className="text-[15px] leading-relaxed text-ink-soft">
+                  {t("award.closed.body")}
+                </p>
+                <Link
+                  to="/"
+                  className="mt-7 inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white hover:bg-brand/90 transition-colors duration-300"
+                >
+                  <ArrowLeft size={14} strokeWidth={1.8} />
+                  {t("award.closed.btn")}
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── Top header ── */}
       <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-xl">
         <div className="container-edge flex h-[72px] items-center justify-between gap-6">

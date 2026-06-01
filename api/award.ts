@@ -29,6 +29,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  // Check if award registration is open
+  try {
+    const { data: setting } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "award_registration_open")
+      .single();
+    if (setting?.value === "false") {
+      console.log("[award] Registration is closed");
+      return res.status(403).json({ error: "registration_closed" });
+    }
+  } catch (err) {
+    console.warn("[award] Could not check registration status (non-fatal):", err);
+  }
+
   const {
     full_name, email, phone, nomination,
     project_name, project_description, questionnaire, language, user_agent,

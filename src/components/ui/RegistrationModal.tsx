@@ -1,8 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, ArrowRight, CheckCircle } from "lucide-react";
+import { X, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
+import { supabase } from "@/lib/supabase";
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ease = [0.25, 0.1, 0.25, 1] as const;
@@ -30,6 +31,16 @@ export function RegistrationModal() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [regOpen, setRegOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "forum_registration_open")
+      .single()
+      .then(({ data }) => setRegOpen(data?.value !== "false"));
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -145,9 +156,9 @@ export function RegistrationModal() {
               </button>
 
               <div className="p-7 sm:p-8">
-                {submitted ? (
-                  <SuccessView onClose={closeModal} t={t} />
-                ) : (
+                {submitted && <SuccessView onClose={closeModal} t={t} />}
+                {!submitted && regOpen === false && <ClosedView onClose={closeModal} t={t} />}
+                {!submitted && regOpen !== false && (
                   <>
                     <div className="mb-6">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand mb-1.5">
@@ -274,7 +285,7 @@ export function RegistrationModal() {
   );
 }
 
-function SuccessView({ onClose, t }: { onClose: () => void; t: (k: string) => string }) {
+function SuccessView({ onClose, t }: Readonly<{ onClose: () => void; t: (k: string) => string }>) {
   return (
     <div className="flex flex-col items-center text-center py-6">
       <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand/10 text-brand">
@@ -288,6 +299,25 @@ function SuccessView({ onClose, t }: { onClose: () => void; t: (k: string) => st
         className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-3 text-[14px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring"
       >
         {t("regModal.success.close")}
+      </button>
+    </div>
+  );
+}
+
+function ClosedView({ onClose, t }: Readonly<{ onClose: () => void; t: (k: string) => string }>) {
+  return (
+    <div className="flex flex-col items-center text-center py-6">
+      <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-ink/8 text-ink/50">
+        <Lock size={32} strokeWidth={1.4} />
+      </div>
+      <h2 className="text-[22px] font-bold text-ink mb-2">{t("regModal.closed.title")}</h2>
+      <p className="text-[14px] text-ink/60 leading-relaxed mb-7 max-w-[300px]">{t("regModal.closed.body")}</p>
+      <button
+        type="button"
+        onClick={onClose}
+        className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-3 text-[14px] font-medium text-white hover:bg-brand active:scale-[0.98] transition-all duration-300 ease-spring"
+      >
+        {t("regModal.closed.btn")}
       </button>
     </div>
   );

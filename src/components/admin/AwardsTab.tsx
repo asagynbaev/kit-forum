@@ -9,6 +9,8 @@ import {
   ExternalLink,
   Download,
   Upload,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type {
@@ -130,6 +132,7 @@ export function AwardsTab() {
   const [selected, setSelected] = useState<Row | null>(null);
   const [importing, setImporting] = useState(false);
   const [importPreview, setImportPreview] = useState<AwardImportPreview | null>(null);
+  const [regOpen, setRegOpen] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -147,7 +150,27 @@ export function AwardsTab() {
     setRows(data ?? []);
   };
 
-  useEffect(() => { load(); }, []);
+  const loadRegStatus = async () => {
+    const { data } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "award_registration_open")
+      .single();
+    setRegOpen(data?.value !== "false");
+  };
+
+  const toggleReg = async () => {
+    const next = !regOpen;
+    const { error } = await supabase
+      .from("app_settings")
+      .update({ value: String(next), updated_at: new Date().toISOString() })
+      .eq("key", "award_registration_open");
+    if (error) { showToast(error.message, false); return; }
+    setRegOpen(next);
+    showToast(next ? "Регистрация открыта" : "Регистрация закрыта", next);
+  };
+
+  useEffect(() => { load(); loadRegStatus(); }, []);
 
   const showToast = (msg: string, ok = true) => {
     setToast({ msg, ok });
@@ -477,6 +500,8 @@ export function AwardsTab() {
           ))}
         </div>
         <div className="flex items-center gap-2">
+          <AwardRegToggleBtn regOpen={regOpen} onClick={toggleReg} />
+          <span className="h-5 w-px bg-gray-200" />
           <select
             value={nomFilter}
             onChange={(e) => setNomFilter(e.target.value)}
@@ -822,5 +847,29 @@ function ImportAwardDupesModal({ preview, onMerge, onSkip, onCancel }: ImportAwa
         </div>
       </div>
     </div>
+  );
+}
+
+function AwardRegToggleBtn({ regOpen, onClick }: { regOpen: boolean | null; onClick: () => void }) {
+  if (regOpen === null) {
+    return (
+      <button type="button" disabled className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium opacity-50">
+        <Loader2 size={13} className="animate-spin" /> Загрузка…
+      </button>
+    );
+  }
+  if (regOpen) {
+    return (
+      <button type="button" onClick={onClick} title="Нажмите, чтобы закрыть регистрацию"
+        className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100">
+        <Unlock size={13} /> Регистрация открыта
+      </button>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} title="Нажмите, чтобы открыть регистрацию"
+      className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100">
+      <Lock size={13} /> Регистрация закрыта
+    </button>
   );
 }

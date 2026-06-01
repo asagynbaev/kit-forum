@@ -22,6 +22,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  // Check if forum registration is open
+  try {
+    const { data: setting } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "forum_registration_open")
+      .single();
+    if (setting?.value === "false") {
+      console.log("[register] Registration is closed");
+      return res.status(403).json({ error: "registration_closed" });
+    }
+  } catch (err) {
+    console.warn("[register] Could not check registration status (non-fatal):", err);
+  }
+
   const { full_name, email, phone, organization, language, source, user_agent } = req.body ?? {};
 
   if (!full_name || !email || !phone || !organization) {

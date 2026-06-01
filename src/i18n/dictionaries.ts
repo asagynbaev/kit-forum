@@ -68,6 +68,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "regModal.success.close": "Закрыть",
     "regModal.submitError": "Произошла ошибка. Попробуйте ещё раз.",
     "regModal.close": "Закрыть",
+    "regModal.closed.title": "Регистрация закрыта",
+    "regModal.closed.body": "К сожалению, регистрация на КИТ Форум 2026 завершена. Следите за обновлениями на официальном сайте.",
+    "regModal.closed.btn": "Закрыть",
 
     // ─── Loader
     "loader.aria": "Загрузка",
@@ -399,6 +402,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.success.bodyB":
       ". Жюри свяжется по итогам предварительного отбора до 20.05.2026.",
     "award.success.reset": "Подать ещё одну заявку",
+    "award.closed.title": "Приём заявок завершён",
+    "award.closed.body": "К сожалению, срок подачи заявок на КИТ Премию 2026 истёк. Следите за обновлениями на официальном сайте.",
+    "award.closed.btn": "На главную",
 
     // ─── City CTA (cinematic banner before footer)
     "city.aria": "Бишкек — город форума",
@@ -559,6 +565,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "regModal.success.close": "Жабуу",
     "regModal.submitError": "Ката кетти. Кайталап аракет кылыңыз.",
     "regModal.close": "Жабуу",
+    "regModal.closed.title": "Катталуу жабылды",
+    "regModal.closed.body": "Өкүнүчтүүсү, КИТ Форум 2026га катталуу аяктады. Жаңылыктарды расмий сайттан байкап туруңуз.",
+    "regModal.closed.btn": "Жабуу",
 
     // ─── Жүктөгүч
     "loader.aria": "Жүктөлүүдө",
@@ -888,6 +897,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.success.bodyB":
       " дарегине жөнөтүлдү. Жюри 20.05.2026ге чейин алдын ала тандоонун жыйынтыктары боюнча байланышат.",
     "award.success.reset": "Дагы бир арыз тапшыруу",
+    "award.closed.title": "Арыз кабыл алуу аяктады",
+    "award.closed.body": "Өкүнүчтүүсү, КИТ Сыйлыгы 2026га арыз тапшыруу мезгили аяктады. Жаңылыктарды расмий сайттан байкап туруңуз.",
+    "award.closed.btn": "Башкы бетке",
 
     // ─── Шаар (форумдан мурунку cinematic баннер)
     "city.aria": "Бишкек — форумдун шаары",
@@ -1048,6 +1060,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "regModal.success.close": "Close",
     "regModal.submitError": "Something went wrong. Please try again.",
     "regModal.close": "Close",
+    "regModal.closed.title": "Registration closed",
+    "regModal.closed.body": "Unfortunately, registration for KIT Forum 2026 has ended. Stay tuned for updates on the official website.",
+    "regModal.closed.btn": "Close",
 
     // ─── Loader
     "loader.aria": "Loading",
@@ -1377,6 +1392,9 @@ export const dictionaries: Record<Locale, Record<string, string>> = {
     "award.success.bodyB":
       ". The jury will be in touch after preliminary review by 20.05.2026.",
     "award.success.reset": "Submit another application",
+    "award.closed.title": "Applications closed",
+    "award.closed.body": "Unfortunately, the application period for KIT Award 2026 has ended. Stay tuned for updates on the official website.",
+    "award.closed.btn": "Back to home",
 
     // ─── City CTA (cinematic banner before footer)
     "city.aria": "Bishkek — host city of the forum",
