@@ -20,7 +20,7 @@ INSERT INTO public.contact_blocks (id, label, title, lines, order_index) VALUES
   'venue',
   '{"ru":"Площадка","ky":"Аянтча","en":"Venue"}',
   '{"ru":"Международный Университет Кыргызстана","ky":"Кыргызстан Эл аралык университети","en":"International University of Kyrgyzstan"}',
-  '[{"ru":"Центральный кампус МУК","ky":"КЭУнун Борбордук кампусу","en":"IUK Central Campus"},{"ru":"Бишкек, ул. Льва Толстого, 1 (17Б)","ky":"Бишкек, Лев Толстой көчөсү, 1 (17Б)","en":"Bishkek, 1 (17B) Lev Tolstoy Street"}]',
+  '[{"ru":"Центральный кампус МУК","ky":"КЭУнун Борбордук кампусу","en":"IUK Central Campus"},{"ru":"Бишкек, ул. Льва Толстого, 17Б/1","ky":"Бишкек, Лев Толстой көчөсү, 17Б/1","en":"Bishkek, 17B/1 Lev Tolstoy Street"}]',
   1
 )
 ON CONFLICT (id) DO NOTHING;

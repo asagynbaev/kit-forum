@@ -18,9 +18,9 @@ export const venue = {
       en: "Kyrgyz Republic, Bishkek",
     } as Localized,
     {
-      ru: "ул. Льва Толстого, 1 (17Б)",
-      ky: "Лев Толстой көчөсү, 1 (17Б)",
-      en: "1 (17B) Lev Tolstoy Street",
+      ru: "ул. Льва Толстого, 17Б/1",
+      ky: "Лев Толстой көчөсү, 17Б/1",
+      en: "17B/1 Lev Tolstoy Street",
     } as Localized,
     {
       ru: "Центральный кампус МУК",

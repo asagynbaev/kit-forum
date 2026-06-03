@@ -193,7 +193,7 @@ function awardEmail(name: string, nomination: string, projectName?: string): str
           <td style="padding:24px 40px;border-top:1px solid #E8ECF2;background:#F9FAFB;">
             <p style="margin:0;font-size:12px;color:#8A99B3;line-height:1.6;">
               КИТ Форум 2026 · Организатор: Парк высоких технологий КР<br/>
-              Бишкек, ул. Льва Толстого, 1 (17Б)
+              Бишкек, ул. Льва Толстого, 17Б/1
             </p>
           </td>
         </tr>
