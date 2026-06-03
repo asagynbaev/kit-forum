@@ -20,8 +20,8 @@ export const venue = {
       en: "IUK Central Campus",
     } as Localized,
     {
-      ru: "Бишкек, ул. Льва Толстого, 17Б/1",
-      ky: "Бишкек, Лев Толстой көчөсү, 17Б/1",
+      ru: "Бишкек, ул. Льва Толстого, 17А/1",
+      ky: "Бишкек, Лев Толстой көчөсү, 17А/1",
       en: "Bishkek, 17B/1 Lev Tolstoy Street",
     } as Localized,
   ],
