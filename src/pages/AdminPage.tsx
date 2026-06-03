@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare, Building2, Newspaper } from "lucide-react";
+import { LogOut, Users, Calendar, Share2, Loader2, Inbox, Trophy, AtSign, MessageSquare, Building2, Newspaper, MailWarning } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SpeakersTab } from "@/components/admin/SpeakersTab";
 import { ProgramTab } from "@/components/admin/ProgramTab";
@@ -11,6 +11,7 @@ import { AwardsTab } from "@/components/admin/AwardsTab";
 import { ContactsTab } from "@/components/admin/ContactsTab";
 import { PartnersTab } from "@/components/admin/PartnersTab";
 import { PressTab } from "@/components/admin/PressTab";
+import { EmailLogsTab } from "@/components/admin/EmailLogsTab";
 
 type Tab =
   | "registrations"
@@ -21,7 +22,8 @@ type Tab =
   | "contacts"
   | "social"
   | "partners"
-  | "press";
+  | "press"
+  | "email_logs";
 
 // ── Login form ─────────────────────────────────────────────────────────────
 function LoginForm() {
@@ -106,6 +108,7 @@ function Dashboard({ session }: { session: Session }) {
     { id: "press",         label: "Пресс-центр", icon: Newspaper     },
     { id: "contacts",      label: "Контакты",    icon: AtSign        },
     { id: "social",        label: "Соц. сети",   icon: Share2        },
+    { id: "email_logs",    label: "Доставка email", icon: MailWarning },
   ];
 
   const signOut = () => supabase.auth.signOut();
@@ -167,6 +170,7 @@ function Dashboard({ session }: { session: Session }) {
         {tab === "press"         && <PressTab />}
         {tab === "contacts"      && <ContactsTab />}
         {tab === "social"        && <SocialTab />}
+        {tab === "email_logs"    && <EmailLogsTab />}
       </div>
     </div>
   );

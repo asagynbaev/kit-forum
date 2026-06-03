@@ -221,18 +221,16 @@ export function KitAwardPage() {
               initial={{ opacity: 0, scale: 0.94, y: 24 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.5, ease }}
-              className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+              className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-line"
             >
-              <div className="bg-ink px-8 pt-10 pb-8 text-center">
-                <div className="mx-auto mb-5 inline-grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
-                  <Lock size={22} className="text-white/70" />
+              <div className="px-8 pt-10 pb-9 text-center">
+                <div className="mx-auto mb-6 inline-grid h-14 w-14 place-items-center rounded-2xl bg-brand/10 ring-1 ring-brand/15">
+                  <Lock size={22} className="text-brand" />
                 </div>
-                <h2 className="font-display font-medium text-white text-[22px] tracking-tight leading-snug">
+                <h2 className="font-display font-medium text-ink text-[22px] tracking-tight leading-snug">
                   {t("award.closed.title")}
                 </h2>
-              </div>
-              <div className="px-8 py-8 text-center">
-                <p className="text-[15px] leading-relaxed text-ink-soft">
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
                   {t("award.closed.body")}
                 </p>
                 <Link

@@ -307,7 +307,7 @@ function SuccessView({ onClose, t }: Readonly<{ onClose: () => void; t: (k: stri
 function ClosedView({ onClose, t }: Readonly<{ onClose: () => void; t: (k: string) => string }>) {
   return (
     <div className="flex flex-col items-center text-center py-6">
-      <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-ink/8 text-ink/50">
+      <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand/10 text-brand ring-1 ring-brand/15">
         <Lock size={32} strokeWidth={1.4} />
       </div>
       <h2 className="text-[22px] font-bold text-ink mb-2">{t("regModal.closed.title")}</h2>

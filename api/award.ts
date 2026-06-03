@@ -79,14 +79,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log("[award] Saved to DB ✓, sending email to:", email.trim());
 
+  const recipient = email.trim();
+  const subject = "Заявка на КИТ Премию 2026 получена";
+
   try {
     await transporter.sendMail({
       from: `"КИТ Форум 2026" <${process.env.SMTP_USER}>`,
-      to: email.trim(),
-      subject: "Заявка на КИТ Премию 2026 получена",
+      to: recipient,
+      subject,
       html: awardEmail(full_name.trim(), nomination, project_name?.trim()),
     });
-    console.log("[award] Email sent ✓ to:", email.trim());
+    console.log("[award] Email sent ✓ to:", recipient);
+
+    await logEmail({ recipient, subject, status: "sent", relatedId: inserted.id });
 
     // Auto-update status to "reviewing" after successful email
     await supabase
@@ -97,9 +102,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[award] Email FAILED:", msg);
+    await logEmail({ recipient, subject, status: "failed", error: msg, relatedId: inserted.id });
   }
 
   return res.status(200).json({ ok: true });
+}
+
+async function logEmail(entry: {
+  recipient: string;
+  subject: string;
+  status: "sent" | "failed";
+  error?: string;
+  relatedId?: string;
+}) {
+  try {
+    await supabase.from("email_logs").insert({
+      kind: "award",
+      recipient: entry.recipient,
+      subject: entry.subject,
+      status: entry.status,
+      error: entry.error ?? null,
+      related_id: entry.relatedId ?? null,
+    });
+  } catch (err) {
+    // Logging must never break the request flow.
+    console.warn("[award] email_logs insert failed (non-fatal):", err);
+  }
 }
 
 function awardEmail(name: string, nomination: string, projectName?: string): string {

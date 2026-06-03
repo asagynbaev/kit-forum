@@ -25,6 +25,10 @@ export type AwardApplicationStatus =
   | "rejected"
   | "winner";
 
+export type EmailLogStatus = "sent" | "failed";
+
+export type EmailLogKind = "register" | "award";
+
 export interface Database {
   public: {
     Tables: {
@@ -347,6 +351,39 @@ export interface Database {
         Row: { key: string; value: string; updated_at: string };
         Insert: { key: string; value: string; updated_at?: string };
         Update: { key?: string; value?: string; updated_at?: string };
+        Relationships: [];
+      };
+      email_logs: {
+        Row: {
+          id: string;
+          kind: string;
+          recipient: string;
+          subject: string;
+          status: EmailLogStatus;
+          error: string | null;
+          related_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          kind: string;
+          recipient: string;
+          subject: string;
+          status?: EmailLogStatus;
+          error?: string | null;
+          related_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          kind?: string;
+          recipient?: string;
+          subject?: string;
+          status?: EmailLogStatus;
+          error?: string | null;
+          related_id?: string | null;
+          created_at?: string;
+        };
         Relationships: [];
       };
     };
