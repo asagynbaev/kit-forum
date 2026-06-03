@@ -4,7 +4,7 @@ import { LangSwitcher } from "../ui/LangSwitcher";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
-import { useContactPersons } from "@/lib/useSupabaseData";
+import { useContactPersons, useVenue } from "@/lib/useSupabaseData";
 
 const columns = [
   {
@@ -46,7 +46,8 @@ function ColLink({ href, children }: Readonly<{ href: string; children: React.Re
 }
 
 export function Footer() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
+  const venue = useVenue();
   const { openModal } = useRegistrationModal();
   const { persons } = useContactPersons();
   return (
@@ -122,7 +123,7 @@ export function Footer() {
                   </li>
                 )}
                 <li>
-                  <a href="#venue" className={cls}>{t("contacts.row.venue.l2")}</a>
+                  <a href="#venue" className={cls}>{tr(venue.shortAddress)}</a>
                 </li>
               </ul>
             </div>

@@ -11,21 +11,18 @@ export const venue = {
     ky: "КЭУ · Борбордук кампус",
     en: "IUK · Central Campus",
   } as Localized,
+  // Фолбэк для useVenue(): порядок совпадает с блоком "venue" в contact_blocks
+  // (последняя строка — адрес, её используют Hero и футер).
   addressLines: [
-    {
-      ru: "Кыргызская Республика, Бишкек",
-      ky: "Кыргыз Республикасы, Бишкек",
-      en: "Kyrgyz Republic, Bishkek",
-    } as Localized,
-    {
-      ru: "ул. Льва Толстого, 17Б/1",
-      ky: "Лев Толстой көчөсү, 17Б/1",
-      en: "17B/1 Lev Tolstoy Street",
-    } as Localized,
     {
       ru: "Центральный кампус МУК",
       ky: "КЭУнун Борбордук кампусу",
       en: "IUK Central Campus",
+    } as Localized,
+    {
+      ru: "Бишкек, ул. Льва Толстого, 17Б/1",
+      ky: "Бишкек, Лев Толстой көчөсү, 17Б/1",
+      en: "Bishkek, 17B/1 Lev Tolstoy Street",
     } as Localized,
   ],
   city: {

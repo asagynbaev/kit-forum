@@ -3,6 +3,8 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronDown, RotateCcw } from "lucide-react";
 import { LiveBadge } from "../ui/LiveBadge";
 import { useI18n } from "@/i18n/I18nProvider";
+import { venue } from "@/data/venue";
+import { useVenue } from "@/lib/useSupabaseData";
 import { onLoaderDone } from "@/lib/loaderState";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
@@ -45,7 +47,10 @@ const stats = [
 ] as const;
 
 export function Hero() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
+  const v = useVenue();
+  // Короткий тег площадки (МУК / КЭУ / IUK) — идентичность, не адрес
+  const venueTag = tr(venue.shortName).split("·")[0].trim();
   const { openModal } = useRegistrationModal();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -358,7 +363,7 @@ export function Hero() {
                 )}
               </div>
               <span className="text-[10px] tracking-[0.16em] sm:tracking-[0.2em] text-white/55">
-                {t("hero.venueLine")}
+                {venueTag} · {tr(v.shortAddress)}
               </span>
               <span className="text-[10px] tracking-[0.16em] sm:tracking-[0.2em] text-white">
                 <span className="text-brand-glow mr-1.5">▸</span>

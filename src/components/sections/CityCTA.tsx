@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Car, BadgeCheck, Accessibility } from "lucide
 import { Reveal } from "../ui/Reveal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { venue } from "@/data/venue";
+import { useVenue } from "@/lib/useSupabaseData";
 import { useRegistrationModal } from "@/context/RegistrationModalContext";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -13,6 +14,7 @@ const twoGisHref = `https://2gis.kg/bishkek/directions/points/%2F${venue.coordin
 
 export function CityCTA() {
   const { t, tr } = useI18n();
+  const v = useVenue();
   const { openModal } = useRegistrationModal();
 
   return (
@@ -59,11 +61,11 @@ export function CityCTA() {
                 className="font-display font-medium leading-[1.15] tracking-tightest text-ink break-words"
                 style={{ fontSize: "clamp(1rem, 1.4vw + 0.55rem, 1.5rem)" }}
               >
-                {tr(venue.name)}
+                {tr(v.name)}
               </div>
               <address className="mt-3 not-italic text-[13px] sm:text-[14px] leading-relaxed text-ink-soft break-words">
-                {venue.addressLines.map((line) => (
-                  <div key={line.ru}>{tr(line)}</div>
+                {v.addressLines.map((line, i) => (
+                  <div key={line.ru || i}>{tr(line)}</div>
                 ))}
               </address>
             </div>

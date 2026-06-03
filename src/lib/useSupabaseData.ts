@@ -3,6 +3,7 @@ import { supabase } from "./supabase";
 import type { Speaker } from "@/data/speakers";
 import type { ProgramDay, SessionSlot, Track, SessionType } from "@/data/program";
 import type { Localized } from "@/i18n/I18nProvider";
+import { venue as staticVenue } from "@/data/venue";
 
 // ── SPEAKERS ──────────────────────────────
 
@@ -236,6 +237,59 @@ export function useContactBlocks() {
   useEffect(() => { load(); }, []);
 
   return { blocks, loading, reload: load };
+}
+
+// ── VENUE (площадка) ───────────────────────────────────────────────────────
+// Единый источник адреса для всего сайта: блок "venue" в contact_blocks
+// (редактируется в админке → вкладка «Контакты» → блок «Площадка»).
+
+export interface VenueInfo {
+  /** Название площадки (title блока) */
+  name: Localized;
+  /** Все строки адреса (lines блока) */
+  addressLines: Localized[];
+  /** Короткая адресная строка (последняя) — для Hero и футера */
+  shortAddress: Localized;
+}
+
+function buildVenueInfo(name: Localized, lines: Localized[]): VenueInfo {
+  const addressLines = lines.length ? lines : staticVenue.addressLines;
+  return {
+    name,
+    addressLines,
+    shortAddress:
+      addressLines[addressLines.length - 1] ??
+      staticVenue.addressLines[staticVenue.addressLines.length - 1],
+  };
+}
+
+const FALLBACK_VENUE: VenueInfo = buildVenueInfo(
+  staticVenue.name,
+  staticVenue.addressLines,
+);
+
+export function useVenue() {
+  const [venue, setVenue] = useState<VenueInfo>(FALLBACK_VENUE);
+
+  useEffect(() => {
+    supabase
+      .from("contact_blocks")
+      .select("title, lines")
+      .eq("id", "venue")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setVenue(
+            buildVenueInfo(
+              data.title as Localized,
+              (data.lines as Localized[]) ?? [],
+            ),
+          );
+        }
+      });
+  }, []);
+
+  return venue;
 }
 
 export function useSocialLinks() {
