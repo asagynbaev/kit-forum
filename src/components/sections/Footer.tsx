@@ -147,7 +147,7 @@ export function Footer() {
 
         <div className="mt-6 flex justify-center">
           <a
-            href="https://t.me/azimbek_eth"
+            href="https://t.me/azimbek_s"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-[11px] text-ink-mute hover:text-ink-soft transition-colors duration-300"
@@ -155,7 +155,7 @@ export function Footer() {
             Made with{" "}
             <span className="text-red-400" aria-label="love">♥</span>
             {" "}by{" "}
-            <span className="text-brand/70 hover:text-brand transition-colors duration-300">@azimbek_eth</span>
+            <span className="text-brand/70 hover:text-brand transition-colors duration-300">@azimbek_s</span>
           </a>
         </div>
       </div>
